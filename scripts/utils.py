@@ -13,7 +13,7 @@ def read_lua(file_path, name_values):
             line = line.strip()
             if line.startswith('SafeAddString'):
                 name = line.split('(', 1)[1].split(',', 1)[0].strip()
-                value = line.split(',', 1)[1].split(',', -1)[0].strip().strip('"')
+                value = line.split(',', 1)[1].rsplit(',', 1)[0].strip().strip('"')
                 version = line.rsplit(',', 1)[1].strip(')').strip()
                 name_values[name] = (value, version)
 
