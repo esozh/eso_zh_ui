@@ -42,7 +42,7 @@ def main():
             return
 
     with open(translate_file, 'wt', encoding='utf-8') as fp:
-        for name, (value, version) in name_values.items():
+        for name, (value, version) in sorted(name_values.items()):
             fp.write('SafeAddString(%s, "%s", %s)\n' % (name, value, version))
             if name in name_translation:
                 fp.write(name_translation[name] + '\n')
