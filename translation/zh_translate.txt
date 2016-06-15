@@ -329,11 +329,11 @@ SafeAddString(SI_APPROVEDURLTYPE5, "http://forums.elderscrollsonline.com", 0)
 SafeAddString(SI_ARMORTYPE0, "None", 0)
 无
 SafeAddString(SI_ARMORTYPE1, "Light", 0)
-轻甲
+轻
 SafeAddString(SI_ARMORTYPE2, "Medium", 0)
-中甲
+中
 SafeAddString(SI_ARMORTYPE3, "Heavy", 0)
-重甲
+重
 SafeAddString(SI_ARMOR_INDICATOR, "Armor Indicator", 0)
 SafeAddString(SI_ARMOR_INDICATOR_SETTINGS_TOOLTIP, "Displays an indicator when a piece of equipped armor is fully damaged.", 0)
 SafeAddString(SI_ARMOR_INDICATOR_TOOLTIP, "A piece of equipped armor is fully damaged.", 0)
@@ -972,6 +972,7 @@ SafeAddString(SI_CHARACTERSLIDERSUBCATEGORY9, "Brow", 0)
 SafeAddString(SI_CHARACTER_EQUIP_SLOT_FORMAT, "<<1>>", 0)
 SafeAddString(SI_CHARACTER_EQUIP_TITLE, "Equipped", 0)
 SafeAddString(SI_CHARACTER_LOAD_REQUESTED, "Requesting character load...", 0)
+请求加载角色...
 SafeAddString(SI_CHARACTER_MENU_SKILLS, "Skills", 0)
 SafeAddString(SI_CHARACTER_MENU_STATS, "Stats", 0)
 SafeAddString(SI_CHARACTER_SELECT_ALLIANCE, "<<1>>", 0)
@@ -1510,6 +1511,7 @@ SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES304, "Loot", 0)
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES305, "NPC Placement", 0)
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES4, "Siege Weapons", 0)
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES401, "Armor", 0)
+甲
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES402, "Consumables / Enchantments", 0)
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES403, "Gathering / Reagents", 0)
 SafeAddString(SI_CUSTOMERSERVICESUBMITFEEDBACKSUBCATEGORIES404, "Item Art", 0)
@@ -2173,66 +2175,121 @@ SafeAddString(SI_FULLSCREENMODE1, "Windowed (Fullscreen)", 5)
 SafeAddString(SI_FULLSCREENMODE2, "Fullscreen", 3)
 全屏
 SafeAddString(SI_GAMECAMERAACTIONTYPE1, "Search", 1)
+搜索
 SafeAddString(SI_GAMECAMERAACTIONTYPE10, "Inspect", 0)
+检视
 SafeAddString(SI_GAMECAMERAACTIONTYPE11, "Repair", 0)
+修理
 SafeAddString(SI_GAMECAMERAACTIONTYPE12, "Unlock", 0)
+开锁
 SafeAddString(SI_GAMECAMERAACTIONTYPE13, "Open", 0)
+打开
 SafeAddString(SI_GAMECAMERAACTIONTYPE15, "Examine", 0)
+检查
 SafeAddString(SI_GAMECAMERAACTIONTYPE16, "Fish", 0)
+钓鱼
 SafeAddString(SI_GAMECAMERAACTIONTYPE17, "Reel In", 0)
 SafeAddString(SI_GAMECAMERAACTIONTYPE18, "Pack Up", 0)
+打包
 SafeAddString(SI_GAMECAMERAACTIONTYPE19, "Steal", 0)
+偷窃
 SafeAddString(SI_GAMECAMERAACTIONTYPE2, "Talk", 0)
+交谈
 SafeAddString(SI_GAMECAMERAACTIONTYPE20, "Steal From", 0)
+偷窃
 SafeAddString(SI_GAMECAMERAACTIONTYPE21, "Pickpocket", 2)
+扒手
 SafeAddString(SI_GAMECAMERAACTIONTYPE23, "Trespass", 0)
+侵入
 SafeAddString(SI_GAMECAMERAACTIONTYPE24, "Hide", 0)
+隐藏
 SafeAddString(SI_GAMECAMERAACTIONTYPE3, "Harvest", 0)
+收获
 SafeAddString(SI_GAMECAMERAACTIONTYPE4, "Disarm", 0)
+解除
 SafeAddString(SI_GAMECAMERAACTIONTYPE5, "Use", 0)
+使用
 SafeAddString(SI_GAMECAMERAACTIONTYPE6, "Read", 0)
+阅读
 SafeAddString(SI_GAMECAMERAACTIONTYPE7, "Take", 0)
+获取
 SafeAddString(SI_GAMECAMERAACTIONTYPE8, "Destroy", 0)
+摧毁
 SafeAddString(SI_GAMECAMERAACTIONTYPE9, "Repair", 0)
+修理
 SafeAddString(SI_GAMEPADITEMCATEGORY0, "Alchemy", 0)
+炼金术
 SafeAddString(SI_GAMEPADITEMCATEGORY1, "Amulet", 0)
+护身符
 SafeAddString(SI_GAMEPADITEMCATEGORY10, "Dagger", 0)
+匕首
 SafeAddString(SI_GAMEPADITEMCATEGORY11, "Enchanting", 0)
 SafeAddString(SI_GAMEPADITEMCATEGORY12, "Feet", 0)
+足
 SafeAddString(SI_GAMEPADITEMCATEGORY13, "Glyphs", 0)
 SafeAddString(SI_GAMEPADITEMCATEGORY14, "Hammer", 0)
+锤子
 SafeAddString(SI_GAMEPADITEMCATEGORY15, "Hands", 0)
+手
 SafeAddString(SI_GAMEPADITEMCATEGORY16, "Head", 0)
+头
 SafeAddString(SI_GAMEPADITEMCATEGORY17, "Legs", 0)
+腿
 SafeAddString(SI_GAMEPADITEMCATEGORY18, "Potion", 0)
+药剂
 SafeAddString(SI_GAMEPADITEMCATEGORY19, "Provisioning", 0)
 SafeAddString(SI_GAMEPADITEMCATEGORY2, "Axe", 0)
+斧子
 SafeAddString(SI_GAMEPADITEMCATEGORY20, "Ring", 0)
+戒指
 SafeAddString(SI_GAMEPADITEMCATEGORY21, "Shield", 0)
+盾牌
 SafeAddString(SI_GAMEPADITEMCATEGORY22, "Shoulders", 0)
+肩
 SafeAddString(SI_GAMEPADITEMCATEGORY23, "Siege", 0)
+攻城
 SafeAddString(SI_GAMEPADITEMCATEGORY24, "Spellcrafting", 0)
+法术制作
 SafeAddString(SI_GAMEPADITEMCATEGORY25, "Staff", 0)
+法杖
 SafeAddString(SI_GAMEPADITEMCATEGORY26, "Material", 0)
+材料
 SafeAddString(SI_GAMEPADITEMCATEGORY27, "Soul Gem", 0)
+灵魂石
 SafeAddString(SI_GAMEPADITEMCATEGORY28, "Sword", 0)
+剑
 SafeAddString(SI_GAMEPADITEMCATEGORY29, "Tool", 0)
+工具
 SafeAddString(SI_GAMEPADITEMCATEGORY3, "Bait", 0)
+饵
 SafeAddString(SI_GAMEPADITEMCATEGORY30, "Trait Gem", 0)
 SafeAddString(SI_GAMEPADITEMCATEGORY31, "Trophy", 0)
 SafeAddString(SI_GAMEPADITEMCATEGORY32, "Waist", 0)
+腰
 SafeAddString(SI_GAMEPADITEMCATEGORY33, "Woodworking", 0)
+木工
 SafeAddString(SI_GAMEPADITEMCATEGORY34, "Weapons", 0)
+武器
 SafeAddString(SI_GAMEPADITEMCATEGORY35, "Heavy Armor", 0)
+重甲
 SafeAddString(SI_GAMEPADITEMCATEGORY36, "Medium Armor", 0)
+中甲
 SafeAddString(SI_GAMEPADITEMCATEGORY37, "Light Armor", 0)
+轻甲
 SafeAddString(SI_GAMEPADITEMCATEGORY38, "Jewelry", 0)
+珠宝
 SafeAddString(SI_GAMEPADITEMCATEGORY4, "Blacksmith", 0)
+铁匠
 SafeAddString(SI_GAMEPADITEMCATEGORY5, "Bow", 0)
+弓
 SafeAddString(SI_GAMEPADITEMCATEGORY6, "Chest", 0)
+胸
 SafeAddString(SI_GAMEPADITEMCATEGORY7, "Clothier", 0)
+服装
 SafeAddString(SI_GAMEPADITEMCATEGORY8, "Consumable", 0)
+耗材
 SafeAddString(SI_GAMEPADITEMCATEGORY9, "Costume", 0)
+套装
 SafeAddString(SI_GAMEPADTEMPLATE0, "Template A", 1)
 SafeAddString(SI_GAMEPADTEMPLATE1, "Southpaw", 0)
 SafeAddString(SI_GAMEPADTEMPLATE2, "Hardcore", 3)
@@ -3878,7 +3935,9 @@ SafeAddString(SI_INTERFACE_OPTIONS_LOOT_USE_AUTOLOOT_STOLEN, "Auto Loot Stolen I
 SafeAddString(SI_INTERFACE_OPTIONS_LOOT_USE_AUTOLOOT_STOLEN_TOOLTIP, "If this option is off, auto-loot will not steal items; they must be manually taken. Otherwise, auto-loot will work on owned items the same way it works on unowned items. Note that this will still incur a bounty if you're seen.", 0)
 SafeAddString(SI_INTERFACE_OPTIONS_LOOT_USE_AUTOLOOT_TOOLTIP, "Automatically takes all items when looting corpses and containers.", 1)
 SafeAddString(SI_INTERFACE_OPTIONS_NAMEPLATES, "Nameplates", 0)
+名字显示
 SafeAddString(SI_INTERFACE_OPTIONS_NAMEPLATES_ALL, "Nameplates", 1)
+名字显示
 SafeAddString(SI_INTERFACE_OPTIONS_NAMEPLATES_ALLIANCE_INDICATORS, "Alliance Indicators", 1)
 SafeAddString(SI_INTERFACE_OPTIONS_NAMEPLATES_ALLIANCE_INDICATORS_TOOLTIP, "Controls the display of an alliance icon above players that signifies their alliance association.", 0)
 SafeAddString(SI_INTERFACE_OPTIONS_NAMEPLATES_ALL_TOOLTIP, "Enables the overhead name system that appears above creatures, non player characters and players.", 0)
@@ -4036,6 +4095,7 @@ SafeAddString(SI_INVENTORY_SORT_ASCENDING_TOOLTIP, "Switch to ascending sort", 0
 SafeAddString(SI_INVENTORY_SORT_DESCENDING_TOOLTIP, "Switch to descending sort", 0)
 SafeAddString(SI_INVENTORY_SORT_TYPE_ACTIVE, "Active", 0)
 SafeAddString(SI_INVENTORY_SORT_TYPE_ARMOR, "Armor", 0)
+甲
 SafeAddString(SI_INVENTORY_SORT_TYPE_NAME, "Name", 1)
 SafeAddString(SI_INVENTORY_SORT_TYPE_POWER, "Damage", 1)
 SafeAddString(SI_INVENTORY_SORT_TYPE_PRICE, "Value", 1)
@@ -4866,6 +4926,7 @@ SafeAddString(SI_LOGOUTERROR8, "Patch required. Please download and install to a
 SafeAddString(SI_LOGOUT_DEFER_DELAY, "Character logout in <<1>> seconds.", 0)
 SafeAddString(SI_LOGOUT_DISALLOWED, "You cannot logout while in combat.", 1)
 SafeAddString(SI_LOG_OUT_DIALOG, "Do you want to log out to character select?", 0)
+登出到角色选择界面？
 SafeAddString(SI_LONG_LOAD_TIME, "This may be an unusually long load time.", 1)
 SafeAddString(SI_LOOTITEMRESULT2, "Your inventory is full.", 1)
 SafeAddString(SI_LOOTITEMRESULT3, "Your inventory is full.", 1)
@@ -6886,6 +6947,7 @@ SafeAddString(SI_WEAPON_SWAP_TOOLTIP, "Toggles between your Primary and Backup W
 SafeAddString(SI_WEAPON_SWAP_UNEARNED_TOOLTIP, "Unlocked at Level <<1>>", 0)
 SafeAddString(SI_WINDOW_TITLE_ADDON_EULA, "AddOn End User License Agreement", 0)
 SafeAddString(SI_WINDOW_TITLE_ADDON_MANAGER, "Add-Ons", 1)
+插件
 SafeAddString(SI_WINDOW_TITLE_AVA_BONUSES, "<<1>> Campaign Bonuses", 2)
 SafeAddString(SI_WINDOW_TITLE_CAMPAIGN_BROWSER, "Campaigns", 0)
 SafeAddString(SI_WINDOW_TITLE_CAMPAIGN_OVERVIEW, "Overview", 0)
