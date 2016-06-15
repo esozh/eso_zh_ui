@@ -22,3 +22,7 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 从 `translation/str_header.txt` 中读取文件头，
 再根据 `translation/zh_pregame.lua`, `translation/zh_client.lua`
 生成 `AddOns/esoui/lang/zh_pregame.str`, `AddOns/esoui/lang/zh_client.str`。
+
+### convert_translate_to_lang.py
+从 `translation/lang/zh.lang.translate.csv` 中提取原文及翻译文本，
+生成 `translation/lang/zh.lang.csv`

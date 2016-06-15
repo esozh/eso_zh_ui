@@ -17,11 +17,24 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 ```
 
 ##### 对话翻译
-编辑 zh.lang.csv 文件，待续
+修改 `zh.lang.translate.csv` 文件。
+文件来源是 `en.lang.csv`。
+
+原文件第一行是说明，
+从第二行开始是需要翻译的文本。
+直接把译文另起一行写在原文后即可。
+例如：
+
+```
+"75246404","0","232","8686977","Hm?"
+嗯？
+"75246404","0","233","11440092","Ah, it's you!"
+啊，是你！
+```
 
 ### 二、生成 .str 文件
 
-在 `/scripts` 下运行 `convert_txt_to_str`
+运行 `/scripts` 下的 `convert_txt_to_str`
 
 ```bash
 python convert_txt_to_str.py
@@ -29,7 +42,15 @@ python convert_txt_to_str.py
 
 ### 三、生成 zh.lang 文件
 
-使用 EsoExtractData 软件，将 `zh.lang.csv` 转换成 `zh.lang`。
+#### 1. 将 `zh.lang.translate.csv` 转换成 `zh.lang.csv`
+```bash
+# todo
+```
+
+#### 2. 使用 EsoExtractData 软件，将 `zh.lang.csv` 转换成 `zh.lang`。
+```bash
+esoextractdata -x zh.lang.csv
+```
 
 ### 四、打包发布
 
