@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : convert_translate_to_lang.py
+# File          : convert_translate_to_lang_po.py
 # Author        : bssthu
 # Project       : eso_zh_ui
-# Description   : 将带翻译的 zh.lang.translate.csv 转换为 zh.lang.csv
+# Description   : 将带翻译的 zh.lang.translate.csv 转换为 PO(Pootle) 文件 zh.lang.csv
 # 
 
 
@@ -42,9 +42,9 @@ def main():
 
     # save translation
     with open(dest_file, 'wt', encoding='utf-8', newline='\n') as fp:
-        fp.write(header)
+        fp.write('"Location","Source","Target"\n')
         for info, text in lang_translate:
-            fp.write('%s,"%s"\n' % (','.join(info), text))
+            fp.write('"%s","%s",""\n' % ('-'.join([x.strip().strip('"') for x in info[:-1]]), text))
 
     print('%d/%d translated in %s.' % (count_translated, count_total, dest_file))
 
