@@ -3,18 +3,10 @@
 ### 一、文本翻译
 
 ##### UI翻译
-编辑 `translation/zh_translate.txt`。
-直接把译文另起一行写在以 "SafeAddString" 开头的原文后即可。
-例如：
+~~~编辑 `translation/zh_translate.txt`。~~~
+~~~直接把译文另起一行写在以 "SafeAddString" 开头的原文后即可。~~~
 
-```
-SafeAddString(SI_GAME_MENU_LOGOUT, "Log Out", 0)
-登出
-SafeAddString(SI_GAME_MENU_QUIT, "Quit", 0)
-退出
-SafeAddString(SI_GAME_MENU_RESUME, "Resume", 0)
-SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
-```
+直接编辑UI汉化的xlsx文件，具体任务分配见翻译群。
 
 ##### 对话翻译
 修改 `zh.lang.translate.csv` 文件。
