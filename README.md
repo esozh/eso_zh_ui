@@ -10,6 +10,7 @@ Chinese translation for Elder Scrolls Online
 4. 如果提示需要更新游戏，可以从启动器更新，但之后可能需要重新进行第2步修改。
 
 ## 其他说明
+* [常见问题](docs/common_issues.md)
 * [翻译方法](docs/translator.md)
 
 ## DISCLAIMER:
