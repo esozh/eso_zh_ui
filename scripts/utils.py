@@ -7,13 +7,17 @@
 # 
 
 
+import xlrd
+
+
 def read_lua(file_path, name_values):
     with open(file_path, 'rt', encoding='utf-8') as fp:
         for line in fp.readlines():
             line = line.strip()
             if line.startswith('SafeAddString'):
                 name = line.split('(', 1)[1].split(',', 1)[0].strip()
-                value = line.split(',', 1)[1].rsplit(',', 1)[0].strip().strip('"')
+                value = line.split(',', 1)[1].rsplit(',', 1)[0].strip()
+                value = value[1:-1]     # remove quotes
                 version = line.rsplit(',', 1)[1].strip(')').strip()
                 name_values[name] = (value, version)
 
@@ -35,6 +39,7 @@ def read_translate_txt(file_path, name_translation):
 
 
 def read_translate_lang_csv(file_path, mode):
+    """读取一行原文、一行译文的 lang.csv 文件"""
     count_translated = 0
     lang_translate = []
     with open(file_path, 'rt', encoding='utf-8') as fp:
@@ -44,6 +49,7 @@ def read_translate_lang_csv(file_path, mode):
             if is_origin and (not line.startswith('"')):
                 is_origin = False
                 count_translated += 1
+                # TODO: 引号的处理
                 text_zh = line.strip().replace('"', '').replace("'", '')
                 # apply translation
                 if mode == 'origin':
@@ -57,6 +63,19 @@ def read_translate_lang_csv(file_path, mode):
             else:
                 a, b, c, d, text_en = line.strip().split(',', 4)
                 info = (a, b, c, d)
-                lang_translate.append([info, text_en.strip().strip('"')])
+                text_en = text_en.strip()[1:-1]     # remove quotes
+                lang_translate.append([info, text_en])
                 is_origin = True
     return header, lang_translate, count_translated
+
+
+def load_xls(file_path):
+    """读取 Excel 文件中的数据。"""
+    with xlrd.open_workbook(file_path) as workbook:
+        sheet = workbook.sheet_by_index(0)
+        nrows = sheet.nrows
+        ncols = sheet.ncols
+        data = []
+        for curr_row in range(0, nrows):
+            data.append([str(sheet.cell(curr_row, curr_col).value) for curr_col in range(0, ncols)])
+        return data

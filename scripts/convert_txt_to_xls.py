@@ -50,7 +50,7 @@ def convert(src_file, dest_file, name_translation):
     header = '编号\t名称\t原文\t译文\t初翻人员\t校对\t润色\t备注\n'
     with open(dest_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
-        for name, (origin_text, version) in name_values.items():
+        for name, (origin_text, version) in sorted(name_values.items()):
             count_total += 1
             # 原文、翻译文本
             if name in name_translation:
@@ -64,7 +64,8 @@ def convert(src_file, dest_file, name_translation):
             proofreader = ''
             refiner = ''
             comments = ''
-            fp.write('\t'.join(('UI-%d' % count_total, name, origin_text, trans_text, translator, comments)) + '\n')
+            fp.write('\t'.join(('UI-%d' % count_total, name, origin_text, trans_text,
+                                translator, proofreader, refiner, comments)) + '\n')
         print('%d/%d translated in %s.' % (count_translated, count_total, dest_file))
 
 
