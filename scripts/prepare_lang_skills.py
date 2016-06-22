@@ -9,19 +9,7 @@
 
 import os
 import sys
-from utils import load_lang_csv
-
-
-def load_index_and_text_from_csv(file_path):
-    """从 csv 中读取文本，并用 index 当作其索引"""
-    data = load_lang_csv(file_path, skip_header=False)
-    data_dict_by_index = {}
-    for _id, unknown, index, offset, text in data:
-        index = int(index)
-        if index in data_dict_by_index:     # 如果 index 没有重复，将来就可以只用 index 来反查
-            raise RuntimeError('duplicate index')
-        data_dict_by_index[index] = text
-    return data_dict_by_index
+from utils import load_index_and_text_from_csv
 
 
 def main():
