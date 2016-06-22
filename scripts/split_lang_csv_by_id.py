@@ -40,7 +40,7 @@ def main():
     # split
     for line in lines:
         _id = line.split(',', 1)[0]
-        _id = _id.strip('"')
+        _id = _id[1:-1]     # remove "
         if _id not in lines_grouped_by_id.keys():
             lines_grouped_by_id[_id] = []
         lines_grouped_by_id[_id].append(line)

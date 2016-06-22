@@ -10,7 +10,7 @@
 import os
 import re
 import sys
-from utils import load_xls
+from xlsutils import load_xls
 
 
 def usage():

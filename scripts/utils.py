@@ -3,11 +3,8 @@
 # File          : utils.py
 # Author        : bssthu
 # Project       : eso_zh_ui
-# Description   : 将 .txt 文件转换为 .str 文件。其中 .txt 文件是翻译过的 .lua 文件。
-# 
-
-
-import xlrd
+# Description   :
+#
 
 
 def read_lua(file_path, name_values):
@@ -36,6 +33,18 @@ def read_translate_txt(file_path, name_translation):
             elif is_origin and line != '':
                 name_translation[last_name] = line
                 is_origin = False
+
+
+def load_lang_csv(file_path, skip_header=True):
+    """读取 lang.csv 文件"""
+    data = []
+    with open(file_path, 'rt', encoding='utf-8') as fp:
+        if skip_header:     # 跳过第一行
+            header = fp.readline()
+        for line in fp.readlines():
+            values = line.strip().split(',', 4)
+            data.append([value.strip()[1:-1] for value in values])  # append values without "
+    return data
 
 
 def read_translate_lang_csv(file_path, mode):
@@ -67,15 +76,3 @@ def read_translate_lang_csv(file_path, mode):
                 lang_translate.append([info, text_en])
                 is_origin = True
     return header, lang_translate, count_translated
-
-
-def load_xls(file_path):
-    """读取 Excel 文件中的数据。"""
-    with xlrd.open_workbook(file_path) as workbook:
-        sheet = workbook.sheet_by_index(0)
-        nrows = sheet.nrows
-        ncols = sheet.ncols
-        data = []
-        for curr_row in range(0, nrows):
-            data.append([str(sheet.cell(curr_row, curr_col).value) for curr_col in range(0, ncols)])
-        return data
