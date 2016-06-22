@@ -40,9 +40,14 @@ def main():
 
     # match name and desc
     name_desc = []
+    repeat_check_list = []  # 用于去重
     for index, desc in sorted(skill_desc_dict.items()):
         if index in skill_name_dict.keys():
-            name_desc.append([index, skill_name_dict[index], desc])
+            name = skill_name_dict[index]
+            to_check = '%s%s' % (name, desc)
+            if to_check not in repeat_check_list:
+                name_desc.append([index, name, desc])
+                repeat_check_list.append(to_check)
 
     # save
     dest_file_name = os.path.join(dest_path, 'en.skills.lang.csv')
