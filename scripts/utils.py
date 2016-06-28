@@ -7,6 +7,10 @@
 #
 
 
+import os
+import sys
+
+
 def read_lua(file_path, name_values):
     with open(file_path, 'rt', encoding='utf-8') as fp:
         for line in fp.readlines():
@@ -88,3 +92,88 @@ def read_translate_lang_csv(file_path, mode):
                 lang_translate.append([info, text_en])
                 is_origin = True
     return header, lang_translate, count_translated
+
+
+def prepare_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
+    """从两个不同 ID 对应文件中，读取同一 index 对应的内容
+
+    两个文件分别存储“名字”及“描述”，每一对“名字”、“描述”的 index 相同。
+
+    Args:
+        name_file_id: “名字”文件的 ID
+        desc_file_id: “描述”文件的 ID
+        lang: 语言
+    """
+
+    cd = sys.path[0]
+    translation_path = os.path.join(cd, '../translation/lang')
+
+    # load
+    name_filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, name_file_id))
+    name_dict = load_index_and_text_from_csv(name_filename)
+    desc_filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, desc_file_id))
+    desc_dict = load_index_and_text_from_csv(desc_filename)
+
+    # match name and desc
+    name_and_desc = []
+    repeat_check_list = []  # 用于去重的列表
+    for index, desc in sorted(desc_dict.items()):
+        if index in name_dict.keys():
+            name = name_dict[index]
+            to_check = '%s%s' % (name, desc)
+            if to_check not in repeat_check_list:   # 去重
+                name_and_desc.append([index, name, desc])
+                repeat_check_list.append(to_check)
+
+    return name_and_desc
+
+
+def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, name_desc_en, name_desc_jp=None):
+    """保存“名字”“描述”到准备翻译的文件里
+
+    Args:
+        dest_filename: 目标文件名
+        name_in_id: “名字”的英文
+        name_title: 名字标题
+        desc_title: 描述标题
+        name_desc_en: 英文内容
+        name_desc_jp: 日文内容
+    """
+
+    cd = sys.path[0]
+    dest_path = os.path.join(cd, '../translation/lang')
+    dest_filename = os.path.join(dest_path, dest_filename)
+
+    with open(dest_filename, 'wt', encoding='utf-8') as fp:
+        line_id = 1     # from 1 to ...
+        if name_desc_jp is None:        # 英汉对照
+            header = '行号\t内部编号\t英文%s\t中文%s\t英文%s\t中文%s\t初翻人员\t校对\t润色\t备注\n' % \
+                     (name_title, name_title, desc_title, desc_title)
+            fp.write(header)
+            for index, name, desc in name_desc_en:
+                line = '%d\t%s-%05d\t%s\t\t%s\t\t\t\t\t\n' % (line_id, name_in_id, index, name, desc)
+                line_id += 1
+                fp.write(line)
+        else:       # 带日文参考
+            # convert to dict
+            name_desc_dict_jp = {}
+            for index, name, desc in name_desc_jp:
+                name_desc_dict_jp[index] = (name, desc)
+            # mach en and jp, save
+            header = '行号\t内部编号\t日文%s\t英文%s\t中文%s\t日文%s\t英文%s\t中文%s\t初翻人员\t校对\t润色\t备注\n' % \
+                     (name_title, name_title, name_title, desc_title, desc_title, desc_title)
+            fp.write(header)
+            for index, name, desc in name_desc_en:
+                # match
+                if index in name_desc_dict_jp:
+                    name_jp, desc_jp = name_desc_dict_jp[index]
+                    # 去重，两种语言相同的话就留白
+                    #if ('%s%s' % (name, desc)) == ('%s%s' % (name_jp, desc_jp)):
+                    #    name_jp = desc_jp = ''
+                else:
+                    name_jp = desc_jp = ''
+                # save
+                line = '%d\t%s-%05d\t%s\t%s\t\t%s\t%s\t\t\t\t\t\n' % \
+                       (line_id, name_in_id, index, name_jp, name, desc_jp, desc)
+                line_id += 1
+                fp.write(line)

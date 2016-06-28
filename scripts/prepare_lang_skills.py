@@ -7,44 +7,20 @@
 # 
 
 
-import os
-import sys
-from utils import load_index_and_text_from_csv
+from utils import prepare_lang_name_and_desc, save_lang_name_and_desc
 
 
 def main():
     skill_name_file_id = '198758357'
     skill_desc_file_id = '132143172'
 
-    cd = sys.path[0]
-    translation_path = os.path.join(cd, '../translation/lang')
-    dest_path = translation_path
-
-    # load
-    skill_name_file = os.path.join(translation_path, 'en.%s.lang.csv' % skill_name_file_id)
-    skill_name_dict = load_index_and_text_from_csv(skill_name_file)
-    skill_desc_file = os.path.join(translation_path, 'en.%s.lang.csv' % skill_desc_file_id)
-    skill_desc_dict = load_index_and_text_from_csv(skill_desc_file)
-
-    # match name and desc
-    name_desc = []
-    repeat_check_list = []  # 用于去重
-    for index, desc in sorted(skill_desc_dict.items()):
-        if index in skill_name_dict.keys():
-            name = skill_name_dict[index]
-            to_check = '%s%s' % (name, desc)
-            if to_check not in repeat_check_list:
-                name_desc.append([index, name, desc])
-                repeat_check_list.append(to_check)
+    # load, match name and desc
+    name_desc = prepare_lang_name_and_desc(skill_name_file_id, skill_desc_file_id)
+    name_desc_jp = prepare_lang_name_and_desc(skill_name_file_id, skill_desc_file_id, lang='jp')
 
     # save
-    dest_file_name = os.path.join(dest_path, 'en.skills.lang.csv')
-    with open(dest_file_name, 'wt', encoding='utf-8') as fp:
-        header = '编号\t英文技能名\t中文技能名\t英文描述\t中文描述\t初翻人员\t校对\t润色\t备注\n'
-        fp.write(header)
-        for index, name, desc in name_desc:
-            line = 'skill-%05d\t%s\t\t%s\t\t\t\t\t\n' % (index, name, desc)
-            fp.write(line)
+    dest_filename = 'en.skills.lang.csv'
+    save_lang_name_and_desc(dest_filename, 'skill', '技能名', '描述', name_desc, name_desc_jp)
 
 
 if __name__ == '__main__':
