@@ -29,6 +29,7 @@ def main():
 
     # check translation
     check_xls(src_path, column_id, origin_column_id)
+    print('checked.')
 
 
 def check_xls(src_path, column_id, origin_column_id):
@@ -36,7 +37,11 @@ def check_xls(src_path, column_id, origin_column_id):
     for line in data:
         text_is_ok = False
         try:
-            text_is_ok = check_string(line[column_id])
+            text_to_check = line[column_id]
+            # skip empty line
+            if text_to_check == '':
+                continue
+            text_is_ok = check_string(text_to_check)
             if origin_column_id is not None:
                 text_is_ok &= check_string_with_origin(line[column_id], line[origin_column_id])
         except Exception as e:
