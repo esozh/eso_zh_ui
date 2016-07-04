@@ -45,6 +45,7 @@ def check_xls(src_path, column_id, origin_column_id):
             if origin_column_id is not None:
                 text_is_ok &= check_string_with_origin(line[column_id], line[origin_column_id])
         except Exception as e:
+            print(line)
             print(e)
         if not text_is_ok:
             print('> failed when checking:\n%s\n' % ', '.join(line))
@@ -126,10 +127,10 @@ def count_string_attr(text_to_check):
     count = {'<>': 0, 'c': 0, 't': 0, 'bs': 0, 'n': 0, 'q': 0}
     len_text = len(text_to_check)
 
-    for i in range(0, len_text):
-        if text_to_check[i] == '<' and i+1 < len_text and text_to_check[i+1] == '<':
+    for i in range(0, len_text - 1):
+        if text_to_check[i] == '<' and text_to_check[i+1] == '<':
             count['<>'] += 1
-        elif text_to_check[i] == '>' and i+1 < len_text and text_to_check[i+1] == '>':
+        elif text_to_check[i] == '>' and text_to_check[i+1] == '>':
             count['<>'] += 1
         elif text_to_check[i] == '|' and text_to_check[i+1] == 'c':
             count['c'] += 1
