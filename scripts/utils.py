@@ -58,8 +58,23 @@ def load_index_and_text_from_csv(file_path):
     for _id, unknown, index, offset, text in data:
         index = int(index)
         if index in data_dict_by_index:     # 如果 index 没有重复，将来就可以只用 index 来反查
+            print(_id, unknown, index, offset, text)
             raise RuntimeError('duplicate index')
         data_dict_by_index[index] = text
+    return data_dict_by_index
+
+
+def load_unknown_index_text_from_csv(file_path):
+    """从 csv 中读取文本，并用 unknown-index 当作其索引"""
+    data = load_lang_csv(file_path, skip_header=False)
+    data_dict_by_index = {}
+    for _id, unknown, index, offset, text in data:
+        unknown = int(unknown)
+        index = int(index)
+        joined_index = '%02d-%05d' % (unknown, index)
+        if joined_index in data_dict_by_index:     # 如果 unknown-index 没有重复，将来就可以只用 unknown-index 来反查
+            raise RuntimeError('duplicate index')
+        data_dict_by_index[joined_index] = text
     return data_dict_by_index
 
 
@@ -167,13 +182,89 @@ def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, n
                 # match
                 if index in name_desc_dict_jp:
                     name_jp, desc_jp = name_desc_dict_jp[index]
-                    # 去重，两种语言相同的话就留白
-                    #if ('%s%s' % (name, desc)) == ('%s%s' % (name_jp, desc_jp)):
-                    #    name_jp = desc_jp = ''
                 else:
                     name_jp = desc_jp = ''
                 # save
                 line = '%d\t%s-%05d\t%s\t%s\t\t%s\t%s\t\t\t\t\t\n' % \
                        (line_id, name_in_id, index, name_jp, name, desc_jp, desc)
+                line_id += 1
+                fp.write(line)
+
+
+def prepare_lang_list(file_id_list, lang='en'):
+    """从多个不同 ID 对应文件中读取文本，并去重。
+
+    Args:
+        file_id_list: 各文件的 ID
+        lang: 语言
+
+    Returns:
+        list of [(int)file_id, (str)unknown-index, (str)text]
+    """
+
+    cd = sys.path[0]
+    translation_path = os.path.join(cd, '../translation/lang')
+
+    # load
+    text_dicts = {}     # 外层 dict 的索引是 file_id, 内层 dict 的索引是文件中的 Index
+    for file_id in file_id_list:
+        filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, file_id))
+        text_dict = load_unknown_index_text_from_csv(filename)
+        text_dicts[file_id] = text_dict
+
+    # decuplication
+    texts = []
+    repeat_check_list = []  # 用于去重的列表
+    for file_id, text_dict in sorted(text_dicts.items()):
+        for index, text in sorted(text_dict.items()):
+            if text not in repeat_check_list:   # 去重
+                texts.append([int(file_id), index, text])
+                repeat_check_list.append(text)
+
+    return texts
+
+
+def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp=None):
+    """保存文本到准备翻译的文件里
+
+    Args:
+        dest_filename: 目标文件名
+        name_of_category: “名字”的英文
+        texts_en: [file_id, unknown-index, text]
+        texts_jp: 日文文本
+    """
+
+    cd = sys.path[0]
+    dest_path = os.path.join(cd, '../translation/lang')
+    dest_filename = os.path.join(dest_path, dest_filename)
+
+    with open(dest_filename, 'wt', encoding='utf-8') as fp:
+        line_id = 1     # from 1 to ...
+        if texts_jp is None:        # 英汉对照
+            header = '行号\t内部编号\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
+            fp.write(header)
+            for file_id, index, text in texts_en:
+                joined_id = '%09d-%s' % (file_id, index)
+                line = '%d\t%s-%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text)
+                line_id += 1
+                fp.write(line)
+        else:       # 带日文参考
+            # convert to dict
+            text_dict_jp = {}
+            for file_id, index, text in texts_jp:
+                joined_id = '%09d-%s' % (file_id, index)
+                text_dict_jp[joined_id] = text
+            # mach en and jp, save
+            header = '行号\t内部编号\t日文\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
+            fp.write(header)
+            for file_id, index, text in texts_en:
+                joined_id = '%09d-%s' % (file_id, index)
+                # match
+                if joined_id in text_dict_jp:
+                    text_jp = text_dict_jp[joined_id]
+                else:
+                    text_jp = ''
+                # save
+                line = '%d\t%s-%s\t%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text_jp, text)
                 line_id += 1
                 fp.write(line)
