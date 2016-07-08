@@ -17,10 +17,14 @@ pair_file_id_dict = {
     'skill': ('198758357', '132143172'),
     'book': ('51188213', '21337012'),
     'item': ('242841733', '228378404'),
+    'questitem': ('267697733', '139139780'),
+    'achievement': ('12529189', '188155806'),   # 172030117
+    'mount': ('18173141', '211640654'),     # 坐骑宠物服装DLC等等
 }
 # category: (file1_id, file2_id, ...)
 list_file_id_dict = {
-    'interact': ('70307621', '8158238', '12912341', '74865733', '108533454', '139475237', '219689294', '263004526')
+    'interact': ('3427285', '6658117', '8158238', '12320021', '12912341', '34717246', '45275092', '45608037',
+                 '70307621', '74865733', '84555781', '108533454', '139475237', '219689294', '263004526')
 }
 
 
@@ -75,7 +79,7 @@ def load_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
 
 
 def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, name_desc_en,
-                            name_desc_jp=None, duplicated_index=None):
+                            name_desc_jp, duplicated_index=None):
     """保存“名字”“描述”到准备翻译的文件里
 
     Args:
@@ -95,41 +99,32 @@ def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, n
     lines = []
     line_id = 1     # from 1 to ...
 
-    if name_desc_jp is None:        # 英汉对照
-        header = '行号\t内部编号\t英文%s\t中文%s\t英文%s\t中文%s\t初翻人员\t校对\t润色\t备注\n' % \
-                 (name_title, name_title, desc_title, desc_title)
-        lines.append(header)
-        for index, name, desc in name_desc_en:
-            line = '%d\t%s-%05d\t%s\t\t%s\t\t\t\t\t\n' % (line_id, name_in_id, index, name, desc)
-            line_id += 1
-            lines.append(line)
-    else:       # 带日文参考
-        # convert to dict
-        name_desc_dict_jp = {}
-        for index, name, desc in name_desc_jp:
-            name_desc_dict_jp[index] = (name, desc)
-        # mach en and jp, save
-        header = '行号\t内部编号\t日文%s\t英文%s\t中文%s\t日文%s\t英文%s\t中文%s\t初翻人员\t校对\t润色\t备注\n' % \
-                 (name_title, name_title, name_title, desc_title, desc_title, desc_title)
-        lines.append(header)
-        for index, name, desc in name_desc_en:
-            # match
-            name_jp = desc_jp = ''
-            # 若有重复表，那么相同内容对应的 id 所对应的日文都有可能有内容
-            # 注：暂不考虑英文内容相同，但对应的日文不相同的情况
-            if duplicated_index is not None:
-                possible_index_list_jp = duplicated_index['%s%s' % (name, desc)]
-                for possible_index in possible_index_list_jp:
-                    if possible_index in name_desc_dict_jp:
-                        name_jp, desc_jp = name_desc_dict_jp[possible_index]
-            # 没有重复表，就直接找 index
-            elif index in name_desc_dict_jp:
-                name_jp, desc_jp = name_desc_dict_jp[index]
-            # save
-            line = '%d\t%s-%05d\t%s\t%s\t\t%s\t%s\t\t\t\t\t\n' % \
-                   (line_id, name_in_id, index, name_jp, name, desc_jp, desc)
-            line_id += 1
-            lines.append(line)
+    # convert to dict
+    name_desc_dict_jp = {}
+    for index, name, desc in name_desc_jp:
+        name_desc_dict_jp[index] = (name, desc)
+    # mach en and jp, save
+    header = '行号\t内部编号\t日文%s\t英文%s\t中文%s\t日文%s\t英文%s\t中文%s\t初翻人员\t校对\t润色\t备注\n' % \
+             (name_title, name_title, name_title, desc_title, desc_title, desc_title)
+    lines.append(header)
+    for index, name, desc in name_desc_en:
+        # match
+        name_jp = desc_jp = ''
+        # 若有重复表，那么相同内容对应的 id 所对应的日文都有可能有内容
+        # 注：暂不考虑英文内容相同，但对应的日文不相同的情况
+        if duplicated_index is not None:
+            possible_index_list_jp = duplicated_index['%s%s' % (name, desc)]
+            for possible_index in possible_index_list_jp:
+                if possible_index in name_desc_dict_jp:
+                    name_jp, desc_jp = name_desc_dict_jp[possible_index]
+        # 没有重复表，就直接找 index
+        elif index in name_desc_dict_jp:
+            name_jp, desc_jp = name_desc_dict_jp[index]
+        # save
+        line = '%d\t%s-%05d\t%s\t%s\t\t%s\t%s\t\t\t\t\t\n' % \
+               (line_id, name_in_id, index, name_jp, name, desc_jp, desc)
+        line_id += 1
+        lines.append(line)
 
     # save file
     with open(dest_filename, 'wt', encoding='utf-8') as fp:
@@ -155,8 +150,11 @@ def load_lang_list(file_id_list, lang='en'):
     text_dicts = {}     # 外层 dict 的索引是 file_id, 内层 dict 的索引是文件中的 Index
     for file_id in file_id_list:
         filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, file_id))
-        text_dict = load_unknown_index_text_from_csv(filename)
-        text_dicts[file_id] = text_dict
+        try:
+            text_dict = load_unknown_index_text_from_csv(filename)
+            text_dicts[file_id] = text_dict
+        except FileNotFoundError:
+            print('Warning: cannot find file %s' % filename)
 
     # deduplicate
     texts = []
@@ -174,7 +172,7 @@ def load_lang_list(file_id_list, lang='en'):
     return texts, duplicated_index
 
 
-def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp=None, duplicated_index=None):
+def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp, duplicated_index=None):
     """保存文本到准备翻译的文件里
 
     Args:
@@ -192,42 +190,33 @@ def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp=None, dup
     lines = []
     line_id = 1     # from 1 to ...
 
-    if texts_jp is None:        # 英汉对照
-        header = '行号\t内部编号\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
-        lines.append(header)
-        for file_id, index, text in texts_en:
-            joined_id = '%09d-%s' % (file_id, index)
-            line = '%d\t%s-%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text)
-            line_id += 1
-            lines.append(line)
-    else:       # 带日文参考
-        # convert to dict
-        text_dict_jp = {}
-        for file_id, index, text in texts_jp:
-            joined_id = '%09d-%s' % (file_id, index)
-            text_dict_jp[joined_id] = text
-        # mach en and jp, save
-        header = '行号\t内部编号\t日文\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
-        lines.append(header)
-        for file_id, index, text in texts_en:
-            # 使用的 joined_id 格式为 fileid-unknown-index
-            joined_id = '%09d-%s' % (file_id, index)
-            # match
-            text_jp = ''
-            # 说明见 save_lang_name_and_desc
-            if duplicated_index is not None:
-                possible_index_list_jp = duplicated_index[text]
-                for possible_file_id, possible_index in possible_index_list_jp:
-                    possible_joined_id = '%09d-%s' % (possible_file_id, possible_index)
-                    if possible_joined_id in text_dict_jp:
-                        text_jp = text_dict_jp[possible_joined_id]
-                        break
-            if joined_id in text_dict_jp:
-                text_jp = text_dict_jp[joined_id]
-            # save
-            line = '%d\t%s-%s\t%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text_jp, text)
-            line_id += 1
-            lines.append(line)
+    # convert to dict
+    text_dict_jp = {}
+    for file_id, index, text in texts_jp:
+        joined_id = '%09d-%s' % (file_id, index)
+        text_dict_jp[joined_id] = text
+    # mach en and jp, save
+    header = '行号\t内部编号\t日文\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
+    lines.append(header)
+    for file_id, index, text in texts_en:
+        # 使用的 joined_id 格式为 fileid-unknown-index
+        joined_id = '%09d-%s' % (file_id, index)
+        # match
+        text_jp = ''
+        # 说明见 save_lang_name_and_desc
+        if duplicated_index is not None:
+            possible_index_list_jp = duplicated_index[text]
+            for possible_file_id, possible_index in possible_index_list_jp:
+                possible_joined_id = '%09d-%s' % (possible_file_id, possible_index)
+                if possible_joined_id in text_dict_jp:
+                    text_jp = text_dict_jp[possible_joined_id]
+                    break
+        if joined_id in text_dict_jp:
+            text_jp = text_dict_jp[joined_id]
+        # save
+        line = '%d\t%s-%s\t%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text_jp, text)
+        line_id += 1
+        lines.append(line)
 
     with open(dest_filename, 'wt', encoding='utf-8') as fp:
         fp.writelines(lines)
