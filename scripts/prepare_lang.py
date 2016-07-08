@@ -117,9 +117,13 @@ def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, n
             for possible_index in possible_index_list_jp:
                 if possible_index in name_desc_dict_jp:
                     name_jp, desc_jp = name_desc_dict_jp[possible_index]
+                    break
         # 没有重复表，就直接找 index
         elif index in name_desc_dict_jp:
             name_jp, desc_jp = name_desc_dict_jp[index]
+        # 没有日文的，说明已废弃
+        if (name_jp == '') and (desc_jp == ''):
+            continue
         # save
         line = '%d\t%s-%05d\t%s\t%s\t\t%s\t%s\t\t\t\t\t\n' % \
                (line_id, name_in_id, index, name_jp, name, desc_jp, desc)
@@ -211,8 +215,11 @@ def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp, duplicat
                 if possible_joined_id in text_dict_jp:
                     text_jp = text_dict_jp[possible_joined_id]
                     break
-        if joined_id in text_dict_jp:
+        elif joined_id in text_dict_jp:
             text_jp = text_dict_jp[joined_id]
+        # 没有日文的，说明已废弃
+        if text_jp == '':
+            continue
         # save
         line = '%d\t%s-%s\t%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text_jp, text)
         line_id += 1
