@@ -1,7 +1,7 @@
 # eso_zh_ui
 Chinese translation for Elder Scrolls Online
 
-项目主页： https://github.com/esozh/eso_zh
+项目主页： http://game.vstab.cn/local/
 
 ## 安装方法
 1. 解压到 "文档\Elder Scrolls Online\live\AddOns" 或类似的文件夹下， 与其他插件的安装方法相同。
@@ -11,7 +11,6 @@ Chinese translation for Elder Scrolls Online
 
 ## 其他说明
 * [常见问题](docs/common_issues.md)
-* [翻译方法](docs/translator.md)
 
 ## DISCLAIMER:
 
