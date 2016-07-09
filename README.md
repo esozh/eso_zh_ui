@@ -9,6 +9,8 @@ Chinese translation for Elder Scrolls Online
 3. **不使用**启动器，直接启动安装路径下的 "The Elder Scrolls Online\game\client\eso.exe" 或 "eso64.exe"。
 4. 如果提示需要更新游戏，可以从启动器更新，但之后可能需要重新进行第2步修改。
 
+注：选择角色进入游戏后，可以按ESC键，在右下角选择语言。
+
 ## 其他说明
 * [常见问题](docs/common_issues.md)
 
@@ -25,6 +27,7 @@ https://account.elderscrollsonline.com/add-on-terms
 ## 致谢/Credit
 - Esoita, http://www.esoui.com/downloads/info1067-ESOItalianTranslationWIP.html
 - Cervanteso, http://www.cervanteso.org.es/
+- RuEso, http://online.elderscrolls.net/RuESO
 
 ## 许可协议/License
 保留所有权利。 (All rights reserved.)

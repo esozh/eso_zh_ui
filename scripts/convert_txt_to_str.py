@@ -62,7 +62,7 @@ def convert(src_file, dest_file, name_translation, header, mode):
     count_translated = 0
     with open(dest_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
-        for name, (value, version) in name_values.items():
+        for name, (value, version) in sorted(name_values.items()):
             count_total += 1
             if name in name_translation:
                 count_translated += 1
