@@ -9,23 +9,8 @@
 
 import os
 import sys
+from lang_def import *
 from utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv
-
-
-# category: (name_file_id, desc_file_id)
-pair_file_id_dict = {
-    'skill': ('198758357', '132143172'),
-    'book': ('51188213', '21337012'),
-    'item': ('242841733', '228378404'),
-    'questitem': ('267697733', '139139780'),
-    'achievement': ('12529189', '188155806'),   # 172030117
-    'mount': ('18173141', '211640654'),     # 坐骑宠物服装DLC等等
-}
-# category: (file1_id, file2_id, ...)
-list_file_id_dict = {
-    'interact': ('3427285', '6658117', '8158238', '12320021', '12912341', '34717246', '45275092', '45608037',
-                 '70307621', '74865733', '84555781', '108533454', '139475237', '219689294', '263004526')
-}
 
 
 def usage():
