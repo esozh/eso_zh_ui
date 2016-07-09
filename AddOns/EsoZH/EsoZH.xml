@@ -1,0 +1,23 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="EsoZHUI" mouseEnabled="true" movable="false" drawLayer="DL_BACKGROUND" clampedToScreen="false" hidden="true">
+			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="GuiRoot" offsetY="7" />
+			<Controls>
+				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Performance/StatusMeterMunge.dds">
+                    <Dimensions x="200" y="256"/>
+                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
+                </Texture>
+			</Controls>
+		</TopLevelControl>
+
+		<Button name="EsoZH_FlagControl_" virtual="true" mouseEnabled="true" text="">
+			<Dimensions x="32" y="32" />
+			<Controls>
+				<Texture name="$(parent)Texture" alpha="1" >
+					<Dimensions x="32" y="32" />
+					<Anchor fill="$(parent)" point="TOPLEFT" offsetX="0" offsetY="0" />
+				</Texture>
+			</Controls>
+		</Button>
+	</Controls>
+</GuiXml>
