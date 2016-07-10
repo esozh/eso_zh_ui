@@ -26,6 +26,7 @@ You can read the full terms at:
 https://account.elderscrollsonline.com/add-on-terms
 
 ## 致谢/Credit
+- 微攻略汉化组
 - Esoita, http://www.esoui.com/downloads/info1067-ESOItalianTranslationWIP.html
 - Cervanteso, http://www.cervanteso.org.es/
 - RuEso, http://online.elderscrolls.net/RuESO
