@@ -13,6 +13,7 @@ Chinese translation for Elder Scrolls Online
 
 ## 其他说明
 * [常见问题](docs/common_issues.md)
+* [已知冲突插件](../../wiki/已知冲突插件)
 
 ## DISCLAIMER:
 

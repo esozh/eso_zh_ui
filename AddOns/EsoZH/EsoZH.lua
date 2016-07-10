@@ -62,3 +62,5 @@ function EsoZH:OnInit(eventCode, addOnName)
 		end
 	end
 end
+
+EVENT_MANAGER:RegisterForEvent("EsoZH_OnAddOnLoaded", EVENT_ADD_ON_LOADED, function(_event, _name) EsoZH:OnInit(_event, _name) end)

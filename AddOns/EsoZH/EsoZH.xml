@@ -10,7 +10,7 @@
 			</Controls>
 		</TopLevelControl>
 
-		<Button name="EsoZH_FlagControl_" virtual="true" mouseEnabled="true" text="">
+		<Button name="EsoZH_FlagControl" virtual="true" mouseEnabled="true" text="">
 			<Dimensions x="32" y="32" />
 			<Controls>
 				<Texture name="$(parent)Texture" alpha="1" >
