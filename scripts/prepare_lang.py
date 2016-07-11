@@ -141,7 +141,7 @@ def load_lang_list(file_id_list, lang='en'):
         filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, file_id))
         try:
             text_dict = load_unknown_index_text_from_csv(filename)
-            text_dicts[file_id] = text_dict
+            text_dicts[int(file_id)] = text_dict
         except FileNotFoundError:
             print('Warning: cannot find file %s' % filename)
 

@@ -18,6 +18,7 @@ pair_file_id_dict = {
     'mount': ('18173141', '211640654'),     # 坐骑宠物服装DLC等等
     'loadscreen': ('162658389', '70901198'),
     'three-alliance': ('116704773', '235463860'),
+    'journey': ('52420949', '265851556'),
 }
 # category: (file1_id, file2_id, ...)
 list_file_id_dict = {
