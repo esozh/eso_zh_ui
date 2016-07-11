@@ -20,13 +20,17 @@ def usage():
 
 def main():
     lang = 'zh'
-    if len(sys.argv) != 4:
+    name_column_id = 1
+    text_column_id = 3
+
+    if len(sys.argv) == 4:
+        name_column_id = int(sys.argv[2])    # 名称
+        text_column_id = None if len(sys.argv) == 3 else int(sys.argv[3])     # 译文
+    elif len(sys.argv) != 2:
         usage()
         sys.exit(2)
 
     xls_path = sys.argv[1]
-    name_column_id = int(sys.argv[2])    # 名称
-    text_column_id = None if len(sys.argv) == 3 else int(sys.argv[3])     # 译文
 
     cd = sys.path[0]
     translation_path = os.path.join(cd, '../translation')
