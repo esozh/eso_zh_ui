@@ -114,3 +114,10 @@ def read_translate_lang_csv(file_path, mode):
                 lang_translate.append([info, text_en])
                 is_origin = True
     return header, lang_translate, count_translated
+
+
+def merge_dict(dict1, dict2):
+    dictx = dict1.copy()
+    dictx.update(dict2)
+    return dictx
+

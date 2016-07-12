@@ -17,7 +17,7 @@ def usage():
     print('Usage:')
     print('python prepare_lang.py category')
     print('available category:')
-    available_category = sorted(list(pair_file_id_dict.keys()) + list(list_file_id_dict.keys()))
+    available_category = sorted(list(file_id_of_pair.keys()) + list(file_id_of_list.keys()))
     print(available_category)
 
 
@@ -249,10 +249,10 @@ def main():
     # 调用 prepare_xxx_lang, prepare_xxx_lang 中再调用 load_lang_xxx, save_lang_xxx
 
     category = sys.argv[1]
-    if category in pair_file_id_dict.keys():
-        prepare_pair_lang(category, pair_file_id_dict[category])
-    elif category in list_file_id_dict.keys():
-        prepare_list_lang(category, list_file_id_dict[category])
+    if category in file_id_of_pair.keys():
+        prepare_pair_lang(category, file_id_of_pair[category])
+    elif category in file_id_of_list.keys():
+        prepare_list_lang(category, file_id_of_list[category])
     else:
         usage()
         sys.exit(2)
