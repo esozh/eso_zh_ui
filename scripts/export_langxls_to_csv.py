@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : export_langxls_to_txt.py
+# File          : export_langxls_to_csv.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : 从 lua 提取原文，从 xls 提取汉化，写入 zh.lang.csv 中
