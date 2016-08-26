@@ -85,6 +85,19 @@ def load_unknown_index_text_from_csv(file_path):
     return data_dict_by_index
 
 
+def sort_texts_by_fileid_index_unknown(texts):
+    """根据 file_id, index, unknown 排序
+
+    Args:
+        texts: list of [(int)file_id, (str)unknown-index, (str)text]
+
+    Returns:
+        sorted_texts
+    """
+    sorted_texts = sorted(texts, key=lambda x: '%d-%s' % (x[0], '-'.join(reversed(x[1].split('-')))))
+    return sorted_texts
+
+
 def read_translate_lang_csv(file_path, mode):
     """读取一行原文、一行译文的 lang.csv 文件"""
     count_translated = 0

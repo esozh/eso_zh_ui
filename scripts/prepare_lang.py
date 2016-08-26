@@ -10,7 +10,7 @@
 import os
 import sys
 from lang_def import *
-from utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv
+from utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv, sort_texts_by_fileid_index_unknown
 
 
 def usage():
@@ -148,12 +148,12 @@ def load_lang_list(file_id_list, lang='en'):
     # deduplicate
     texts = []
     duplicated_index = {}
-    repeat_check_list = []  # 用于去重的列表
+    repeat_check_list = set([])  # 用于去重的列表
     for file_id, text_dict in sorted(text_dicts.items()):
         for index, text in sorted(text_dict.items()):
             if text not in repeat_check_list:   # 去重
                 texts.append([int(file_id), index, text])
-                repeat_check_list.append(text)
+                repeat_check_list.add(text)
                 duplicated_index[text] = [[int(file_id), index], ]
             else:
                 duplicated_index[text].append([int(file_id), index])
@@ -235,6 +235,8 @@ def prepare_list_lang(category, list_file_id):
     # load
     texts, duplicated_index = load_lang_list(list_file_id)
     texts_jp, duplicated_index_jp = load_lang_list(list_file_id, lang='jp')
+    # sort
+    texts = sort_texts_by_fileid_index_unknown(texts)
     # save
     dest_filename = 'en.%ss.lang.csv' % category
     save_lang_list(dest_filename, category, texts, texts_jp, duplicated_index=duplicated_index)
