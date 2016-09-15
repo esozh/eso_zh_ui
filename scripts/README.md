@@ -73,18 +73,13 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 合并、转换成翻译、校对使用的 csv 文件，
 用于生成 xlsx 文件。
 
-#### convert_translate_to_lang.py
->.id.lang.csv -> .name.lang.csv
-
-从 `translation/lang/zh.lang.translate.csv` 中提取原文及翻译文本，
-生成 `translation/lang/zh.lang.csv`。
-
 #### export_langxls_to_csv.py
 >.lang.csv + .*.xls -> .lang.csv
 
 从 `translation/lang/translated/` 中的 `*.xls` 里提取翻译， 
 仿照 `translation/lang/en.lang.csv` 和 `translation/lang/jp.lang.csv`
 的结构生成 `translation/lang/translated/zh.lang.csv`。
+
 
 ## 其他
 

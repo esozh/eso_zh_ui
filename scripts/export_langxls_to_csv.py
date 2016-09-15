@@ -22,14 +22,14 @@ def load_from_list_category(data):
         data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
 
     Returns:
-        category: category from lang_def
-        translated_data: list of [file_id, unknown, index, text]
+        category (str): category from lang_def
+        translated_data (list): list of [file_id, unknown, index, text]
     """
 
     # check
     for row in data:
         if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            print(row[1], row[3])
+            print('check string failed', row[1], row[3])
 
     # 删除多余数据，只保留 内部编号, 中文
     data = [(row[1], row[4]) for row in data]
@@ -53,8 +53,8 @@ def load_from_pair_category(data):
         data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
 
     Returns:
-        category: category from lang_def
-        translated_data: list of [file_id, unknown, index, text]
+        category (str): category from lang_def
+        translated_data (list): list of [file_id, unknown, index, text]
     """
 
     # check
@@ -91,11 +91,11 @@ def load_from_xls(file_path):
     xlsx 文件可能是 <name, desc> 模式，也可能是 list<text> 模式。
 
     Args:
-        file_path: xlsx 文件路径
+        file_path (str): xlsx 文件路径
 
     Returns:
-        category: category from lang_def
-        translated_data: list of [file_id, unknown, index, text]
+        category (str): category from lang_def
+        translated_data (list): list of [file_id, unknown, index, text]
     """
 
     data = load_xls(file_path)[1:]
@@ -116,10 +116,10 @@ def load_translation(translation_path):
     """从文件夹中读取所有翻译文件
 
     Args:
-        translation_path: 存放翻译 xlsx 文件的路径
+        translation_path (str): 存放翻译 xlsx 文件的路径
 
     Returns:
-        category_to_translated: dict<str, list>, 根据 category 归类的翻译
+        category_to_translated (dict[str: list]): dict<str, list>, 根据 category 归类的翻译
     """
     category_to_translated = {}
     for dir_path, dir_names, file_names in os.walk(translation_path):
@@ -140,7 +140,7 @@ def get_file_id_to_lines(lines):
         lines: 英文原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
 
     Returns:
-        file_id_to_lines:
+        file_id_to_lines (dict[int: list]):
             <int> file id 作为 key,
             <list> lines 作为 value.
     """
@@ -163,11 +163,11 @@ def get_en_line_to_zh_line_for_list_category(lines, translated_data):
     已知译文的 id-unknown-index，可以用它得到译文对应的原文，这样就有了原文到译文的映射。（重复相同的原文可以对应同一条译文）
 
     Args:
-        lines: 英文原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        translated_data: list of [file_id, unknown, index, text]
+        lines (list[str]): 英文原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
+        translated_data (list): list of [file_id, unknown, index, text]
 
     Returns:
-        en_line_to_zh_line: key 为原文行, value 为译文行
+        en_line_to_zh_line (dict[str: str]): key 为原文行, value 为译文行
     """
     en_key_to_line = {}
     for line in lines:
@@ -195,12 +195,12 @@ def get_en_line_to_zh_line_for_pair_category(lines_of_name, lines_of_desc, trans
     再根据译文的id-unknown-index，得到原文(line)到译文(line)的映射。
 
     Args:
-        lines_of_name: 英文名字原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        lines_of_desc: 英文描述原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        translated_data: list of [file_id, unknown, index, text]
+        lines_of_name (list[str]): 英文名字原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
+        lines_of_desc (list[str]): 英文描述原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
+        translated_data (list): list of [file_id, unknown, index, text]
 
     Returns:
-        en_line_to_zh_line: key 为原文行, value 为译文行
+        en_line_to_zh_line (dict[str: str]): key 为原文行, value 为译文行
     """
 
     # 首先利用 name-desc 的关系进行处理
@@ -246,12 +246,14 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated, ful
     """转换格式
 
     Args:
-        file_id_to_lines: key 为 file_id, value 为 list<line>, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        category_to_translated: dict, key 为 category, value 为 list of [file_id, unknown, index, text]
-        full_ids_jp: 日文原文里出现过的 '"file_id","unknown","index"', 在处理其他 file_id 中的翻译的时候用
+        file_id_to_lines (dict[int: list[str]]):
+                key 为 file_id,
+                value 为 list<line>, 每行的格式为 "ID","Unknown","Index","Offset","Text"
+        category_to_translated (dict[str: list]): dict, key 为 category, value 为 list of [file_id, unknown, index, text]
+        full_ids_jp (set[str]): 日文原文里出现过的 '"file_id","unknown","index"', 在处理其他 file_id 中的翻译的时候用
 
     Returns:
-        en_line_to_zh_line: key 为原文的行， value 为译文的行
+        en_line_to_zh_line (dict[str: str]): key 为原文的行， value 为译文的行
     """
 
     translated_count_dry = 0    # 不包括重复的
@@ -329,7 +331,7 @@ def main():
         fp.readline()   # skip
         # lines_jp: 日文原文件中的行
         lines_jp = fp.readlines()
-        full_ids_jp = {','.join(line.split(',', 4)[:3]): None for line in lines_jp}.keys()  # keys is faster than list
+        full_ids_jp = {','.join(line.split(',', 4)[:3]) for line in lines_jp}
     print('read %d lines from jp.lang.csv.' % len(lines_jp))
 
     file_id_to_lines = get_file_id_to_lines(lines)

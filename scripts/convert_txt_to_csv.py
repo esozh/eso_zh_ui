@@ -31,9 +31,8 @@ def main():
     dest_path = translation_path
 
     # load translation
-    name_translation = {}
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
-    read_translate_txt(translate_file, name_translation)
+    name_translation = read_translate_txt(translate_file)
 
     # convert
     csv_xls_file = os.path.join(dest_path, '%s_translate.csv' % lang)
@@ -41,6 +40,14 @@ def main():
 
 
 def convert(src_file, dest_file, name_translation):
+    """转换文件
+
+    Args:
+        src_file (str): .lua 文件的路径
+        dest_file (str): 输出的 .csv 文件的路径
+        name_translation (dict[str: str]): 原文: 译文
+    """
+
     # merge translation & save str file
     name_values = {}
     read_lua(src_file, name_values)

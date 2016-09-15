@@ -33,6 +33,13 @@ def main():
 
 
 def check_xls(src_path, column_id, origin_column_id):
+    """检查xls
+
+    Args:
+        src_path (str): 待检查的 xlsx 文件的路径
+        column_id (int): 翻译后的列的 id
+        origin_column_id (int): 原文的列的 id
+    """
     data = load_xls(src_path)
     for line in data:
         text_is_ok = False
@@ -52,7 +59,14 @@ def check_xls(src_path, column_id, origin_column_id):
 
 
 def check_string(text_to_check):
-    """检查是否符合规范，输出错误"""
+    """检查是否符合规范，输出错误
+
+    Args:
+        text_to_check (str): 一个待检查的字符串
+
+    Returns:
+        return (bool): 是否合格
+    """
     if text_to_check == '':
         return True
 
@@ -111,7 +125,12 @@ def check_string(text_to_check):
 
 
 def check_string_with_origin(text_to_check, origin_text):
-    """比较翻译前后文本的属性，例如 \n 数量"""
+    """比较翻译前后文本的属性，例如 \n 数量
+
+    Args:
+        text_to_check (str): 一个待检查的字符串
+        origin_text (str): 对应的原字符串
+    """
     if text_to_check == '' or origin_text == '':
         return True
     attr_check = count_string_attr(text_to_check)
@@ -123,7 +142,11 @@ def check_string_with_origin(text_to_check, origin_text):
 
 
 def count_string_attr(text_to_check):
-    """统计文本的属性，例如 \n 的个数"""
+    """统计文本的属性，例如 \n 的个数
+
+    Args:
+        text_to_check (str): 一个待检查的字符串
+    """
     count = {'<>': 0, 'c': 0, 't': 0, 'bs': 0, 'n': 0, 'q': 0}
     len_text = len(text_to_check)
 

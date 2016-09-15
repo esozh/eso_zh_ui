@@ -11,7 +11,11 @@ import xlrd
 
 
 def load_xls(file_path):
-    """读取 Excel 文件中的数据。"""
+    """读取 Excel 文件中的数据。
+
+    Args:
+        file_path (str): xlsx 文件的路径
+    """
     with xlrd.open_workbook(file_path) as workbook:
         sheet = workbook.sheet_by_index(0)
         nrows = sheet.nrows

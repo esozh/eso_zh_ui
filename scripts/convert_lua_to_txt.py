@@ -36,7 +36,7 @@ def main():
         choose = choose.lower().strip()
         if choose != '' and choose[0] == 'y':
             print('merging to translate file.')
-            read_translate_txt(translate_file, name_translation)
+            name_translation = read_translate_txt(translate_file)
         else:
             print('skipped.')
             return

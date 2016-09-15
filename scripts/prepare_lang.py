@@ -27,13 +27,13 @@ def load_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
     两个文件分别存储“名字”及“描述”，每一对“名字”、“描述”的 index 相同。
 
     Args:
-        name_file_id: “名字”文件的 ID
-        desc_file_id: “描述”文件的 ID
-        lang: 语言
+        name_file_id (str): “名字”文件的 ID
+        desc_file_id (str): “描述”文件的 ID
+        lang (str): 语言
 
     Returns:
-        name_and_desc: [index, name, desc]
-        duplicated_index: {namedesc: [index1, index2, ...]}
+        name_and_desc (list[list]): list of [index, name, desc]
+        duplicated_index (dict[str: list[int]]): {namedesc: [index1, index2, ...]}
     """
 
     cd = sys.path[0]
@@ -48,14 +48,14 @@ def load_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
     # match name and desc
     name_and_desc = []
     duplicated_index = {}
-    repeat_check_list = []  # 用于去重的列表
+    repeat_check_list = set()  # 用于去重的列表
     for index, desc in sorted(desc_dict.items()):
         if index in name_dict.keys():
             name = name_dict[index]
             to_check = '%s%s' % (name, desc)
             if to_check not in repeat_check_list:   # 去重
                 name_and_desc.append([index, name, desc])
-                repeat_check_list.append(to_check)
+                repeat_check_list.add(to_check)
                 duplicated_index[to_check] = [index, ]
             else:
                 duplicated_index[to_check].append(index)
@@ -68,13 +68,13 @@ def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, n
     """保存“名字”“描述”到准备翻译的文件里
 
     Args:
-        dest_filename: 目标文件名
-        name_in_id: “名字”的英文
-        name_title: 名字标题
-        desc_title: 描述标题
-        name_desc_en: 英文内容
-        name_desc_jp: 日文内容
-        duplicated_index: 英文重复表
+        dest_filename (str): 目标文件名
+        name_in_id (str): “名字”的英文
+        name_title (str): 名字标题
+        desc_title (str): 描述标题
+        name_desc_en (list[list]): 英文内容
+        name_desc_jp (list[list]): 日文内容
+        duplicated_index (dict[str: list[int]]): 英文重复表
     """
 
     cd = sys.path[0]
@@ -124,12 +124,12 @@ def load_lang_list(file_id_list, lang='en'):
     """从多个不同 ID 对应文件中读取文本，并去重。
 
     Args:
-        file_id_list: 各文件的 ID
-        lang: 语言
+        file_id_list (list[str]): 各文件的 ID
+        lang (str): 语言
 
     Returns:
-        texts: list of [(int)file_id, (str)unknown-index, (str)text]
-        duplicated_index: {text: [unknown-index1, unknown-index2, ...]}
+        texts (list): list of [(int)file_id, (str)unknown-index, (str)text]
+        duplicated_index (dict[str: list[int]]): {text: [unknown-index1, unknown-index2, ...]}
     """
 
     cd = sys.path[0]
@@ -165,11 +165,11 @@ def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp, duplicat
     """保存文本到准备翻译的文件里
 
     Args:
-        dest_filename: 目标文件名
-        name_of_category: “名字”的英文
-        texts_en: [file_id, unknown-index, text]
-        texts_jp: 日文文本
-        duplicated_index: 英文重复表
+        dest_filename (str): 目标文件名
+        name_of_category (str): “名字”的英文
+        texts_en (list): list of [file_id, unknown-index, text]
+        texts_jp (list): 日文文本
+        duplicated_index (dict[str: list[int]]): 英文重复表
     """
 
     cd = sys.path[0]
@@ -215,7 +215,12 @@ def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp, duplicat
 
 
 def prepare_pair_lang(category, pair_file_id):
-    """提取成对的 <名称、描述>，放到同一个文件中"""
+    """提取成对的 <名称、描述>，放到同一个文件中
+
+    Args:
+        category (str): 分类名字
+        list_file_id (list[str]): 对应的 file_id
+    """
     name_file_id = pair_file_id[0]
     desc_file_id = pair_file_id[1]
 
@@ -231,7 +236,12 @@ def prepare_pair_lang(category, pair_file_id):
 
 
 def prepare_list_lang(category, list_file_id):
-    """提取一系列的文本，放到同一个文件中"""
+    """提取一系列的文本，放到同一个文件中
+
+    Args:
+        category (str): 分类名字
+        list_file_id (list[str]): 对应的 file_id
+    """
     # load
     texts, duplicated_index = load_lang_list(list_file_id)
     texts_jp, duplicated_index_jp = load_lang_list(list_file_id, lang='jp')

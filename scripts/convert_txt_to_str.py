@@ -34,9 +34,8 @@ def main():
     dest_path = os.path.join(cd, '../AddOns/esoui/lang')
 
     # load translation
-    name_translation = {}
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
-    read_translate_txt(translate_file, name_translation)
+    name_translation = read_translate_txt(translate_file)
 
     # load header
     header_file = os.path.join(translation_path, 'str_header.txt')
@@ -54,6 +53,16 @@ def main():
 
 
 def convert(src_file, dest_file, name_translation, header, mode):
+    """转换文件
+
+    Args:
+        src_file (str): .lua 文件的路径
+        dest_file (str): 输出的 .csv 文件的路径
+        name_translation (dict[str: str]): 原文: 译文
+        header (list[str]): .str 文件的公共头
+        mode (str): 翻译模式， origin, translation, both
+    """
+
     # merge translation & save str file
     name_values = {}
     read_lua(src_file, name_values)
