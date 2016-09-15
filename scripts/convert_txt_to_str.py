@@ -11,7 +11,7 @@ import getopt
 import os
 import sys
 
-from utils.utils import read_lua, read_translate_txt
+from objs.ui_mgr import UiMgr
 
 
 def main():
@@ -32,59 +32,40 @@ def main():
 
     cd = sys.path[0]
     translation_path = os.path.join(cd, '../translation')
-    dest_path = os.path.join(cd, '../AddOns/esoui/lang')
-
-    # load translation
-    translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
-    name_translation = read_translate_txt(translate_file)
+    dest_path = os.path.join(cd, '../AddOns/EsoUI/lang')
 
     # load header
     header_file = os.path.join(translation_path, 'str_header.txt')
     with open(header_file, 'rt', encoding='utf-8') as fp:
         header = fp.readlines()
 
+    ui_mgr_pregame = UiMgr()
+    ui_mgr_client = UiMgr()
+
     # load lua
     pregame_src = os.path.join(translation_path, '%s_pregame.lua' % lang)
-    pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
-    convert(pregame_src, pregame_dest, name_translation, header, mode)
+    ui_mgr_pregame.load_lua_file(pregame_src)
 
     client_src = os.path.join(translation_path, '%s_client.lua' % lang)
-    client_dest = os.path.join(dest_path, '%s_client.str' % lang)
-    convert(client_src, client_dest, name_translation, header, mode)
+    ui_mgr_client.load_lua_file(client_src)
 
+    # load translation
+    translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
+    ui_mgr_pregame.apply_translate_txt(translate_file)
+    ui_mgr_client.apply_translate_txt(translate_file)
 
-def convert(src_file, dest_file, name_translation, header, mode):
-    """转换文件
-
-    Args:
-        src_file (str): .lua 文件的路径
-        dest_file (str): 输出的 .csv 文件的路径
-        name_translation (dict[str: str]): 原文: 译文
-        header (list[str]): .str 文件的公共头
-        mode (str): 翻译模式， origin, translation, both
-    """
-
-    # merge translation & save str file
-    name_values = {}
-    read_lua(src_file, name_values)
-
-    count_total = 0
-    count_translated = 0
-    with open(dest_file, 'wt', encoding='utf-8') as fp:
+    # save lua
+    pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
+    pregame_lines = ui_mgr_pregame.get_str_lines(mode)
+    with open(pregame_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
-        for name, (value, version) in sorted(name_values.items()):
-            count_total += 1
-            if name in name_translation:
-                count_translated += 1
-                # apply translation
-                if mode == 'origin':
-                    pass    # keep origin
-                elif mode == 'translation':
-                    value = name_translation[name]
-                else:
-                    value = '%s %s' % (name_translation[name], value)   # both translation and origin
-            fp.write('[%s] = "%s"\n' % (name, value))
-        print('%d/%d translated in %s.' % (count_translated, count_total, dest_file))
+        fp.writelines(pregame_lines)
+
+    client_dest = os.path.join(dest_path, '%s_client.str' % lang)
+    client_lines = ui_mgr_pregame.get_str_lines(mode)
+    with open(client_dest, 'wt', encoding='utf-8') as fp:
+        fp.writelines(header)
+        fp.writelines(client_lines)
 
 
 if __name__ == '__main__':

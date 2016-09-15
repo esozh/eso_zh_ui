@@ -40,10 +40,10 @@ class UiMgr:
         Args:
             txt_file_path (str): 翻译的 _translate.txt 路径
         """
-        name_translation = read_translate_txt(txt_file_path)
-        for name, translation in name_translation.items():
-            if name in self.lines.keys():
-                self.lines[name].set_translation(translation)
+        lines_with_translation = read_translate_txt(txt_file_path)
+        for name, line in lines_with_translation.items():
+            if name in self.lines.keys() and line.origin == self.lines[name].origin:
+                self.lines[name].set_translation(line.translation)
 
     def get_rows(self):
         """转换成写入 .xls 的 UiRow 列表
@@ -62,7 +62,7 @@ class UiMgr:
             rows[name] = row
         return rows
 
-    def get_lines(self):
+    def get_txt_lines(self):
         """转换成写入 .txt 的行
 
         Returns:
@@ -73,4 +73,24 @@ class UiMgr:
             lines.append(line.to_lua_line() + '\n')
             if line.translation != '':
                 lines.append(line.translation + '\n')
+        return lines
+
+    def get_str_lines(self, mode='both'):
+        """转换成写入 .str 的行
+
+        Args:
+            mode (str): 翻译模式， origin, translation, both
+
+        Returns:
+            return (list[str]): 要写入的行的列表
+        """
+        lines = []
+        for name, line in sorted(self.lines.items()):
+            value = line.origin
+            if line.translation != '':
+                if mode == 'translation':
+                    value = line.translation
+                elif mode == 'both':
+                    value += ' ' + line.translation
+            lines.append('[%s] = "%s"\n' % (name, value))
         return lines
