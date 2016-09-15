@@ -9,8 +9,9 @@
 
 import os
 import sys
-from xlsutils import load_xls
-from utils import read_lua
+
+from utils.utils import read_lua
+from utils.xlsutils import load_xls
 
 
 def usage():

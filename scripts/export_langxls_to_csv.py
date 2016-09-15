@@ -9,10 +9,11 @@
 
 import os
 import sys
-from lang_def import *
-from utils import merge_dict
-from xlsutils import load_xls
+
 from check_xls import check_string_with_origin
+from utils.lang_def import *
+from utils.utils import merge_dict
+from utils.xlsutils import load_xls
 
 
 def load_from_list_category(data):

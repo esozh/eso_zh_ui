@@ -44,7 +44,7 @@ def read_translate_txt(file_path):
         is_origin = False
         last_name = ''
         for line in fp.readlines():
-            line = line.strip()
+            line = line.strip('\n')
             if line.startswith('SafeAddString'):
                 name = line.split('(', 1)[1].split(',', 1)[0].strip()
                 is_origin = True
@@ -97,6 +97,9 @@ def load_unknown_index_text_from_csv(file_path):
 
     Args:
         file_path (str): csv 文件的路径
+
+    Returns:
+        data_dict_by_index (dict[int: str]): {unknown-index: text}
     """
     data = load_lang_csv(file_path, skip_header=False)
     data_dict_by_index = {}

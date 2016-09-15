@@ -3,7 +3,7 @@
 ### 流程
 
 ```txt
-.lua -> _translate.txt <--> _translate.csv -> .xls
+.lua -> _translate.txt -> .xls
 .xls -> _translate.txt
 .lua + str_header.txt + _translate.txt -> .str
 ```
@@ -29,17 +29,16 @@ SafeAddString(SI_GAME_MENU_RESUME, "Resume", 0)
 SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 ```
 
-#### convert_txt_to_csv.py
->_translate.txt -> _translate.csv
+#### convert_txt_to_xls.py
+>_translate.txt -> .xls
 
 从 `translation/zh_translate.txt` 中提取翻译文本，
-转换成翻译、校对使用的 csv 文件，
-用于生成 xlsx 文件。
+转换成翻译、校对使用的 xls 文件。
 
 #### export_uixls_to_txt.py
 >.xls -> _translate.txt
 
-将文本从翻译后的 xlsx 文件导出到 `translation/zh_translate.txt` 中。
+将文本从翻译后的 xls 文件导出到 `translation/zh_translate.txt` 中。
 
 #### convert_txt_to_str.py
 >.lua + str_header.txt + _translate.txt -> .str

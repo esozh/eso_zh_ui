@@ -1,4 +1,6 @@
 *
 !.gitignore
 !*.py
+!utils/
+!objs/
 !*.md

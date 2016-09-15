@@ -10,7 +10,8 @@
 import getopt
 import os
 import sys
-from utils import read_lua, read_translate_txt
+
+from utils.utils import read_lua, read_translate_txt
 
 
 def main():

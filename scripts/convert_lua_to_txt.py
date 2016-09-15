@@ -9,7 +9,8 @@
 
 import os
 import sys
-from utils import read_lua, read_translate_txt
+
+from objs.ui_mgr import UiMgr
 
 
 def main():
@@ -21,31 +22,28 @@ def main():
     translation_path = os.path.join(cd, '../translation')
 
     # load lua
-    name_values = {}
     pregame_file = os.path.join(translation_path, '%s_pregame.lua' % lang)
     client_file = os.path.join(translation_path, '%s_client.lua' % lang)
-    read_lua(pregame_file, name_values)
-    read_lua(client_file, name_values)
-    print('read %d lines.' % len(name_values))
+
+    ui_mgr = UiMgr()
+    ui_mgr.load_lua_file(pregame_file)
+    ui_mgr.load_lua_file(client_file)
+    print('read %d lines.' % len(ui_mgr.lines))
 
     # save merged lines
-    name_translation = {}
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
     if os.path.exists(translate_file):
         choose = input('%s_translate.txt file exists, merge? [y/N]' % lang)
         choose = choose.lower().strip()
         if choose != '' and choose[0] == 'y':
             print('merging to translate file.')
-            name_translation = read_translate_txt(translate_file)
+            ui_mgr.apply_translate_txt(translate_file)
         else:
             print('skipped.')
             return
 
     with open(translate_file, 'wt', encoding='utf-8') as fp:
-        for name, (value, version) in sorted(name_values.items()):
-            fp.write('SafeAddString(%s, "%s", %s)\n' % (name, value, version))
-            if name in name_translation:
-                fp.write(name_translation[name] + '\n')
+        fp.writelines(ui_mgr.get_lines())
         print('save translate file succeed.')
 
 

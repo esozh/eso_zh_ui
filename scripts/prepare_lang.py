@@ -9,8 +9,9 @@
 
 import os
 import sys
-from lang_def import *
-from utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv, sort_texts_by_fileid_index_unknown
+
+from utils.lang_def import *
+from utils.utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv, sort_texts_by_fileid_index_unknown
 
 
 def usage():
