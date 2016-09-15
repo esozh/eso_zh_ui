@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : convert_txt_to_xls.py
+# File          : convert_txt_to_csv.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : 将 .txt 文件转换为TAB分隔的文本，准备导入Excel

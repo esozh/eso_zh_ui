@@ -1,6 +1,18 @@
-## 脚本使用说明
+## UI 汉化
 
-### convert_lua_to_txt.py
+### 流程
+
+```txt
+.lua -> _translate.txt <--> _translate.csv -> .xls
+.xls -> _translate.txt
+.lua + str_header.txt + _translate.txt -> .str
+```
+
+### 脚本使用说明
+
+#### convert_lua_to_txt.py
+>.lua -> _translate.txt
+
 从 `translation/zh_pregame.lua`, `translation/zh_client.lua` 中提取待翻译文本，
 并写入 `translation/zh_translate.txt` 中。
 
@@ -17,24 +29,75 @@ SafeAddString(SI_GAME_MENU_RESUME, "Resume", 0)
 SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 ```
 
-### convert_txt_to_str.py
+#### convert_txt_to_csv.py
+>_translate.txt -> _translate.csv
+
+从 `translation/zh_translate.txt` 中提取翻译文本，
+转换成翻译、校对使用的 csv 文件，
+用于生成 xlsx 文件。
+
+#### export_uixls_to_txt.py
+>.xls -> _translate.txt
+
+将文本从翻译后的 xlsx 文件导出到 `translation/zh_translate.txt` 中。
+
+#### convert_txt_to_str.py
+>.lua + str_header.txt + _translate.txt -> .str
+
 从 `translation/zh_translate.txt` 中提取翻译文本，
 从 `translation/str_header.txt` 中读取文件头，
 再根据 `translation/zh_pregame.lua`, `translation/zh_client.lua`
 生成 `AddOns/esoui/lang/zh_pregame.str`, `AddOns/esoui/lang/zh_client.str`。
 
-### convert_txt_to_xls.py
-从 `translation/zh_translate.txt` 中提取翻译文本，
-转换成翻译、校对使用的 csv 文件，
+
+## lang 汉化
+
+### 流程
+
+```txt
+.lang <--> .lang.csv -> .id.lang.csv -> .name.lang.csv -> .name.lang.xls
+.lang.csv + .*.xls -> .lang.csv
+```
+
+### 脚本使用说明
+
+#### split_lang_csv_by_id.py
+>.lang.csv -> .id.lang.csv
+
+以 `translation/lang/en.lang.csv` 中的 id 项为 file_id，用来分割文件。
+
+#### prepare_lang.py
+>.id.lang.csv -> .name.lang.csv
+
+从特定的分割好的 `translation/lang/en.id.lang.csv` 中提取文本，
+合并、转换成翻译、校对使用的 csv 文件，
 用于生成 xlsx 文件。
 
-### check_xls.py
-检查翻译后的 xls 文件是否符合语法规范。
+#### convert_translate_to_lang.py
+>.id.lang.csv -> .name.lang.csv
+
+从 `translation/lang/zh.lang.translate.csv` 中提取原文及翻译文本，
+生成 `translation/lang/zh.lang.csv`。
+
+#### export_langxls_to_csv.py
+>.lang.csv + .*.xls -> .lang.csv
+
+从 `translation/lang/translated/` 中的 `*.xls` 里提取翻译， 
+仿照 `translation/lang/en.lang.csv` 和 `translation/lang/jp.lang.csv`
+的结构生成 `translation/lang/translated/zh.lang.csv`。
+
+## 其他
+
+#### lang_def.py
+`.lang.csv` 文件中 id 项的说明。
+
+#### check_xls.py
+检查翻译后的 xlsx 文件是否符合语法规范。
 ```bash
 # ./check_xls.py file_name column_id [src_column_id]
 python check_xls.py ui.xlsx 3
 ```
 
-### convert_translate_to_lang.py
-从 `translation/lang/zh.lang.translate.csv` 中提取原文及翻译文本，
-生成 `translation/lang/zh.lang.csv`
+#### utils.py
+
+#### xlsutils.py
