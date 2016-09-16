@@ -16,15 +16,18 @@ def load_xls(file_path):
 
     Args:
         file_path (str): xlsx 文件的路径
+
+    Returns:
+        data (list[list[str]]): 工作表中的内容
     """
+    data = []
     with xlrd.open_workbook(file_path) as workbook:
         sheet = workbook.sheet_by_index(0)
         nrows = sheet.nrows
         ncols = sheet.ncols
-        data = []
         for curr_row in range(0, nrows):
             data.append([str(sheet.cell(curr_row, curr_col).value) for curr_col in range(0, ncols)])
-        return data
+    return data
 
 
 def save_xls(file_path, data, header=None, col_id=None):

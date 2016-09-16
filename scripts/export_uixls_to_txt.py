@@ -10,24 +10,20 @@
 import os
 import sys
 
+from objs.ui_mgr import UiMgr
 from utils.utils import read_lua
 from utils.xlsutils import load_xls
 
 
 def usage():
     print('usage:')
-    print('python export_uixls_to_txt.py xls_file_name name_column_id text_column_id')
+    print('python export_uixls_to_txt.py xls_file_name')
 
 
 def main():
     lang = 'zh'
-    name_column_id = 1
-    text_column_id = 3
 
-    if len(sys.argv) == 4:
-        name_column_id = int(sys.argv[2])    # 名称
-        text_column_id = None if len(sys.argv) == 3 else int(sys.argv[3])     # 译文
-    elif len(sys.argv) != 2:
+    if len(sys.argv) != 2:
         usage()
         sys.exit(2)
 
@@ -37,30 +33,26 @@ def main():
     translation_path = os.path.join(cd, '../translation')
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
 
+    ui_mgr = UiMgr()
+
     # load lua
-    name_values = {}
-    pregame_file = os.path.join(translation_path, '%s_pregame.lua' % lang)
-    client_file = os.path.join(translation_path, '%s_client.lua' % lang)
-    read_lua(pregame_file, name_values)
-    read_lua(client_file, name_values)
-    print('read %d lines from lua.' % len(name_values))
+    pregame_src = os.path.join(translation_path, '%s_pregame.lua' % lang)
+    ui_mgr.load_lua_file(pregame_src)
+
+    client_src = os.path.join(translation_path, '%s_client.lua' % lang)
+    ui_mgr.load_lua_file(client_src)
 
     # load translation
-    name_translation = {line[name_column_id]: line[text_column_id] for line in load_xls(xls_path)}
-    print('read %d lines from xls.' % len(name_translation))
+    data_from_xls = load_xls(xls_path)
+    ui_mgr.apply_translate_from_xls(data_from_xls)
+    ui_mgr.apply_translate_from_xls(data_from_xls)
 
     # save result
+    txt_lines = ui_mgr.get_txt_lines()
     with open(translate_file, 'wt', encoding='utf-8') as fp:
-        for name, (value, version) in sorted(name_values.items()):
-            fp.write('SafeAddString(%s, "%s", %s)\n' % (name, value, version))
-            if name in name_translation:
-                translation = name_translation[name].strip()
-                if translation != '':
-                    fp.write(name_translation[name] + '\n')
+        fp.writelines(txt_lines)
         print('save translate file succeed.')
 
 
 if __name__ == '__main__':
-    if os.name == 'nt':
-        sys.stdout = open(1, 'w', encoding='utf-8', closefd=False)  # windows
     main()

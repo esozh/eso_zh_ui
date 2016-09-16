@@ -9,16 +9,15 @@
 
 from objs.ui_line import UiLine
 from objs.ui_row import UiRow
-from utils.utils import read_translate_txt
 
 
 class UiMgr:
     """
     Attributes:
-        lines (dict[str: UiLine]):
+        ui_lines (dict[str: UiLine]):
     """
     def __init__(self):
-        self.lines = {}
+        self.ui_lines = {}
 
     def load_lua_file(self, lua_file_path):
         """从 lua 文件加载
@@ -28,22 +27,47 @@ class UiMgr:
         """
         with open(lua_file_path, 'rt', encoding='utf-8') as fp:
             for line in fp.readlines():
-                line = UiLine.from_lua_line(line)
-                if line is not None:
-                    self.lines[line.name] = line
+                ui_line = UiLine.from_lua_line(line)
+                if ui_line is not None:
+                    self.ui_lines[ui_line.name] = ui_line
 
-    def apply_translate_txt(self, txt_file_path):
-        """从 _translate.txt 加载
+    def apply_translate_from_txt(self, name_to_uiline):
+        """应用从 _translate.txt 加载的翻译
 
         不检查更新
 
         Args:
-            txt_file_path (str): 翻译的 _translate.txt 路径
+            name_to_uiline (dict[str: UiLine]): name 及其对应的 UiLine
         """
-        lines_with_translation = read_translate_txt(txt_file_path)
-        for name, line in lines_with_translation.items():
-            if name in self.lines.keys() and line.origin == self.lines[name].origin:
-                self.lines[name].set_translation(line.translation)
+        for name, ui_line in name_to_uiline.items():
+            self.apply_one_translate(name, ui_line.origin, ui_line.translation)
+
+    def apply_translate_from_xls(self, data_from_xls):
+        """应用从 xls 文件加载的翻译
+
+        不检查更新
+
+        Args:
+            data_from_xls (list[list[str]]): xls 工作表中的数据
+        """
+        name_column_id, origin_column_id, translation_column_id = 1, 2, 3
+        for row_data in data_from_xls:
+            name, origin, translation = \
+                    row_data[name_column_id], row_data[origin_column_id], row_data[translation_column_id]
+            self.apply_one_translate(name, origin, translation)
+
+    def apply_one_translate(self, name, origin, translation):
+        """应用一条翻译
+
+        不检查更新
+
+        Args:
+            name (str): 名字， SI_ 开头
+            origin (str): 原文
+            translation (str): 译文
+        """
+        if name in self.ui_lines.keys() and origin == self.ui_lines[name].origin:
+            self.ui_lines[name].set_translation(translation)
 
     def get_rows(self):
         """转换成写入 .xls 的 UiRow 列表
@@ -53,12 +77,12 @@ class UiMgr:
         """
         rows = {}
         count = 0
-        for name, line in sorted(self.lines.items()):
+        for name, ui_line in sorted(self.ui_lines.items()):
             count += 1
             row = UiRow(name) \
-                .set_origin(line.origin) \
-                .set_translation(line.translation) \
-                .set_id(count)
+                    .set_origin(ui_line.origin) \
+                    .set_translation(ui_line.translation) \
+                    .set_id(count)
             rows[name] = row
         return rows
 
@@ -69,10 +93,10 @@ class UiMgr:
             return (list[str]): 要写入的行的列表
         """
         lines = []
-        for name, line in sorted(self.lines.items()):
-            lines.append(line.to_lua_line() + '\n')
-            if line.translation != '':
-                lines.append(line.translation + '\n')
+        for name, ui_line in sorted(self.ui_lines.items()):
+            lines.append(ui_line.to_lua_line() + '\n')
+            if ui_line.translation != '':
+                lines.append(ui_line.translation + '\n')
         return lines
 
     def get_str_lines(self, mode='both'):
@@ -85,12 +109,12 @@ class UiMgr:
             return (list[str]): 要写入的行的列表
         """
         lines = []
-        for name, line in sorted(self.lines.items()):
-            value = line.origin
-            if line.translation != '':
+        for name, ui_line in sorted(self.ui_lines.items()):
+            value = ui_line.origin
+            if ui_line.translation != '':
                 if mode == 'translation':
-                    value = line.translation
+                    value = ui_line.translation
                 elif mode == 'both':
-                    value += ' ' + line.translation
+                    value += ' ' + ui_line.translation
             lines.append('[%s] = "%s"\n' % (name, value))
         return lines
