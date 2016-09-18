@@ -13,7 +13,6 @@ import sys
 
 from objs.ui_row import UiRow
 from objs.ui_mgr import UiMgr
-from utils.utils import read_translate_txt
 from utils.xlsutils import save_xls
 
 
@@ -39,7 +38,7 @@ def main():
     # load translation
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
     ui_mgr.load_lua_file(translate_file)
-    ui_mgr.apply_translate_from_txt(read_translate_txt(translate_file))      # _translate.txt 中同时存了原文和译文
+    ui_mgr.apply_translate_from_txt_file(translate_file)      # _translate.txt 中同时存了原文和译文
 
     rows = ui_mgr.get_rows()
     rows = [row for name, row in sorted(rows.items())]

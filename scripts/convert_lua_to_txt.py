@@ -3,7 +3,7 @@
 # File          : convert_lua_to_txt.py
 # Author        : bssthu
 # Project       : eso_zh_ui
-# Description   : 将从 mnf 中解出的， esoui 文件夹下的 en_client.lua 等转换为 .txt 文件
+# Description   : 将从 mnf 中解出的， EsoUI 文件夹下的 en_client.lua 等转换为 .txt 文件
 # 
 
 
@@ -11,7 +11,6 @@ import os
 import sys
 
 from objs.ui_mgr import UiMgr
-from utils.utils import read_translate_txt
 
 
 def main():
@@ -38,7 +37,7 @@ def main():
         choose = choose.lower().strip()
         if choose != '' and choose[0] == 'y':
             print('merging to translate file.')
-            ui_mgr.apply_translate_from_txt(read_translate_txt(translate_file))
+            ui_mgr.apply_translate_from_txt_file(translate_file)
         else:
             print('skipped.')
             return

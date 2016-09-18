@@ -7,53 +7,6 @@
 # 
 
 
-from objs.ui_line import UiLine
-
-
-def read_lua(file_path, name_values):
-    """从 lua 文件读取 name 和文本，将结果存入 name_values
-
-    Args:
-        file_path (str): lua 文件路径
-        name_values (dict[str: str]): name 与 文本
-    """
-    with open(file_path, 'rt', encoding='utf-8') as fp:
-        for line in fp.readlines():
-            line = line.strip()
-            if line.startswith('SafeAddString'):
-                name = line.split('(', 1)[1].split(',', 1)[0].strip()
-                value = line.split(',', 1)[1].rsplit(',', 1)[0].strip()
-                value = value[1:-1]     # remove quotes
-                version = line.rsplit(',', 1)[1].strip(')').strip()
-                name_values[name] = (value, version)
-
-
-def read_translate_txt(file_path):
-    """从 .translate.txt 文件读取 name 和包含原文、译文的 UiLine
-
-    Args:
-        file_path (str): 文件路径
-
-    Returns:
-        name_uilines (dict[str: UiLine]): name 与 UiLine
-    """
-    name_uilines = {}
-    with open(file_path, 'rt', encoding='utf-8') as fp:
-        # 每一行 SafeAddString 的下一行可能是翻译
-        is_origin = False
-        ui_line = None
-        for line in fp.readlines():
-            line = line.strip('\n')
-            if line.startswith('SafeAddString'):
-                ui_line = UiLine.from_lua_line(line)
-                is_origin = True
-            elif is_origin and line != '':
-                ui_line.set_translation(line)
-                name_uilines[ui_line.name] = ui_line
-                is_origin = False
-    return name_uilines
-
-
 def load_lang_csv(file_path, skip_header=True):
     """读取 lang.csv 文件
 

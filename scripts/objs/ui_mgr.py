@@ -26,21 +26,47 @@ class UiMgr:
             lua_file_path (str): .lua 文件的路径
         """
         with open(lua_file_path, 'rt', encoding='utf-8') as fp:
-            for line in fp.readlines():
-                ui_line = UiLine.from_lua_line(line)
-                if ui_line is not None:
-                    self.ui_lines[ui_line.name] = ui_line
+            self.load_lua_lines(fp.readlines())
 
-    def apply_translate_from_txt(self, name_to_uiline):
-        """应用从 _translate.txt 加载的翻译
-
-        不检查更新
+    def apply_translate_from_txt_file(self, txt_file_path):
+        """从 _translate.txt 读到的行中加载的翻译
 
         Args:
-            name_to_uiline (dict[str: UiLine]): name 及其对应的 UiLine
+            txt_file_path (str): .txt 文件的路径
         """
-        for name, ui_line in name_to_uiline.items():
-            self.apply_one_translate(name, ui_line.origin, ui_line.translation)
+        with open(txt_file_path, 'rt', encoding='utf-8') as fp:
+            self.apply_translate_from_txt_lines(fp.readlines())
+
+    def load_lua_lines(self, lines):
+        """从 lua 文件加载
+
+        Args:
+            lines (list[str]): .lua 文件中的行
+        """
+        for line in lines:
+            ui_line = UiLine.from_lua_line(line)
+            if ui_line is not None:
+                self.ui_lines[ui_line.name] = ui_line
+
+    def apply_translate_from_txt_lines(self, lines_from_txt):
+        """从 _translate.txt 读到的行中加载的翻译
+
+        只加载已有的 UiLine 的翻译，并且 txt 和 lua 中的原文要一致
+
+        Args:
+            lines_from_txt (list[str]): .txt 文件中的行
+        """
+        # 每一行 SafeAddString 的下一行可能是翻译
+        ui_line = None
+        for line in lines_from_txt:
+            line = line.strip('\n')
+            if line.startswith('SafeAddString'):
+                # 原文行
+                ui_line = UiLine.from_lua_line(line)
+            elif (ui_line is not None) and (line != ''):
+                # 译文行，检查并应用翻译
+                self.apply_one_translate(ui_line.name, ui_line.origin, line)
+                ui_line = None
 
     def apply_translate_from_xls(self, data_from_xls):
         """应用从 xls 文件加载的翻译
@@ -59,7 +85,7 @@ class UiMgr:
     def apply_one_translate(self, name, origin, translation):
         """应用一条翻译
 
-        不检查更新
+        先检查原文是否一致。不检查更新。
 
         Args:
             name (str): 名字， SI_ 开头

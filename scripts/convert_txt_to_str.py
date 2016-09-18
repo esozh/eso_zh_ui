@@ -12,7 +12,6 @@ import os
 import sys
 
 from objs.ui_mgr import UiMgr
-from utils.utils import read_translate_txt
 
 
 def main():
@@ -52,9 +51,10 @@ def main():
 
     # load translation
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
-    name_to_uiline = read_translate_txt(translate_file)
-    ui_mgr_pregame.apply_translate_from_txt(name_to_uiline)
-    ui_mgr_client.apply_translate_from_txt(name_to_uiline)
+    with open(translate_file, 'rt', encoding='utf-8') as fp:
+        lines = fp.readlines()
+        ui_mgr_pregame.apply_translate_from_txt_lines(lines)
+        ui_mgr_client.apply_translate_from_txt_lines(lines)
 
     # save lua
     pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
