@@ -4,7 +4,7 @@
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : UI 翻译管理工具
-#
+# 
 
 
 from objs.ui_line import UiLine

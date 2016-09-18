@@ -3,4 +3,5 @@
 !*.py
 !utils/
 !objs/
+!tests/
 !*.md

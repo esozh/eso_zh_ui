@@ -4,7 +4,7 @@
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : UI 翻译时 .xls 的一行
-#
+# 
 
 
 class UiRow:

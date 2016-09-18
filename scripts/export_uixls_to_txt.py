@@ -11,7 +11,6 @@ import os
 import sys
 
 from objs.ui_mgr import UiMgr
-from utils.utils import read_lua
 from utils.xlsutils import load_xls
 
 

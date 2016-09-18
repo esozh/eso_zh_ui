@@ -45,13 +45,13 @@ def main():
     rows = [row for name, row in sorted(rows.items())]
 
     header = UiRow('名称') \
-        .set_id('编号') \
-        .set_origin('原文') \
-        .set_translation('译文') \
-        .set_translator('初翻人员') \
-        .set_proofreader('校对') \
-        .set_refiner('润色') \
-        .set_comments('备注')
+            .set_id('编号') \
+            .set_origin('原文') \
+            .set_translation('译文') \
+            .set_translator('初翻人员') \
+            .set_proofreader('校对') \
+            .set_refiner('润色') \
+            .set_comments('备注')
     rows[0:0] = [header, ]
 
     # save
