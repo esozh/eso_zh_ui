@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : test_lang_lines_name_value.py
+# File          : test_lang_group_name_value.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : 
@@ -8,12 +8,12 @@
 
 
 import unittest
-from objs.lang_lines_name_value import LangLinesNameValue
+from objs.lang_group_name_value import LangGroupNameValue
 
 
-class TestLangLinesNameValue(unittest.TestCase):
+class TestLangGroupNameValue(unittest.TestCase):
     def setUp(self):
-        self.lang_lines = LangLinesNameValue(3)
+        self.lang_lines = LangGroupNameValue(3)
         self.line_name = '"3427285","0","3","0","Laugh"'
         self.line_value = '"111","1","3","0","laugh..."'
         self.lang_lines.add_name(self.line_name)
@@ -32,3 +32,16 @@ class TestLangLinesNameValue(unittest.TestCase):
 
     def test_add_line(self):
         self.assertRaises(RuntimeError, self.lang_lines.add_line, self.line_name)
+
+    def test_to_xls_list(self):
+        self.assertEqual([], self.lang_lines.to_xls_list())
+
+        self.lang_lines.add_jp('"3427285","0","3","0","aaa"', key='name')
+        self.lang_lines.add_jp('"111","1","3","0","bbb"', key='value')
+        xls_list = [
+            ['1', '003427285-00-00003', 'aaa', 'Laugh', '', '', '', '', ''],
+            ['2', '000000111-01-00003', 'bbb', 'laugh...', '', '', '', '', '']
+        ]
+        self.assertEqual(xls_list, self.lang_lines.to_xls_list())
+
+        self.lang_lines.add_jp('"111","1","3","0","bbb"', key='not_exists')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : lang_lines_name_value.py
+# File          : lang_group_name_value.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : .lang.csv 翻译时的一组数据，一个名字行与若干内容行，有共同的 index，
@@ -8,10 +8,10 @@
 # 
 
 
-from objs.lang_lines import LangLines
+from objs.lang_group import LangGroup
 
 
-class LangLinesNameValue(LangLines):
+class LangGroupNameValue(LangGroup):
     """继承自 LangLines, alias 保存 name, value 两个 key"""
     def __init__(self, index):
         """构造函数
@@ -38,11 +38,11 @@ class LangLinesNameValue(LangLines):
 
     def add_name(self, line):
         """add_line 改版，索引为 name"""
-        super(LangLinesNameValue, self).add_line(line, key='name')
+        super(LangGroupNameValue, self).add_line(line, key='name')
 
     def add_value(self, line):
         """add_line 改版，索引为 value"""
-        super(LangLinesNameValue, self).add_line(line, key='value')
+        super(LangGroupNameValue, self).add_line(line, key='value')
 
     def get_key(self):
         """用于去重，减少翻译工作的 key"""

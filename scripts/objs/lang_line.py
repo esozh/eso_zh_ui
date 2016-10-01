@@ -7,6 +7,9 @@
 # 
 
 
+from utils.utils import parse_csv_line
+
+
 class LangLine:
     def __init__(self, file_id, unknown, index, offset, origin):
         """构造函数
@@ -25,24 +28,10 @@ class LangLine:
         self.origin = origin
         self.origin_jp = None
         self.translation = ''
-
-    @staticmethod
-    def parse_csv_line(line):
-        """从 csv 文件的一行里读取需要的参数
-
-        Args:
-            line(str): csv 里的一行
-
-        Returns:
-            return (list | None): 从这一行里解析出的参数, [file_id, unknown, index, offset, origin]
-        """
-        data = line.strip().split(',', 4)
-        try:
-            file_id, unknown, index, offset = [int(v[1:-1]) for v in data[0:4]]
-            text = data[4][1:-1]
-            return [file_id, unknown, index, offset, text]
-        except ValueError:
-            return None
+        self.translator = ''    # 初翻
+        self.proofreader = ''   # 校对
+        self.refiner = ''       # 润色
+        self.comments = ''      # 备注
 
     @staticmethod
     def from_csv_line(line):
@@ -54,7 +43,7 @@ class LangLine:
         Returns:
             return (LangLine | None): 从这一行里构造出的 LangLine 对象
         """
-        data = __class__.parse_csv_line(line)
+        data = parse_csv_line(line)
         if data is None:
             return None
         else:
@@ -70,6 +59,10 @@ class LangLine:
     def get_key(self):
         return '%d-%d-%d' % (self.file_id, self.unknown, self.index)
 
+    def get_xls_key(self):
+        return '%09d-%02d-%05d' % (self.file_id, self.unknown, self.index)
+
     def to_csv_line(self):
+        """转换为写入 lang.csv 文件的行"""
         text = self.translation if self.translation != '' else self.origin
         return '"%d","%d","%d","%d","%s"' % (self.file_id, self.unknown, self.index, self.offset, text)

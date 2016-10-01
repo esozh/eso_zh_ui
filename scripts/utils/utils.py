@@ -24,6 +24,24 @@ def load_lang_csv(file_path, skip_header=True):
     return data
 
 
+def parse_csv_line(line):
+    """从 csv 文件的一行里读取需要的参数
+
+    Args:
+        line(str): csv 里的一行
+
+    Returns:
+        return (list | None): 从这一行里解析出的参数, [file_id, unknown, index, offset, origin]
+    """
+    data = line.strip().split(',', 4)
+    try:
+        file_id, unknown, index, offset = [int(v[1:-1]) for v in data[0:4]]
+        text = data[4][1:-1]
+        return [file_id, unknown, index, offset, text]
+    except ValueError:
+        return None
+
+
 def load_index_and_text_from_csv(file_path):
     """从 csv 中读取文本，并用 index 当作其索引
 
