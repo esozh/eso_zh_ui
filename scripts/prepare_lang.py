@@ -34,7 +34,7 @@ def load_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
 
     Returns:
         name_and_desc (list[list]): list of [index, name, desc]
-        duplicated_index (dict[str: list[int]]): {namedesc: [index1, index2, ...]}
+        duplicated_index (dict[str: list[int]]): 重复列表，应用翻译时使用。 {namedesc: [index1, index2, ...]}
     """
 
     cd = sys.path[0]
