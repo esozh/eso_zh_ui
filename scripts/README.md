@@ -48,6 +48,8 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 再根据 `translation/zh_pregame.lua`, `translation/zh_client.lua`
 生成 `AddOns/esoui/lang/zh_pregame.str`, `AddOns/esoui/lang/zh_client.str`。
 
+可以通过 `-m` 参数选择 origin, translation, both 三种模式之一。
+
 
 ## lang 汉化
 

@@ -30,7 +30,7 @@ def load_from_list_category(data):
     # check
     for row in data:
         if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            print('check string failed', row[1], row[3])
+            print('>check string failed:', row[1])
 
     # 删除多余数据，只保留 内部编号, 中文
     data = [(row[1], row[4]) for row in data]
@@ -271,7 +271,11 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated, ful
             possible_file_ids = file_id_of_list[category]
             translated_file_ids.extend(possible_file_ids)
             # 需要判断的行
-            possible_lines = [line for file_id in possible_file_ids for line in file_id_to_lines[int(file_id)]]
+            possible_lines = []
+            for file_id in possible_file_ids:
+                file_id = int(file_id)
+                if file_id in file_id_to_lines:
+                    possible_lines.extend([line for line in file_id_to_lines[int(file_id)]])
             # load translation
             en_line_to_zh_line_of_category = get_en_line_to_zh_line_for_list_category(possible_lines, translated_data)
             # merge translation
