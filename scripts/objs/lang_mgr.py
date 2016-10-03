@@ -18,43 +18,68 @@ class LangMgr:
 
         Args:
             translation_path (str): 翻译文件的路径
-            file_id_list (list[int]):
+            file_id_list (list[str]):
         """
-        self.lang_groups = {}       # 根据文件 id 组织的 LangGroup 集合，每个小集合按 index 组织
+        self.all_lang_groups = {}       # 根据文件 id 组织的 LangGroup 集合，每个小集合按 index 组织
+        # 读取文件
         for file_id in file_id_list:
-            lang_groups = {}
-            # 英文
-            file_path = os.path.join(translation_path, 'en.%s.lang.csv' % file_id)
+            self.add_file_by_id(translation_path, file_id)
+
+    def add_file_by_id(self, translation_path, file_id):
+        """添加一个文件
+
+        Args:
+            translation_path (str): 翻译文件的路径
+            file_id (str): 文件 id
+        """
+        lang_groups = {}
+        # 英文
+        file_path = os.path.join(translation_path, 'en.%s.lang.csv' % file_id)
+        if os.path.isfile(file_path):
             for line in load_lang_csv(file_path, skip_header=False):
-                _, _, index, _, _ = parse_csv_line(line)
+                file_id, unknown, index, offset = [int(v) for v in line[0:4]]
+                origin = line[4]
                 if index not in lang_groups.keys():
                     # 如果是新出现的 index，则新建
                     lang_groups[index] = LangGroup(index)
-                lang_groups[index].add_line(line)
-            # 日文
-            file_path_jp = os.path.join(translation_path, 'en.%s.lang.csv' % file_id)
+                lang_groups[index].add(file_id, unknown, index, offset, origin)
+        # 日文
+        file_path_jp = os.path.join(translation_path, 'jp.%s.lang.csv' % file_id)
+        if os.path.isfile(file_path_jp):
             for line in load_lang_csv(file_path_jp, skip_header=False):
-                _, _, index, _, origin_jp = parse_csv_line(line)
+                file_id, unknown, index, offset = [int(v) for v in line[0:4]]
+                origin_jp = line[4]
                 if index not in lang_groups.keys():
                     # 如果是新出现的 index，则舍弃
                     print('new index from jp: %s' % line)
                     continue
-                lang_groups[index].add_jp(line)
-
-            self.lang_groups[file_id] = lang_groups
+                lang_groups[index].add_jp(file_id, unknown, index, offset, origin_jp)
+        # 添加
+        self.all_lang_groups[file_id] = lang_groups
 
     @staticmethod
     def get_header():
         return ['行号', '内部编号', '日文', '英文', '中文', '初翻人员', '校对', '润色', '备注']
 
-    def to_xls_list(self):
+    def to_xls_list(self, deduplicate=True):
         """转换为写入 .xlsx 翻译文件的列表"""
         xls_list = []
-        for key1 in sorted(self.lang_groups):
-            lang_groups = self.lang_groups[key1]
+        # 生成列表
+        for key1 in sorted(self.all_lang_groups):
+            lang_groups = self.all_lang_groups[key1]
             for key2 in sorted(lang_groups):
                 lang_group = lang_groups[key2]
                 xls_list.extend(lang_group.to_xls_list())
+        # 去重
+        deduplicate_xls_list = []
+        if deduplicate:
+            duplicated_text = set()
+            for row in xls_list:
+                origin, origin_jp = row[2], row[3]
+                if (origin, origin_jp) not in duplicated_text:
+                    deduplicate_xls_list.append(row)
+                    duplicated_text.add((origin, origin_jp))
+            xls_list = deduplicate_xls_list
         # 重新编号
         i = 0
         for row in xls_list:

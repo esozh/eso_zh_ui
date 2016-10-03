@@ -40,8 +40,8 @@ class LangGroup:
             key = lang_line.get_key()
         self.lines[key] = lang_line
 
-    def add_jp(self, line, key=None):
-        """添加一行日文原文
+    def add_line_jp(self, line, key=None):
+        """添加一行日文原文，添加到对应的 LangLine 对象中
 
         index 必须与当前一致
 
@@ -78,6 +78,27 @@ class LangGroup:
 
         lang_line = LangLine(file_id, unknown, index, offset, origin)
         self.lines[lang_line.get_key()] = lang_line
+
+    def add_jp(self, file_id, unknown, index, offset, origin_jp, key=None):
+        """添加一行日文其他内容，添加到对应的 LangLine 对象中
+
+        index 必须与当前一致
+
+        Args:
+            file_id (int): ID
+            unknown (int):
+            index (int):
+            offset (int):
+            origin_jp (str): 日文原文
+            key(str): 指定 key
+        """
+        if index != self.index:
+            raise RuntimeError('index does not match')
+
+        if key is None:
+            key = LangLine(file_id, unknown, index, offset, origin_jp).get_key()
+        if key in self.lines:
+            self.lines[key].set_origin_jp(origin_jp)
 
     def to_csv_lines(self):
         """转换为写入 lang.csv 文件的行"""

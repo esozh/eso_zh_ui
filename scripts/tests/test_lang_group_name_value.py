@@ -36,12 +36,12 @@ class TestLangGroupNameValue(unittest.TestCase):
     def test_to_xls_list(self):
         self.assertEqual([], self.lang_lines.to_xls_list())
 
-        self.lang_lines.add_jp('"3427285","0","3","0","aaa"', key='name')
-        self.lang_lines.add_jp('"111","1","3","0","bbb"', key='value')
+        self.lang_lines.add_line_jp('"3427285","0","3","0","aaa"', key='name')
+        self.lang_lines.add_line_jp('"111","1","3","0","bbb"', key='value')
         xls_list = [
             ['1', '003427285-00-00003', 'aaa', 'Laugh', '', '', '', '', ''],
             ['2', '000000111-01-00003', 'bbb', 'laugh...', '', '', '', '', '']
         ]
         self.assertEqual(xls_list, self.lang_lines.to_xls_list())
 
-        self.lang_lines.add_jp('"111","1","3","0","bbb"', key='not_exists')
+        self.lang_lines.add_line_jp('"111","1","3","0","bbb"', key='not_exists')

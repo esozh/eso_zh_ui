@@ -30,8 +30,8 @@ class TestLangGroup(unittest.TestCase):
     def test_to_xls_list(self):
         self.assertEqual([], self.lang_lines.to_xls_list())
 
-        self.lang_lines.add_jp('"3427285","0","3","0","aaa"')
-        self.lang_lines.add_jp('"111","1","3","0","bbb"')
+        self.lang_lines.add_line_jp('"3427285","0","3","0","aaa"')
+        self.lang_lines.add_line_jp('"111","1","3","0","bbb"')
         xls_list = [
             ['1', '000000111-01-00003', 'bbb', 'laugh...', '', '', '', '', ''],
             ['2', '003427285-00-00003', 'aaa', 'Laugh', '', '', '', '', '']
