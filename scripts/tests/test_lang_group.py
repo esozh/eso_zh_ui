@@ -16,8 +16,8 @@ class TestLangGroup(unittest.TestCase):
         self.lang_lines = LangGroup(3)
         self.line1 = '"3427285","0","3","0","Laugh"'
         self.line2 = '"111","1","3","0","laugh..."'
-        self.lang_lines.add_line(self.line1)
-        self.lang_lines.add_line(self.line2)
+        self.lang_lines.add(3427285, 0, 3, 0, "Laugh")
+        self.lang_lines.add(111, 1, 3, 0, "laugh...")
 
     def test_add_name_value(self):
         self.assertEqual(self.line1, self.lang_lines.lines['3427285-0-3'].to_csv_line())
@@ -30,8 +30,8 @@ class TestLangGroup(unittest.TestCase):
     def test_to_xls_list(self):
         self.assertEqual([], self.lang_lines.to_xls_list())
 
-        self.lang_lines.add_line_jp('"3427285","0","3","0","aaa"')
-        self.lang_lines.add_line_jp('"111","1","3","0","bbb"')
+        self.lang_lines.add_jp(3427285, 0, 3, 0, "aaa")
+        self.lang_lines.add_jp(111, 1, 3, 0, "bbb")
         xls_list = [
             ['1', '000000111-01-00003', 'bbb', 'laugh...', '', '', '', '', ''],
             ['2', '003427285-00-00003', 'aaa', 'Laugh', '', '', '', '', '']

@@ -73,7 +73,8 @@ file_id_of_list = {
 }
 
 # category: (name_file_id, file1_id, file2_id, ...)
-file_id_of_pair_list = {
+# 各 index 相同的条目有关联
+file_id_of_array = {
     'achievement': ('12529189', '188155806', '172030117'),  # 成就名，描述，子目标
     'location-object': ('10860933', '129979412', '108566804'),   # 地点，地点的目标,目标完成，地点不译（完成后地图上标志变白）
     'quest-obj': ('7949764', '234743124', '144228340'),     # 目标，交任务的对话动作，交任务的动作

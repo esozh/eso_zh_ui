@@ -20,47 +20,6 @@ class LangGroup:
         self.index = index
         self.lines = {}
 
-    def add_line(self, line, key=None):
-        """添加一行其他内容
-
-        index 必须与当前一致
-
-        Args:
-            line(str): csv 里的一行
-            key(str): 指定 key
-        """
-        lang_line = LangLine.from_csv_line(line)
-
-        if lang_line is None:
-            raise RuntimeError('failed to create lang line')
-        if lang_line.index != self.index:
-            raise RuntimeError('index does not match')
-
-        if key is None:
-            key = lang_line.get_key()
-        self.lines[key] = lang_line
-
-    def add_line_jp(self, line, key=None):
-        """添加一行日文原文，添加到对应的 LangLine 对象中
-
-        index 必须与当前一致
-
-        Args:
-            line(str): jp.csv 里的一行
-            key(str): 指定 key
-        """
-        lang_line_jp = LangLine.from_csv_line(line)
-
-        if lang_line_jp is None:
-            raise RuntimeError('failed to create lang line')
-        if lang_line_jp.index != self.index:
-            raise RuntimeError('index does not match')
-
-        if key is None:
-            key = lang_line_jp.get_key()
-        if key in self.lines:
-            self.lines[key].set_origin_jp(lang_line_jp.origin)
-
     def add(self, file_id, unknown, index, offset, origin):
         """添加一行其他内容
 
@@ -79,7 +38,7 @@ class LangGroup:
         lang_line = LangLine(file_id, unknown, index, offset, origin)
         self.lines[lang_line.get_key()] = lang_line
 
-    def add_jp(self, file_id, unknown, index, offset, origin_jp, key=None):
+    def add_jp(self, file_id, unknown, index, offset, origin_jp):
         """添加一行日文其他内容，添加到对应的 LangLine 对象中
 
         index 必须与当前一致
@@ -90,13 +49,11 @@ class LangGroup:
             index (int):
             offset (int):
             origin_jp (str): 日文原文
-            key(str): 指定 key
         """
         if index != self.index:
             raise RuntimeError('index does not match')
 
-        if key is None:
-            key = LangLine(file_id, unknown, index, offset, origin_jp).get_key()
+        key = LangLine(file_id, unknown, index, offset, origin_jp).get_key()
         if key in self.lines:
             self.lines[key].set_origin_jp(origin_jp)
 

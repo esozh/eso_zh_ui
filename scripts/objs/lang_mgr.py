@@ -26,16 +26,16 @@ class LangMgr:
         for file_id in file_id_list:
             self.add_file_by_id(translation_path, file_id)
 
-    def add_file_by_id(self, translation_path, file_id):
+    def add_file_by_id(self, translation_path, file_id_str):
         """添加一个文件
 
         Args:
             translation_path (str): 翻译文件的路径
-            file_id (str): 文件 id
+            file_id_str (str): 文件 id
         """
         lang_groups = {}
         # 英文
-        file_path = os.path.join(translation_path, 'en.%s.lang.csv' % file_id)
+        file_path = os.path.join(translation_path, 'en.%s.lang.csv' % file_id_str)
         if os.path.isfile(file_path):
             for line in load_lang_csv(file_path, skip_header=False):
                 file_id, unknown, index, offset = [int(v) for v in line[0:4]]
@@ -45,7 +45,7 @@ class LangMgr:
                     lang_groups[index] = LangGroup(index)
                 lang_groups[index].add(file_id, unknown, index, offset, origin)
         # 日文
-        file_path_jp = os.path.join(translation_path, 'jp.%s.lang.csv' % file_id)
+        file_path_jp = os.path.join(translation_path, 'jp.%s.lang.csv' % file_id_str)
         if os.path.isfile(file_path_jp):
             for line in load_lang_csv(file_path_jp, skip_header=False):
                 file_id, unknown, index, offset = [int(v) for v in line[0:4]]
@@ -56,7 +56,7 @@ class LangMgr:
                     continue
                 lang_groups[index].add_jp(file_id, unknown, index, offset, origin_jp)
         # 添加
-        self.all_lang_groups[file_id] = lang_groups
+        self.all_lang_groups[file_id_str] = lang_groups
 
     @staticmethod
     def get_header():
@@ -78,8 +78,8 @@ class LangMgr:
                 lang_group = lang_groups[key2]
                 xls_list.extend(lang_group.to_xls_list())
         # 去重
-        deduplicate_xls_list = []
         if deduplicate:
+            deduplicate_xls_list = []
             duplicated_text = set()
             for row in xls_list:
                 origin, origin_jp = row[2], row[3]
