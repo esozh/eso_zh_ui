@@ -10,8 +10,10 @@
 import os
 import sys
 
+from objs.lang_mgr import LangMgr
 from utils.lang_def import *
-from utils.utils import load_index_and_text_from_csv, load_unknown_index_text_from_csv, sort_texts_by_fileid_index_unknown
+from utils.utils import load_index_and_text_from_csv
+from utils.xlsutils import save_xls
 
 
 def usage():
@@ -33,8 +35,8 @@ def load_lang_name_and_desc(name_file_id, desc_file_id, lang='en'):
         lang (str): 语言
 
     Returns:
-        name_and_desc (list[list]): list of [index, name, desc]
-        duplicated_index (dict[str: list[int]]): {namedesc: [index1, index2, ...]}
+        name_and_desc (list[LangLinesNameValue]): LangLines 列表
+        duplicated_index (dict[str: list[LangLinesNameValue]]): 重复列表，应用翻译时使用。 {key: [lang_lines1, lang_lines2, ...]}
     """
 
     cd = sys.path[0]
@@ -121,98 +123,24 @@ def save_lang_name_and_desc(dest_filename, name_in_id, name_title, desc_title, n
         fp.writelines(lines)
 
 
-def load_lang_list(file_id_list, lang='en'):
+def load_lang_list(file_id_list, translation_path):
     """从多个不同 ID 对应文件中读取文本，并去重。
+
+    按 fileid-unknown-index 排序
 
     Args:
         file_id_list (list[str]): 各文件的 ID
-        lang (str): 语言
+        translation_path (str): 翻译文件的路径
 
     Returns:
-        texts (list): list of [(int)file_id, (str)unknown-index, (str)text]
-        duplicated_index (dict[str: list[int]]): {text: [unknown-index1, unknown-index2, ...]}
+        rows (list[list[str]]): 准备写入 .xls 的列表
     """
 
-    cd = sys.path[0]
-    translation_path = os.path.join(cd, '../translation/lang')
+    lang_mgr = LangMgr(translation_path, file_id_list)
+    rows = [lang_mgr.get_header(), ]
+    rows.extend(lang_mgr.to_xls_list())
 
-    # load
-    text_dicts = {}     # 外层 dict 的索引是 file_id, 内层 dict 的索引是文件中的 Index
-    for file_id in file_id_list:
-        filename = os.path.join(translation_path, '%s.%s.lang.csv' % (lang, file_id))
-        try:
-            text_dict = load_unknown_index_text_from_csv(filename)
-            text_dicts[int(file_id)] = text_dict
-        except FileNotFoundError:
-            print('Warning: cannot find file %s' % filename)
-
-    # deduplicate
-    texts = []
-    duplicated_index = {}
-    repeat_check_list = set([])  # 用于去重的列表
-    for file_id, text_dict in sorted(text_dicts.items()):
-        for index, text in sorted(text_dict.items()):
-            if text not in repeat_check_list:   # 去重
-                texts.append([int(file_id), index, text])
-                repeat_check_list.add(text)
-                duplicated_index[text] = [[int(file_id), index], ]
-            else:
-                duplicated_index[text].append([int(file_id), index])
-
-    return texts, duplicated_index
-
-
-def save_lang_list(dest_filename, name_of_category, texts_en, texts_jp, duplicated_index=None):
-    """保存文本到准备翻译的文件里
-
-    Args:
-        dest_filename (str): 目标文件名
-        name_of_category (str): “名字”的英文
-        texts_en (list): list of [file_id, unknown-index, text]
-        texts_jp (list): 日文文本
-        duplicated_index (dict[str: list[int]]): 英文重复表
-    """
-
-    cd = sys.path[0]
-    dest_path = os.path.join(cd, '../translation/lang')
-    dest_filename = os.path.join(dest_path, dest_filename)
-
-    lines = []
-    line_id = 1     # from 1 to ...
-
-    # convert to dict
-    text_dict_jp = {}
-    for file_id, index, text in texts_jp:
-        joined_id = '%09d-%s' % (file_id, index)
-        text_dict_jp[joined_id] = text
-    # mach en and jp, save
-    header = '行号\t内部编号\t日文\t英文\t中文\t初翻人员\t校对\t润色\t备注\n'
-    lines.append(header)
-    for file_id, index, text in texts_en:
-        # 使用的 joined_id 格式为 fileid-unknown-index
-        joined_id = '%09d-%s' % (file_id, index)
-        # match
-        text_jp = ''
-        # 说明见 save_lang_name_and_desc
-        if duplicated_index is not None:
-            possible_index_list_jp = duplicated_index[text]
-            for possible_file_id, possible_index in possible_index_list_jp:
-                possible_joined_id = '%09d-%s' % (possible_file_id, possible_index)
-                if possible_joined_id in text_dict_jp:
-                    text_jp = text_dict_jp[possible_joined_id]
-                    break
-        elif joined_id in text_dict_jp:
-            text_jp = text_dict_jp[joined_id]
-        # 没有日文的，说明已废弃
-        if text_jp == '':
-            continue
-        # save
-        line = '%d\t%s-%s\t%s\t%s\t\t\t\t\t\n' % (line_id, name_of_category, joined_id, text_jp, text)
-        line_id += 1
-        lines.append(line)
-
-    with open(dest_filename, 'wt', encoding='utf-8') as fp:
-        fp.writelines(lines)
+    return rows
 
 
 def prepare_pair_lang(category, pair_file_id):
@@ -220,7 +148,7 @@ def prepare_pair_lang(category, pair_file_id):
 
     Args:
         category (str): 分类名字
-        list_file_id (list[str]): 对应的 file_id
+        pair_file_id (list[str]): 对应的 file_id
     """
     name_file_id = pair_file_id[0]
     desc_file_id = pair_file_id[1]
@@ -236,21 +164,20 @@ def prepare_pair_lang(category, pair_file_id):
     print('save to %s' % dest_filename)
 
 
-def prepare_list_lang(category, list_file_id):
+def prepare_list_lang(category, list_file_id, translation_path):
     """提取一系列的文本，放到同一个文件中
 
     Args:
         category (str): 分类名字
         list_file_id (list[str]): 对应的 file_id
+        translation_path (str): 翻译文件的路径
     """
+
     # load
-    texts, duplicated_index = load_lang_list(list_file_id)
-    texts_jp, duplicated_index_jp = load_lang_list(list_file_id, lang='jp')
-    # sort
-    texts = sort_texts_by_fileid_index_unknown(texts)
+    rows = load_lang_list(list_file_id, translation_path)
     # save
-    dest_filename = 'en.%ss.lang.csv' % category
-    save_lang_list(dest_filename, category, texts, texts_jp, duplicated_index=duplicated_index)
+    dest_filename = 'en.%ss.lang.xls' % category
+    save_xls(os.path.join(translation_path, dest_filename), rows)
     print('save to %s' % dest_filename)
 
 
@@ -259,13 +186,16 @@ def main():
         usage()
         sys.exit(2)
 
+    cd = sys.path[0]
+    translation_path = os.path.join(cd, '../translation/lang')
+
     # 调用 prepare_xxx_lang, prepare_xxx_lang 中再调用 load_lang_xxx, save_lang_xxx
 
     category = sys.argv[1]
     if category in file_id_of_pair.keys():
         prepare_pair_lang(category, file_id_of_pair[category])
     elif category in file_id_of_list.keys():
-        prepare_list_lang(category, file_id_of_list[category])
+        prepare_list_lang(category, file_id_of_list[category], translation_path)
     else:
         usage()
         sys.exit(2)

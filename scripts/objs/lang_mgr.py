@@ -9,10 +9,11 @@
 
 import os
 from objs.lang_group import LangGroup
-from utils.utils import load_lang_csv, parse_csv_line
+from utils.utils import load_lang_csv
 
 
 class LangMgr:
+    """结果按 fileid-unknown-index 排序"""
     def __init__(self, translation_path, file_id_list):
         """构造函数
 
@@ -51,7 +52,7 @@ class LangMgr:
                 origin_jp = line[4]
                 if index not in lang_groups.keys():
                     # 如果是新出现的 index，则舍弃
-                    print('new index from jp: %s' % line)
+                    print('> new index from jp: %s' % line)
                     continue
                 lang_groups[index].add_jp(file_id, unknown, index, offset, origin_jp)
         # 添加
@@ -62,7 +63,13 @@ class LangMgr:
         return ['行号', '内部编号', '日文', '英文', '中文', '初翻人员', '校对', '润色', '备注']
 
     def to_xls_list(self, deduplicate=True):
-        """转换为写入 .xlsx 翻译文件的列表"""
+        """转换为写入 .xlsx 翻译文件的列表
+
+        按 fileid-unknown-index 排序
+
+        Args:
+            deduplicate (bool): 是否去重
+        """
         xls_list = []
         # 生成列表
         for key1 in sorted(self.all_lang_groups):
@@ -83,6 +90,6 @@ class LangMgr:
         # 重新编号
         i = 0
         for row in xls_list:
-            row[0] = '%02d' % i
+            row[0] = '%d' % i
             i += 1
         return xls_list

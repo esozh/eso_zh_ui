@@ -30,7 +30,7 @@ def load_from_list_category(data):
     # check
     for row in data:
         if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            print('>check string failed:', row[1])
+            print('> check string failed:', row[1])
 
     # 删除多余数据，只保留 内部编号, 中文
     data = [(row[1], row[4]) for row in data]
