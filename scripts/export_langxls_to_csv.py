@@ -353,8 +353,9 @@ def main():
             translated_lines.append(en_line_to_zh_line[en_line])
         else:
             # 如果未翻译，检查在日文文本里是否有这行。检查 file_id,unknown,index
-            full_id = ','.join(en_line.split(',', 4)[:3])
-            if full_id in full_ids_jp:
+            file_id, unknown, index = en_line.split(',', 4)[:3]
+            full_id = ','.join((file_id, unknown, index))
+            if (full_id in full_ids_jp) or (file_id in file_id_of_pair['crown']):   # 皇冠商店不同区域可能不一样
                 translated_lines.append(en_line)
 
     # save result

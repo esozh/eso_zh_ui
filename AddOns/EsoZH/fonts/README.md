@@ -10,4 +10,7 @@
 - FuturaStd-Condensed 方正兰亭圆
 - FuturaStd-CondensedLight 汉仪典雅体
 - FuturaStd-CondensedBold 方正兰亭圆-中
+- FTN47 汉仪典雅体
+- FTN57 方正兰亭圆
+- FTN87 方正兰亭圆-中
 - handwritten_bold 方正硬笔行书简体
