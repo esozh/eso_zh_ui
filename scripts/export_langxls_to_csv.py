@@ -10,107 +10,9 @@
 import os
 import sys
 
-from check_xls import check_string_with_origin
 from utils.lang_def import *
 from utils.utils import merge_dict
-from utils.xlsutils import load_xls
-
-
-def load_from_list_category(data):
-    """解析从 list<text> 模式的 xlsx 中读取的翻译
-
-    Args:
-        data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
-
-    Returns:
-        category (str): category from lang_def
-        translated_data (list): list of [file_id, unknown, index, text]
-    """
-
-    # check
-    for row in data:
-        if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            print('> check string failed:', row[1])
-
-    # 删除多余数据，只保留 内部编号, 中文
-    data = [(row[1], row[4]) for row in data]
-    category = data[0][0].rsplit('-', 3)[0]
-
-    # 恢复编号
-    translated_data = []
-    for intern_id, text in data:
-        if text != '':
-            file_id, unknown, index = [int(x) for x in intern_id.rsplit('-', 3)[1:]]
-            translated_data.append([file_id, unknown, index, text])
-
-    print('load %d %ss' % (len(translated_data), category))
-    return category, translated_data
-
-
-def load_from_pair_category(data):
-    """解析从 <name, desc> 模式的 xlsx 中读取的翻译
-
-    Args:
-        data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
-
-    Returns:
-        category (str): category from lang_def
-        translated_data (list): list of [file_id, unknown, index, text]
-    """
-
-    # check
-    for row in data:
-        if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
-                or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
-            print(row[1], row[3])
-
-    # 删除多余数据，只保留 内部编号, 中文名称, 中文描述
-    data = [(row[1], row[4], row[7]) for row in data]
-
-    category = data[0][0].rsplit('-', 1)[0]
-    name_file_id, desc_file_id = file_id_of_pair[category]
-    name_file_id, desc_file_id = int(name_file_id), int(desc_file_id)
-
-    # 恢复编号
-    translated_data = []
-    for intern_id, name, desc in data:
-        index = int(intern_id.rsplit('-', 1)[-1])
-        # TODO: 这里直接令 unknown 为 0，需验证
-        unknown = 0
-        if name != '':
-            translated_data.append([name_file_id, unknown, index, name])
-        if desc != '':
-            translated_data.append([desc_file_id, unknown, index, desc])
-
-    print('load %d %ss' % (len(translated_data), category))
-    return category, translated_data
-
-
-def load_from_xls(file_path):
-    """从 xlsx 文件中读取翻译
-
-    xlsx 文件可能是 <name, desc> 模式，也可能是 list<text> 模式。
-
-    Args:
-        file_path (str): xlsx 文件路径
-
-    Returns:
-        category (str): category from lang_def
-        translated_data (list): list of [file_id, unknown, index, text]
-    """
-
-    data = load_xls(file_path)[1:]
-    # 判断文件模式
-    id_split = data[0][1].split('-')
-    if len(id_split) > 3 and id_split[-1].isdigit() and id_split[-2].isdigit() and id_split[-3].isdigit():
-        # list of text
-        return load_from_list_category(data)
-    elif len(id_split) > 1 and id_split[-1].isdigit():
-        # name_desc
-        return load_from_pair_category(data)
-    else:
-        print('load failed.')
-        return '', []
+from utils.langxls_loader import load_from_langxls
 
 
 def load_translation(translation_path):
@@ -129,7 +31,8 @@ def load_translation(translation_path):
                 file_abs_path = os.path.join(dir_path, file_name)
                 # load from one file
                 print('load from %s' % file_name)
-                category, translated_data = load_from_xls(file_abs_path)
+                category, translated_data = load_from_langxls(file_abs_path)
+                print('load %d %ss' % (len(translated_data), category))
                 category_to_translated[category] = translated_data
     return category_to_translated
 
@@ -165,7 +68,7 @@ def get_en_line_to_zh_line_for_list_category(lines, translated_data):
 
     Args:
         lines (list[str]): 英文原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        translated_data (list): list of [file_id, unknown, index, text]
+        translated_data (list[str]): list of [file_id, unknown, index, text]
 
     Returns:
         en_line_to_zh_line (dict[str: str]): key 为原文行, value 为译文行
@@ -179,7 +82,7 @@ def get_en_line_to_zh_line_for_list_category(lines, translated_data):
     # {"en_line": "zh_line"}
     en_line_to_zh_line = {}
     for file_id, unknown, index, zh_text in translated_data:
-        key = '"%d","%d","%d"' % (file_id, unknown, index)
+        key = '"%s","%s","%s"' % (file_id, unknown, index)
         if key in en_key_to_line:
             en_line = en_key_to_line[key]
             file_id, unknown, index, offset, en_text = en_line.split(',', 4)
@@ -198,7 +101,7 @@ def get_en_line_to_zh_line_for_pair_category(lines_of_name, lines_of_desc, trans
     Args:
         lines_of_name (list[str]): 英文名字原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
         lines_of_desc (list[str]): 英文描述原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        translated_data (list): list of [file_id, unknown, index, text]
+        translated_data (list[str]): list of [file_id, unknown, index, text]
 
     Returns:
         en_line_to_zh_line (dict[str: str]): key 为原文行, value 为译文行
@@ -233,7 +136,7 @@ def get_en_line_to_zh_line_for_pair_category(lines_of_name, lines_of_desc, trans
     # {"en_line": "zh_line"}
     en_line_to_zh_line = {}
     for file_id, unknown, index, zh_text in translated_data:
-        key = '"%d","%d","%d"' % (file_id, unknown, index)
+        key = '"%s","%s","%s"' % (file_id, unknown, index)
         if key in en_key_to_line:
             en_line = en_key_to_line[key]
             file_id, unknown, index, offset, en_text = en_line.split(',', 4)

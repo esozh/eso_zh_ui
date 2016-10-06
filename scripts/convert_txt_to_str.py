@@ -14,21 +14,30 @@ import sys
 from objs.ui_mgr import UiMgr
 
 
+def usage():
+    print('usage:')
+    print('python convert_txt_to_str.py [-m translation]')
+
+
 def main():
     lang = 'zh'
     mode = 'both'   # origin, translation, both
 
     # getopt
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'l:m:')
+        opts, args = getopt.getopt(sys.argv[1:], 'l:m:h')
     except getopt.GetoptError as e:
         print(e)
+        usage()
         sys.exit(2)
     for o, a in opts:
         if o == '-l':
             lang = a
         elif o == '-m':
             mode = a.lower()
+        elif o == '-h':
+            usage()
+            return
 
     cd = sys.path[0]
     translation_path = os.path.join(cd, '../translation')
