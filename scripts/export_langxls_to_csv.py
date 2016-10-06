@@ -33,6 +33,8 @@ def load_translation(translation_path):
                 print('load from %s' % file_name)
                 category, translated_data = load_from_langxls(file_abs_path)
                 print('load %d %ss' % (len(translated_data), category))
+                if category in category_to_translated:
+                    print('> warning: override category %s' % category)
                 category_to_translated[category] = translated_data
     return category_to_translated
 

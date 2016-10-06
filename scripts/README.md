@@ -72,7 +72,7 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 
 从特定的分割好的 `translation/lang/en.id.lang.csv` 中提取文本，
 合并、转换成翻译、校对使用的 csv 文件，
-用于生成 xlsx 文件。
+用于生成 xls 文件。
 
 #### export_langxls_to_csv.py
 >.lang.csv + .*.xls -> .lang.csv
@@ -83,6 +83,9 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 
 
 ## 其他
+
+#### merge_langxls.py
+按要求合并两个 xls 文件。
 
 #### lang_def.py
 `.lang.csv` 文件中 id 项的说明。
