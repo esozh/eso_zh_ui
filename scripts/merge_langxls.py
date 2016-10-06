@@ -15,7 +15,7 @@ import sys
 
 from utils import lang_def
 from utils.langxls_loader import load_from_langxls
-from utils.xlsutils import load_xls, save_xls
+from utils.xlsutils import load_xls, save_xlsx
 
 
 def usage():
@@ -48,10 +48,11 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
     merged_data, conflict_data = merge_translation_data(category, dest_data, src_data)
 
     # save
-    save_xls(dest_xls_path, merged_data, header=header)
+    save_xlsx(dest_xls_path, merged_data, header=header)
+    print('%d conflicts.' % len(conflict_data))
     print('save %s' % dest_xls_path)
     if conflict_xls_file is not None and len(conflict_data) > 0:
-        save_xls(conflict_xls_file, conflict_data, header=header)
+        save_xlsx(conflict_xls_file, conflict_data, header=header)
         print('save %s' % conflict_xls_file)
 
 

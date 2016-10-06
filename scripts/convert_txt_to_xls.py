@@ -13,7 +13,7 @@ import sys
 
 from objs.ui_row import UiRow
 from objs.ui_mgr import UiMgr
-from utils.xlsutils import save_xls
+from utils.xlsutils import save_xlsx
 
 
 def main():
@@ -54,9 +54,9 @@ def main():
     rows[0:0] = [header, ]
 
     # save
-    xls_file = os.path.join(dest_path, '%s_translate.xls' % lang)
+    xls_file = os.path.join(dest_path, '%s_translate.xlsx' % lang)
     plain_rows = [row.to_list() for row in rows]    # list of [id, name, origin, translation, ...]
-    save_xls(xls_file, plain_rows)
+    save_xlsx(xls_file, plain_rows)
 
 
 if __name__ == '__main__':

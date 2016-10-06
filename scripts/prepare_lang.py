@@ -14,7 +14,7 @@ from objs.lang_mgr import LangMgr
 from objs.lang_mgr_array import LangMgrArray
 from objs.lang_mgr_pair import LangMgrPair
 from utils.lang_def import *
-from utils.xlsutils import save_xls
+from utils.xlsutils import save_xlsx
 
 
 def usage():
@@ -102,29 +102,15 @@ def load_lang_list(category, file_id_list, translation_path):
     return rows
 
 
-def prepare_array_lang(category, list_file_id, translation_path):
-    """提取一系列的文本，放到同一个文件中。相同 index 表示相关联。
-
-    Args:
-        category (str): 分类名字
-        list_file_id (list[str]): 对应的 file_id
-        translation_path (str): 翻译文件的路径
-    """
-
-    # load
-    rows = load_lang_array(category, list_file_id, translation_path)
-    # save
-    dest_filename = 'en.%ss.lang.xls' % category
-    save_xls(os.path.join(translation_path, dest_filename), rows)
-    print('save to %s' % dest_filename)
-
-
 def prepare_pair_lang(category, pair_file_id, translation_path):
     """提取成对的 <名称、描述>，放到同一个文件中
 
     Args:
         category (str): 分类名字
         pair_file_id (list[str]): 对应的 file_id
+
+    Returns:
+        rows (list[list[str]]): 准备写入 .xls 的列表
     """
     if len(pair_file_id) != 2:
         raise RuntimeError('len(pair_file_id) in prepare_pair_lang must equals 2.')
@@ -132,29 +118,7 @@ def prepare_pair_lang(category, pair_file_id, translation_path):
     desc_file_id = pair_file_id[1]
 
     # load, match name and desc
-    rows = load_lang_name_and_desc(category, name_file_id, desc_file_id, translation_path)
-
-    # save
-    dest_filename = 'en.%ss.lang.xls' % category
-    save_xls(os.path.join(translation_path, dest_filename), rows)
-    print('save to %s' % dest_filename)
-
-
-def prepare_list_lang(category, list_file_id, translation_path):
-    """提取一系列的文本，放到同一个文件中
-
-    Args:
-        category (str): 分类名字
-        list_file_id (list[str]): 对应的 file_id
-        translation_path (str): 翻译文件的路径
-    """
-
-    # load
-    rows = load_lang_list(category, list_file_id, translation_path)
-    # save
-    dest_filename = 'en.%ss.lang.xls' % category
-    save_xls(os.path.join(translation_path, dest_filename), rows)
-    print('save to %s' % dest_filename)
+    return load_lang_name_and_desc(category, name_file_id, desc_file_id, translation_path)
 
 
 def main():
@@ -168,15 +132,22 @@ def main():
     # 调用 prepare_xxx_lang, prepare_xxx_lang 中再调用 load_lang_xxx, save_lang_xxx
 
     category = sys.argv[1]
+
+    # load
     if category in file_id_of_pair.keys():
-        prepare_pair_lang(category, file_id_of_pair[category], translation_path)
+        rows = prepare_pair_lang(category, file_id_of_pair[category], translation_path)
     elif category in file_id_of_list.keys():
-        prepare_list_lang(category, file_id_of_list[category], translation_path)
+        rows = load_lang_list(category, file_id_of_list[category], translation_path)
     elif category in file_id_of_array.keys():
-        prepare_array_lang(category, file_id_of_array[category], translation_path)
+        rows = load_lang_array(category, file_id_of_array[category], translation_path)
     else:
         usage()
         sys.exit(2)
+
+    # save
+    dest_filename = 'en.%ss.lang.xlsx' % category
+    save_xlsx(os.path.join(translation_path, dest_filename), rows)
+    print('save to %s' % dest_filename)
 
 
 if __name__ == '__main__':

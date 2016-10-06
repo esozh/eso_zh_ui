@@ -8,7 +8,7 @@
 
 
 import xlrd
-import xlwt
+import xlsxwriter
 
 
 def load_xls(file_path):
@@ -30,7 +30,7 @@ def load_xls(file_path):
     return data
 
 
-def save_xls(file_path, data, header=None, col_id=None):
+def save_xlsx(file_path, data, header=None, col_id=None):
     """将输入保存到 Excel 文件中。
 
     全部保存为文本。
@@ -41,8 +41,8 @@ def save_xls(file_path, data, header=None, col_id=None):
         header (list): 第一行
         col_id (list[int]): data 中列号到 xlsx 中列号的映射
     """
-    workbook = xlwt.Workbook()
-    sheet = workbook.add_sheet('sheet 1')
+    workbook = xlsxwriter.Workbook(file_path)
+    sheet = workbook.add_worksheet('sheet 1')
 
     row_id = 0
     # 保存第一行
@@ -60,4 +60,4 @@ def save_xls(file_path, data, header=None, col_id=None):
             sheet.write(row_id, col_id[j], str(row[j]))
         row_id += 1
 
-    workbook.save(file_path)
+    workbook.close()
