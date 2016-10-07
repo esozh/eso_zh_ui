@@ -40,20 +40,26 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
         raise RuntimeError('category not equal.')
 
     # load
+    print('load %s' % dest_xls_path)
     dest_data = load_xls(dest_xls_path)
     header, dest_data = dest_data[0], dest_data[1:]
+    print('load %s' % src_xls_path)
     src_data = load_xls(src_xls_path)[1:]
 
     # merge
     merged_data, conflict_data = merge_translation_data(category, dest_data, src_data)
 
+    # sort
+    merged_data = sorted(merged_data, key=lambda row: '%06d' % int(row[0]))
+    conflict_data = sorted(conflict_data, key=lambda row: '%06d' % int(row[0]))
+
     # save
-    save_xlsx(dest_xls_path, merged_data, header=header)
     print('%d conflicts.' % len(conflict_data))
     print('save %s' % dest_xls_path)
+    save_xlsx(dest_xls_path, merged_data, header=header)
     if conflict_xls_file is not None and len(conflict_data) > 0:
-        save_xlsx(conflict_xls_file, conflict_data, header=header)
         print('save %s' % conflict_xls_file)
+        save_xlsx(conflict_xls_file, conflict_data, header=header)
 
 
 def merge_translation_data(category, dest_data, src_data):
@@ -82,7 +88,7 @@ def merge_translation_data(category, dest_data, src_data):
 def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, translation_col_ids):
     """合并数据
 
-    合并时，以 dest 文件为准，逐行从 src 文件加载译文。
+    合并时，以 dest 文件为准，根据 id，逐行从 src 文件加载译文。
     1. 如果 dest 没有译文，并且 dest 和 src 的原文一致，就把 src 的译文写入 dest；
     2. 否则，dest 的这一行保持不变。
 
@@ -90,7 +96,11 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
     冲突判断条件：
     1. dest 与 src 中原文不一致
     2. dest 与 src 中都有译文且不一致
-    3. dest 中有，但 src 中无此 id
+    3. 见下文（新增）
+
+    对于在 dest 中有，但在 src 中没有此 id 的行（新增），
+    1. 如果在 src 中有与之原文相同的行，就把这行当作 src 中 id 相同的行，然后按前面的方式处理
+    2. 否则，认为冲突（新增）
 
     Args:
         dest_data (list[list[str]]): 目标文件中的数据
@@ -103,24 +113,32 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
         merged_data (list[list[str]]): 合并后的数据，按 id 排序
         conflict_data (list[list[str]]): 合并时冲突的行（原文不一致，或都有译文）
     """
+    empty_row_translation = tuple('' for i in translation_col_ids)
+
     dest_by_id = {row[id_col]: row for row in dest_data}
     src_by_id = {row[id_col]: row for row in src_data}
+    src_by_origin = {tuple(row[i] for i in origin_col_ids): row for row in src_data}
 
     merged_count = 0
+    new_count = 0   # 新增的行数
 
     merged_data = []
     conflict_data = []
     for _id in sorted(dest_by_id.keys()):
         dest_row = dest_by_id[_id]
+        dest_row_origin = tuple(dest_row[i] for i in origin_col_ids)
+        dest_row_translation = tuple(dest_row[i] for i in translation_col_ids)
+
+        src_row = None
         if _id in src_by_id:
             # 按 id 逐行检查
             src_row = src_by_id[_id]
+        elif dest_row_origin in src_by_origin:
+            src_row = src_by_origin[dest_row_origin]
 
-            dest_row_origin = tuple(dest_row[i] for i in origin_col_ids)
+        if src_row is not None:
             src_row_origin = tuple(src_row[i] for i in origin_col_ids)
-            dest_row_translation = tuple(dest_row[i] for i in translation_col_ids)
             src_row_translation = tuple(src_row[i] for i in translation_col_ids)
-            empty_row_translation = tuple('' for i in translation_col_ids)
 
             # 检查原文是否相等
             if dest_row_origin != src_row_origin:
@@ -140,9 +158,11 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
         else:
             # src 没有此 id，判为冲突（新增）
             conflict_data.append(dest_row)
+            new_count += 1
         merged_data.append(dest_row)
 
     print('copy %d rows to dest' % merged_count)
+    print('%d unique rows in dest' % new_count)
     return merged_data, conflict_data
 
 
