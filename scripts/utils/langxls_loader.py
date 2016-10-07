@@ -35,7 +35,7 @@ def load_from_list_category(data):
     # 恢复编号
     translated_data = []
     for intern_id, text in data:
-        if text != '':
+        if intern_id != '' and text != '':
             file_id, unknown, index = [str(int(x)) for x in intern_id.rsplit('-', 3)[1:]]   # str 形式，不带前导0
             translated_data.append([file_id, unknown, index, text])
 
@@ -57,7 +57,7 @@ def load_from_pair_category(data):
     for row in data:
         if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
                 or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
-            print('> check string failed:', row[1], row[3])
+            print('> check string failed:', row[1])
 
     # 删除多余数据，只保留 内部编号, 中文名称, 中文描述
     data = [(row[1], row[4], row[7]) for row in data]
@@ -68,6 +68,8 @@ def load_from_pair_category(data):
     # 恢复编号
     translated_data = []
     for intern_id, name, desc in data:
+        if intern_id == '':
+            continue        # 空行
         index = intern_id.rsplit('-', 1)[-1]
         index = str(int(index))     # 消除前导0
         # 这里直接令 unknown 为 0，对此类数据，暂时没有发现例外
