@@ -36,7 +36,7 @@ def load_from_list_category(data):
     translated_data = []
     for intern_id, text in data:
         if text != '':
-            file_id, unknown, index = [x for x in intern_id.rsplit('-', 3)[1:]]
+            file_id, unknown, index = [str(int(x)) for x in intern_id.rsplit('-', 3)[1:]]   # str 形式，不带前导0
             translated_data.append([file_id, unknown, index, text])
 
     return category, translated_data
@@ -69,6 +69,7 @@ def load_from_pair_category(data):
     translated_data = []
     for intern_id, name, desc in data:
         index = intern_id.rsplit('-', 1)[-1]
+        index = str(int(index))     # 消除前导0
         # 这里直接令 unknown 为 0，对此类数据，暂时没有发现例外
         unknown = '0'
         if name != '':
@@ -89,7 +90,7 @@ def load_from_langxls(file_path):
 
     Returns:
         category (str): category from lang_def
-        translated_data (list[str]): list of [file_id, unknown, index, text]
+        translated_data (list[str]): list of [file_id, unknown, index, text]，不带前导0
     """
 
     data = load_xls(file_path)[1:]
