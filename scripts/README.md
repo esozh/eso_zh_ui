@@ -84,6 +84,9 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 
 ## 其他
 
+#### merge_uixls.py
+按要求合并两个 UI 汉化的 xls 文件。
+
 #### merge_langxls.py
 按要求合并两个 xls 文件。
 
