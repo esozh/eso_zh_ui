@@ -35,6 +35,9 @@ def main():
             lang = a
         elif o == '-m':
             mode = a.lower()
+            if mode not in ('origin', 'translation', 'both'):
+                usage()
+                sys.exit(2)
         elif o == '-h':
             usage()
             return
@@ -65,15 +68,19 @@ def main():
         ui_mgr_pregame.apply_translate_from_txt_lines(lines)
         ui_mgr_client.apply_translate_from_txt_lines(lines)
 
+    print('mode: %s' % mode)
+
     # save lua
     pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
     pregame_lines = ui_mgr_pregame.get_str_lines(mode)
+    print('save to %s.' % pregame_dest)
     with open(pregame_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
         fp.writelines(pregame_lines)
 
     client_dest = os.path.join(dest_path, '%s_client.str' % lang)
-    client_lines = ui_mgr_pregame.get_str_lines(mode)
+    client_lines = ui_mgr_client.get_str_lines(mode)
+    print('save to %s.' % client_dest)
     with open(client_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
         fp.writelines(client_lines)
