@@ -32,7 +32,7 @@ def main():
         sys.exit(2)
     for o, a in opts:
         if o == '-l':
-            lang = a
+            lang = a.lower()
         elif o == '-m':
             mode = a.lower()
             if mode not in ('origin', 'translation', 'both'):
@@ -70,7 +70,7 @@ def main():
 
     print('mode: %s' % mode)
 
-    # save lua
+    # save str
     pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
     pregame_lines = ui_mgr_pregame.get_str_lines(mode)
     print('save to %s.' % pregame_dest)
@@ -84,6 +84,28 @@ def main():
     with open(client_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
         fp.writelines(client_lines)
+
+    # save en str (fix fonts)
+    if lang != 'en':
+        pregame_dest = os.path.join(dest_path, 'en_pregame.str')
+        pregame_lines = ui_mgr_pregame.get_str_lines(mode)
+        print('save to %s.' % pregame_dest)
+        with open(pregame_dest, 'wt', encoding='utf-8') as fp:
+            fp.writelines(header)
+            # keep version info
+            for line in pregame_lines:
+                if line.startswith('[SI_VERSION] ='):
+                    fp.write(line + '\n')
+
+        client_dest = os.path.join(dest_path, 'en_client.str')
+        client_lines = ui_mgr_client.get_str_lines(mode)
+        print('save to %s.' % client_dest)
+        with open(client_dest, 'wt', encoding='utf-8') as fp:
+            fp.writelines(header)
+            # keep version info
+            for line in client_lines:
+                if line.startswith('[SI_VERSION] ='):
+                    fp.write(line + '\n')
 
 
 if __name__ == '__main__':
