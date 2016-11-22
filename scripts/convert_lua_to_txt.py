@@ -22,8 +22,8 @@ def main():
     translation_path = os.path.join(cd, '../translation')
 
     # load lua
-    pregame_file = os.path.join(translation_path, '%s_pregame.lua' % lang)
-    client_file = os.path.join(translation_path, '%s_client.lua' % lang)
+    pregame_file = os.path.join(translation_path, 'en_pregame.lua')
+    client_file = os.path.join(translation_path, 'en_client.lua')
 
     ui_mgr = UiMgr()
     ui_mgr.load_lua_file(pregame_file)
