@@ -72,7 +72,7 @@ class LangMgr:
         """
         xls_list = []
         # 生成列表
-        for key1 in sorted(self.all_lang_groups):
+        for key1 in sorted(self.all_lang_groups, key=lambda x: int(x)):
             lang_groups = self.all_lang_groups[key1]
             for key2 in sorted(lang_groups):
                 lang_group = lang_groups[key2]
