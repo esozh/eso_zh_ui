@@ -50,6 +50,29 @@ function EsoZH:OnInit(eventCode, addOnName)
     SetNameplateKeyboardFont("EsoZH/fonts/univers67.otf", 4)
     SetNameplateGamepadFont("EsoZH/fonts/ftn87.otf", 4)
 
+    if LibStub then
+        local LMP = LibStub("LibMediaProvider-1.0", true)
+        if LMP then
+            LMP.MediaTable.font["Univers 67"] = nil
+            LMP.MediaTable.font["Univers 57"] = nil
+            LMP.MediaTable.font["Skyrim Handwritten"] = nil
+            LMP.MediaTable.font["ProseAntique"] = nil
+            LMP.MediaTable.font["Trajan Pro"] = nil
+            LMP.MediaTable.font["Futura Condensed"] = nil
+            LMP.MediaTable.font["Futura Condensed Bold"] = nil
+            LMP.MediaTable.font["Futura Condensed Light"] = nil
+            LMP:Register("font", "Univers 67", "EsoZH/fonts/univers67.otf")
+            LMP:Register("font", "Univers 57", "EsoZH/fonts/univers57.otf")
+            LMP:Register("font", "Skyrim Handwritten", "EsoZH/fonts/handwritten_bold.otf")
+            LMP:Register("font", "ProseAntique", "EsoZH/fonts/proseantiquepsmt.otf")
+            LMP:Register("font", "Trajan Pro", "EsoZH/fonts/trajanpro-regular.otf")
+            LMP:Register("font", "Futura Condensed", "EsoZH/fonts/ftn57.otf")
+            LMP:Register("font", "Futura Condensed Bold", "EsoZH/fonts/ftn87.otf")
+            LMP:Register("font", "Futura Condensed Light", "EsoZH/fonts/ftn47.otf")
+            LMP:SetDefault("font", "Univers 57")
+        end
+    end
+
     EsoZH:RefreshUI()
 
     function ZO_GameMenu_OnShow(control)
