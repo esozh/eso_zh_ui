@@ -35,10 +35,10 @@ def main():
     ui_mgr = UiMgr()
 
     # load lua
-    pregame_src = os.path.join(translation_path, '%s_pregame.lua' % lang)
+    pregame_src = os.path.join(translation_path, 'en_pregame.lua')
     ui_mgr.load_lua_file(pregame_src)
 
-    client_src = os.path.join(translation_path, '%s_client.lua' % lang)
+    client_src = os.path.join(translation_path, 'en_client.lua')
     ui_mgr.load_lua_file(client_src)
 
     # load translation
