@@ -63,7 +63,7 @@ def get_file_id_to_lines(lines):
     return file_id_to_lines
 
 
-def get_en_line_to_zh_line_for_list_category(lines, translated_data):
+def get_en_line_to_zh_line(lines, translated_data):
     """获取从英文行到中文行的对照，翻译类型为 text
 
     已知译文的 id-unknown-index，可以用它得到译文对应的原文，这样就有了原文到译文的映射。（重复相同的原文可以对应同一条译文）
@@ -81,60 +81,6 @@ def get_en_line_to_zh_line_for_list_category(lines, translated_data):
         key = ','.join((file_id, unknown, index))   # 格式为 "file_id","unknown","index"
         en_key_to_line[key] = line
 
-    # {"en_line": "zh_line"}
-    en_line_to_zh_line = {}
-    for file_id, unknown, index, zh_text in translated_data:
-        key = '"%s","%s","%s"' % (file_id, unknown, index)
-        if key in en_key_to_line:
-            en_line = en_key_to_line[key]
-            file_id, unknown, index, offset, en_text = en_line.split(',', 4)
-            zh_line = '%s,%s,"%s"\n' % (key, offset, zh_text)
-            en_line_to_zh_line[en_line] = zh_line
-
-    return en_line_to_zh_line
-
-
-def get_en_line_to_zh_line_for_pair_category(lines_of_name, lines_of_desc, translated_data):
-    """获取从英文行到中文行的对照，翻译类型为 <name, desc>
-
-    已知译文的 index，可以用它得到 name, desc 分别对应的 id-unknown-index，
-    再根据译文的id-unknown-index，得到原文(line)到译文(line)的映射。
-
-    Args:
-        lines_of_name (list[str]): 英文名字原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        lines_of_desc (list[str]): 英文描述原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        translated_data (list[str]): list of [file_id, unknown, index, text]
-
-    Returns:
-        en_line_to_zh_line (dict[str: str]): key 为原文行, value 为译文行
-    """
-
-    # 首先利用 name-desc 的关系进行处理
-    # 得到 {index: ("id","unknown","index", line)}
-
-    index_to_en_key_and_line_of_name = {}
-    for line in lines_of_name:
-        file_id, unknown, index, offset, name = line.split(',', 4)
-        key = '%s,%s,%s' % (file_id, unknown, index)
-        index_to_en_key_and_line_of_name[index] = (key, line)
-
-    index_to_en_key_and_line_of_desc = {}
-    for line in lines_of_desc:
-        file_id, unknown, index, offset, desc = line.split(',', 4)
-        key = '%s,%s,%s' % (file_id, unknown, index)
-        index_to_en_key_and_line_of_desc[index] = (key, line)
-
-    # 把能对应上的 name, desc 整理出来
-    en_key_to_line = {}
-    for index, key_and_line_of_name in index_to_en_key_and_line_of_name.items():
-        if index in index_to_en_key_and_line_of_desc.keys():
-            key_of_name, line_of_name = key_and_line_of_name
-            key_of_desc, line_of_desc = index_to_en_key_and_line_of_desc[index]
-            # add to dict
-            en_key_to_line[key_of_name] = line_of_name
-            en_key_to_line[key_of_desc] = line_of_desc
-
-    # 之后就和 get_en_line_to_zh_line_for_list_category() 类似了
     # {"en_line": "zh_line"}
     en_line_to_zh_line = {}
     for file_id, unknown, index, zh_text in translated_data:
@@ -182,7 +128,7 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated, ful
                 if file_id in file_id_to_lines:
                     possible_lines.extend([line for line in file_id_to_lines[int(file_id)]])
             # load translation
-            en_line_to_zh_line_of_category = get_en_line_to_zh_line_for_list_category(possible_lines, translated_data)
+            en_line_to_zh_line_of_category = get_en_line_to_zh_line(possible_lines, translated_data)
             # merge translation
             en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
         elif category in file_id_of_pair.keys():
@@ -191,8 +137,8 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated, ful
             lines_of_name = file_id_to_lines[int(name_file_id)]
             lines_of_desc = file_id_to_lines[int(desc_file_id)]
             # load translation
-            en_line_to_zh_line_of_category = get_en_line_to_zh_line_for_pair_category(
-                lines_of_name, lines_of_desc, translated_data)
+            en_line_to_zh_line_of_category = get_en_line_to_zh_line(
+                lines_of_name + lines_of_desc, translated_data)
             # merge translation
             en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
     print('%d(%d) lines translated' % (translated_count_dry, len(en_line_to_zh_line)))
