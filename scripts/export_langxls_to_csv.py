@@ -94,15 +94,16 @@ def get_en_line_to_zh_line(lines, translated_data):
     return en_line_to_zh_line
 
 
-def get_translated_lines_converter(file_id_to_lines, category_to_translated, full_ids_jp):
+def get_translated_lines_converter(file_id_to_lines, category_to_translated):
     """转换格式
 
     Args:
         file_id_to_lines (dict[int: list[str]]):
                 key 为 file_id,
                 value 为 list<line>, 每行的格式为 "ID","Unknown","Index","Offset","Text"
-        category_to_translated (dict[str: list]): dict, key 为 category, value 为 list of [file_id, unknown, index, text]
-        full_ids_jp (set[str]): 日文原文里出现过的 '"file_id","unknown","index"', 在处理其他 file_id 中的翻译的时候用
+        category_to_translated (dict[str: list]): dict,
+                key 为 category,
+                value 为 list of [file_id, unknown, index, text]
 
     Returns:
         en_line_to_zh_line (dict[str: str]): key 为原文的行， value 为译文的行
@@ -115,58 +116,113 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated, ful
     # 已经处理过的 file_id
     translated_file_ids = []
 
-    # 根据 category 决定处理方法
+    # 遍历从每个 xls 读入的数据
     for category, translated_data in sorted(category_to_translated.items()):
         translated_count_dry += len(translated_data)
+        possible_file_ids = []
+        # 根据 category 决定处理方法
         if category in file_id_of_list.keys():
             possible_file_ids = file_id_of_list[category]
-            translated_file_ids.extend(possible_file_ids)
-            # 需要判断的行
-            possible_lines = []
-            for file_id in possible_file_ids:
-                file_id = int(file_id)
-                if file_id in file_id_to_lines:
-                    possible_lines.extend([line for line in file_id_to_lines[int(file_id)]])
-            # load translation
-            en_line_to_zh_line_of_category = get_en_line_to_zh_line(possible_lines, translated_data)
-            # merge translation
-            en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
         elif category in file_id_of_pair.keys():
-            name_file_id, desc_file_id = file_id_of_pair[category]
-            translated_file_ids.extend(file_id_of_pair[category])
-            lines_of_name = file_id_to_lines[int(name_file_id)]
-            lines_of_desc = file_id_to_lines[int(desc_file_id)]
-            # load translation
-            en_line_to_zh_line_of_category = get_en_line_to_zh_line(
-                lines_of_name + lines_of_desc, translated_data)
-            # merge translation
-            en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
+            possible_file_ids = file_id_of_pair[category]
+        translated_file_ids.extend(possible_file_ids)
+        # 需要判断的行
+        possible_lines = []
+        for file_id in possible_file_ids:
+            file_id = int(file_id)
+            if file_id in file_id_to_lines:
+                possible_lines.extend([line for line in file_id_to_lines[int(file_id)]])
+        # load translation
+        en_line_to_zh_line_of_category = get_en_line_to_zh_line(possible_lines, translated_data)
+        # merge translation
+        en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
+
     print('%d(%d) lines translated' % (translated_count_dry, len(en_line_to_zh_line)))
+    return en_line_to_zh_line
 
-    # 处理剩下的行
-    # 不同 file_id,unknown,index 对应的文本有可能相同，这种情况下，只要翻译了一个地方，其他地方就可以使用已有的翻译表
+
+def expand_translated_lines_converter(en_line_to_zh_line, en_lines, jp_lines):
+    """处理之前剩下的行
+    不同 file_id,unknown,index 对应的文本有可能相同，这种情况下，只要翻译了一个地方，其他地方就可以使用已有的翻译表
+    必须英文、日文原文都一致才可以
+
+    Args:
+        en_line_to_zh_line (dict[str: str]): key 为原文的行， value 为译文的行
+        en_lines (list[str]): 英文原文
+        jp_lines (list[str]): 日文原文
+
+    Returns:
+        en_line_to_zh_line (dict[str: str]): key 为原文的行， value 为译文的行
+    """
+
     other_translated_count = 0
-    en_text_to_zh_text = {key.split(',', 4)[4]: value.split(',', 4)[4]
-                          for key, value in sorted(en_line_to_zh_line.items())}
 
-    # 所有的原文行，每行的格式为 "ID","Unknown","Index","Offset","Text"
-    en_lines = [line for lines_of_file_id in sorted(file_id_to_lines.values()) for line in lines_of_file_id]
-    # 排除已经翻译过的
+    en_line_to_jp_text = get_en_line_to_jp_text(en_lines, jp_lines)
+    enjp_text_to_zh_text = {}
+    for en_line, zh_line in sorted(en_line_to_zh_line.items()):
+        _, _, _, _, en_text = en_line.strip().split(',', 4)
+        _, _, _, _, zh_text = zh_line.strip().split(',', 4)
+        if en_line in en_line_to_jp_text:
+            jp_text = en_line_to_jp_text[en_line]
+            enjp_text_to_zh_text[en_text + ',' + jp_text] = zh_text
+
+    # 排除英文原文中已经翻译过的
     en_lines = [line for line in en_lines if line not in en_line_to_zh_line.keys()]
-    # 排除 jp.lang.csv 中没有的
-    en_lines = [line for line in en_lines if ','.join(line.split(',', 4)[:3]) in full_ids_jp]
+    # 日文原文
+    fileid_unknown_index_to_jp_text = get_fileid_unknown_index_to_text(jp_lines)
 
     for line in en_lines:
-        file_id, unknown, index, offset, en_text = line.split(',', 4)
-        if en_text in en_text_to_zh_text:
-            zh_line = '%s,%s,%s,%s,%s' % (file_id, unknown, index, offset, en_text_to_zh_text[en_text])
-            en_line_to_zh_line[line] = zh_line
-            other_translated_count += 1
+        file_id, unknown, index, offset, en_text = line.strip().split(',', 4)
+        key = ','.join((file_id, unknown, index))
+        # 在日文原文里要存在
+        if key in fileid_unknown_index_to_jp_text:
+            enjp_text = en_text + ',' + fileid_unknown_index_to_jp_text[key]
+            # 并且这一行英文、日文原文都与已翻译的某一行的原文相等
+            if enjp_text in enjp_text_to_zh_text:
+                # 那么，直接使用翻译
+                zh_line = '%s,%s,%s,%s,%s\n' % (file_id, unknown, index, offset, enjp_text_to_zh_text[enjp_text])
+                en_line_to_zh_line[line] = zh_line
+                other_translated_count += 1
 
     print('%d more lines translated' % other_translated_count)
     print('%d lines left' % (len(en_lines) - other_translated_count))
 
     return en_line_to_zh_line
+
+
+def get_fileid_unknown_index_to_text(lines):
+    """以 "file_id","unknown","index" 为 key, 以 text 为 value"""
+    fileid_unknown_index_to_text = {}
+    for line in lines:
+        file_id, unknown, index, offset, text = line.strip().split(',', 4)
+        fileid_unknown_index_to_text[','.join((file_id, unknown, index))] = text
+    return fileid_unknown_index_to_text
+
+
+def get_en_line_to_jp_text(en_lines, jp_lines):
+    """从英文行获取日文文本
+
+    Args:
+        en_lines (list[str]): 英文原文
+        jp_lines (list[str]): 日文原文
+
+    Returns:
+        en_line_to_jp_text: (dict[str: str]): 从英文行获取日文文本
+    """
+    jp_key_to_text = {}
+    # 日文对照表
+    for line in jp_lines:
+        file_id, unknown, index, offset, text = line.strip().split(',', 4)
+        # 日文的 offset 可能与英文不同，所以 key 忽略 offset
+        jp_key_to_text[','.join((file_id, unknown, index))] = text
+
+    en_line_to_jp_text = {}
+    for line in en_lines:
+        file_id, unknown, index, offset, text = line.strip().split(',', 4)
+        key = ','.join((file_id, unknown, index))
+        if key in jp_key_to_text:
+            en_line_to_jp_text[line] = jp_key_to_text[key]
+    return en_line_to_jp_text
 
 
 def main():
@@ -196,7 +252,8 @@ def main():
     category_to_translated = load_translation(translation_path)
 
     # get result
-    en_line_to_zh_line = get_translated_lines_converter(file_id_to_lines, category_to_translated, full_ids_jp)
+    en_line_to_zh_line = get_translated_lines_converter(file_id_to_lines, category_to_translated)
+    en_line_to_zh_line = expand_translated_lines_converter(en_line_to_zh_line, lines, lines_jp)
     translated_lines = []
     for en_line in lines:
         # 先检查是否已翻译
