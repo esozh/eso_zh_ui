@@ -123,6 +123,8 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated):
         # 根据 category 决定处理方法
         if category in file_id_of_list.keys():
             possible_file_ids = file_id_of_list[category]
+        elif category in file_id_of_array.keys():
+            possible_file_ids = file_id_of_array[category]
         elif category in file_id_of_pair.keys():
             possible_file_ids = file_id_of_pair[category]
         translated_file_ids.extend(possible_file_ids)
