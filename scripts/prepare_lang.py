@@ -121,19 +121,15 @@ def prepare_pair_lang(category, pair_file_id, translation_path):
     return load_lang_name_and_desc(category, name_file_id, desc_file_id, translation_path)
 
 
-def main():
-    if len(sys.argv) != 2:
-        usage()
-        sys.exit(2)
+def load_category(translation_path, category):
+    """读取一类，存到一个 xlsx 文件中
 
-    cd = sys.path[0]
-    translation_path = os.path.join(cd, '../translation/lang')
+    Args:
+        translation_path (str): 翻译文件路径
+        category (str): 分类名字
+    """
 
     # 调用 prepare_xxx_lang, prepare_xxx_lang 中再调用 load_lang_xxx, save_lang_xxx
-
-    category = sys.argv[1]
-
-    # load
     if category in file_id_of_pair.keys():
         rows = prepare_pair_lang(category, file_id_of_pair[category], translation_path)
     elif category in file_id_of_list.keys():
@@ -148,6 +144,26 @@ def main():
     dest_filename = 'en.%ss.lang.xlsx' % category
     save_xlsx(os.path.join(translation_path, dest_filename), rows)
     print('save to %s' % dest_filename)
+
+
+def main():
+    if len(sys.argv) != 2:
+        usage()
+        sys.exit(2)
+
+    cd = sys.path[0]
+    translation_path = os.path.join(cd, '../translation/lang')
+    category = sys.argv[1]
+
+    if category == '--all':
+        for each_category in file_id_of_pair:
+            load_category(translation_path, each_category)
+        for each_category in file_id_of_list:
+            load_category(translation_path, each_category)
+        for each_category in file_id_of_array:
+            load_category(translation_path, each_category)
+    else:
+        load_category(translation_path, category)
 
 
 if __name__ == '__main__':
