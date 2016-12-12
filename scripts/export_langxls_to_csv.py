@@ -3,7 +3,7 @@
 # File          : export_langxls_to_csv.py
 # Author        : bssthu
 # Project       : eso_zh_ui
-# Description   : 从 lua 提取原文，从 xls 提取汉化，写入 zh.lang.csv 中
+# Description   : 从 csv 提取原文，从 xls 提取汉化，写入 zh.lang.csv 中
 # 
 
 
