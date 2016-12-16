@@ -96,7 +96,39 @@ def sort_texts_by_fileid_index_unknown(texts):
     return sorted_texts
 
 
+def almost_equals(str1, str2):
+    """两个字符串的英文字符和数字都相等
+
+    Args:
+        str1 (str): 待比较字符串1
+        str2 (str): 待比较字符串2
+
+    Returns:
+        eq (bool): 是否相等
+    """
+    charset = set('abcdefghijklmnopqrstuvwxyz0123456789')
+    str1_filtered = filter_string(str1.lower(), charset)
+    str2_filtered = filter_string(str2.lower(), charset)
+    return str1_filtered == str2_filtered
+
+
+def filter_string(src, charset):
+    """过滤字符串，仅保留所需字符
+
+    Args:
+        src (str): 待过滤字符串
+        charset (set): 允许出现的字符
+
+    Returns:
+        left_str (str): 过滤后的字符串
+    """
+    if src is None:
+        return src
+    return ''.join((ch for ch in src if ch in charset))
+
+
 def merge_dict(dict1, dict2):
+    """合并两个 dict, 生成新 dict"""
     dictx = dict1.copy()
     dictx.update(dict2)
     return dictx
