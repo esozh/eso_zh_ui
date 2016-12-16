@@ -16,6 +16,7 @@ import sys
 from utils import lang_def
 from utils.langxls_loader import load_from_langxls
 from utils.xlsutils import load_xls, save_xlsx
+from utils.utils import almost_equals
 
 
 def usage():
@@ -77,10 +78,10 @@ def merge_translation_data(category, dest_data, src_data):
 
     if category in lang_def.file_id_of_array or category in lang_def.file_id_of_list:
         return merge_translation_by_col(dest_data, src_data, id_col=1,
-                                        origin_col_ids=[2, 3], translation_col_ids=[4, 5, 6, 7, 8])
+                                        origin_col_ids=[3, ], translation_col_ids=[4, 5, 6, 7, 8])
     elif category in lang_def.file_id_of_pair:
         return merge_translation_by_col(dest_data, src_data, id_col=1,
-                                        origin_col_ids=[2, 3, 5, 6], translation_col_ids=[4, 7, 8, 9, 10, 11])
+                                        origin_col_ids=[3, 6], translation_col_ids=[4, 7, 8, 9, 10, 11])
     else:
         raise RuntimeError('unknown category.')
 
@@ -141,7 +142,7 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
             src_row_translation = tuple(src_row[i] for i in translation_col_ids)
 
             # 检查原文是否相等
-            if dest_row_origin != src_row_origin:
+            if not text_tuple_equals(dest_row_origin, src_row_origin):
                 conflict_data.append(dest_row)
             # 如果原文相等，并且 src 的译文非空
             elif src_row_translation != empty_row_translation:
@@ -164,6 +165,30 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
     print('copy %d rows to dest' % merged_count)
     print('%d unique rows in dest' % new_count)
     return merged_data, conflict_data
+
+
+def text_tuple_equals(tuple1, tuple2):
+    """比较两个包含原文的 tuple 是否基本相等
+    只比较字母和数字部分
+
+    Args:
+        tuple1 (tuple[str]): 原文1
+        tuple2 (tuple[str]): 原文2
+
+    Returns:
+        equals (bool): 是否相等
+    """
+    if tuple1 is None and tuple2 is None:
+        return True
+    if tuple1 is None or tuple2 is None or len(tuple1) != len(tuple2):
+        return False
+
+    for i in range(len(tuple1)):
+        str1 = tuple1[i]
+        str2 = tuple2[i]
+        if not almost_equals(str1, str2):
+            return False
+    return True
 
 
 def format_file_path(filename, default_path):

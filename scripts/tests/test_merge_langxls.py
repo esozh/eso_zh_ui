@@ -20,7 +20,8 @@ class TestMergeLangXls(unittest.TestCase):
             ['3', 'id_4', 'o4', 't4'],
             ['4', 'id_5', 'o5', 't5'],
             ['5', 'id_6', 'o6', 't6'],
-            ['6', 'id_7', 'o7', 't7']   # 只在 dest 中
+            ['6', 'id_7', 'o7', 't7'],  # 只在 dest 中
+            ['7', 'id_9', 'o9', 't9']
         ]
         src_data = [
             ['0', 'id_1', 'o1', ''],    # 都未翻译
@@ -29,7 +30,8 @@ class TestMergeLangXls(unittest.TestCase):
             ['4', 'id_4', 'o?', 't4'],  # 原文冲突
             ['4', 'id_5', 'o5', 't?'],  # 译文冲突
             ['4', 'id_6', 'o6', 't6'],  # 相同译文
-            ['4', 'id_8', 'o8', 't8']   # 只在 src 中
+            ['4', 'id_8', 'o8', 't8'],  # 只在 src 中
+            ['7', 'id_9', 'O-9', 't9']  # 原文有变化但字母数字没变
         ]
         exp_merged = [
             ['0', 'id_1', 'o1', ''],
@@ -38,7 +40,8 @@ class TestMergeLangXls(unittest.TestCase):
             ['3', 'id_4', 'o4', 't4'],
             ['4', 'id_5', 'o5', 't5'],
             ['5', 'id_6', 'o6', 't6'],
-            ['6', 'id_7', 'o7', 't7']
+            ['6', 'id_7', 'o7', 't7'],
+            ['7', 'id_9', 'o9', 't9']
         ]
         exp_conflict = [
             ['3', 'id_4', 'o4', 't4'],
