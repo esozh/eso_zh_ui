@@ -114,7 +114,7 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
         merged_data (list[list[str]]): 合并后的数据，按 id 排序
         conflict_data (list[list[str]]): 合并时冲突的行（原文不一致，或都有译文）
     """
-    empty_row_translation = tuple('' for i in translation_col_ids)
+    empty_row_translation = ('', ) * len(translation_col_ids)
 
     dest_by_id = {row[id_col]: row for row in dest_data}
     src_by_id = {row[id_col]: row for row in src_data}

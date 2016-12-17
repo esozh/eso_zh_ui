@@ -2,6 +2,7 @@
 !.gitignore
 !*.py
 !utils/
+!utils/data/
 !objs/
 !tests/
 !*.md
