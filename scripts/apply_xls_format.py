@@ -9,6 +9,8 @@
 
 import os
 import sys
+import multiprocessing
+from multiprocessing import Pool
 
 from utils.xlsutils import load_xls, save_xlsx_template
 
@@ -22,6 +24,7 @@ def apply_format(file_path):
     data = data[1:]
     if len(header) in (9, 12):
         save_xlsx_template(file_path, data, header=header)
+    print('save %s' % file_path)
 
 
 def format_file_path(filename, default_path):
@@ -39,9 +42,9 @@ def main():
     cd = os.path.dirname(os.path.abspath(__file__))
     translation_path = os.path.join(cd, '../translation/lang')
 
-    for filename in sys.argv[1:]:
-        file_path = format_file_path(filename, translation_path)
-        apply_format(file_path)
+    file_paths = [format_file_path(filename, translation_path) for filename in sys.argv[1:]]
+    with Pool(processes=multiprocessing.cpu_count()) as pool:
+        pool.map(apply_format, file_paths)
 
 
 if __name__ == '__main__':
