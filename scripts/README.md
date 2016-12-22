@@ -90,6 +90,9 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 #### merge_langxls.py
 按要求合并两个 xls 文件。
 
+#### export_rawxls_to_csv.py
+`prepare_lang` 的逆，合并所有导出的 xls 文件，得到去重的 `.lang.csv`。
+
 #### lang_def.py
 `.lang.csv` 文件中 id 项的说明。
 
@@ -99,6 +102,9 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 # ./check_xls.py file_name column_id [src_column_id]
 python check_xls.py ui.xlsx 3
 ```
+
+#### apply_xls_format.py
+给指定的 xls 文件套用模板中的格式。
 
 #### utils.py
 

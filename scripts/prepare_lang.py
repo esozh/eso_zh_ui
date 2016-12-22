@@ -14,7 +14,7 @@ from objs.lang_mgr import LangMgr
 from objs.lang_mgr_array import LangMgrArray
 from objs.lang_mgr_pair import LangMgrPair
 from utils.lang_def import *
-from utils.xlsutils import create_xlsx
+from utils.xlsutils import save_xlsx
 
 
 def usage():
@@ -142,7 +142,7 @@ def load_category(translation_path, category):
 
     # save
     dest_filename = 'en.%ss.lang.xlsx' % category
-    create_xlsx(os.path.join(translation_path, dest_filename), rows[1:], header=rows[0])
+    save_xlsx(os.path.join(translation_path, dest_filename), rows[1:], header=rows[0])
     print('save to %s' % dest_filename)
 
 

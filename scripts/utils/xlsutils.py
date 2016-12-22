@@ -34,7 +34,7 @@ def load_xls(file_path):
     return data
 
 
-def save_xlsx(file_path, data, header=None, col_id=None):
+def save_xlsx_template(file_path, data, header=None, col_id=None):
     """将输入保存到 Excel 文件中。使用文件模板
 
     全部保存为文本。
@@ -46,7 +46,7 @@ def save_xlsx(file_path, data, header=None, col_id=None):
         col_id (list[int]): data 中列号到 xlsx 中列号的映射
     """
     if len(data) <= 0:
-        return create_xlsx(file_path, data, header, col_id)
+        return save_xlsx(file_path, data, header, col_id)
 
     cd = os.path.dirname(os.path.abspath(__file__))
     num_col = len(data[0])
@@ -55,7 +55,7 @@ def save_xlsx(file_path, data, header=None, col_id=None):
     elif num_col == 12:
         shutil.copy(os.path.join(cd, 'data/prototype_pair.xlsx'), file_path)
     else:
-        return create_xlsx(file_path, data, header, col_id)
+        return save_xlsx(file_path, data, header, col_id)
 
     if col_id is None:
         col_id = list(range(0, num_col))
@@ -87,7 +87,7 @@ def save_xlsx(file_path, data, header=None, col_id=None):
     workbook.save(file_path)
 
 
-def create_xlsx(file_path, data, header=None, col_id=None):
+def save_xlsx(file_path, data, header=None, col_id=None):
     """将输入保存到新建的 Excel 文件中。
 
     全部保存为文本。
