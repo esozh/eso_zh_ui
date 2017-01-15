@@ -47,8 +47,6 @@ function EsoZH:OnInit(eventCode, addOnName)
     end
 
     SetSCTKeyboardFont("EsoZH/fonts/univers67.otf|29|soft-shadow-thick")
-    SetNameplateKeyboardFont("EsoZH/fonts/univers67.otf", 4)
-    SetNameplateGamepadFont("EsoZH/fonts/ftn87.otf", 4)
 
     if LibStub then
         local LMP = LibStub("LibMediaProvider-1.0", true)
@@ -90,4 +88,10 @@ function EsoZH:OnInit(eventCode, addOnName)
     end
 end
 
+function EsoZH.LoadScreen(event)
+    SetNameplateKeyboardFont("EsoZH/fonts/univers67.otf", 4)
+    SetNameplateGamepadFont("EsoZH/fonts/ftn87.otf", 4)
+end
+
 EVENT_MANAGER:RegisterForEvent("EsoZH_OnAddOnLoaded", EVENT_ADD_ON_LOADED, function(_event, _name) EsoZH:OnInit(_event, _name) end)
+EVENT_MANAGER:RegisterForEvent("EsoZH_LoadScreen", EVENT_PLAYER_ACTIVATED, EsoZH.LoadScreen)
