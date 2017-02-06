@@ -7,6 +7,7 @@
 # 
 
 
+import io
 import os
 import sys
 
@@ -167,4 +168,5 @@ def main():
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
     main()
