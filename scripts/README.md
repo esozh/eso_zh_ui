@@ -90,6 +90,15 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 #### merge_langxls.py
 按要求合并两个 xls 文件。
 
+#### merge_langxls_dir.py
+按要求合并两个目录中的 xls 文件。
+对目录1中的每个文件，都去目录2里找它的同类文件，向目录1中的文件导数据。
+
+#### merge_diff_files.py
+合并目录中的表示冲突项的 xls 文件。
+合并的同时去重、去空（未翻译）、排序，
+得到校对用的翻译冲突列表。
+
 #### export_rawxls_to_csv.py
 `prepare_lang` 的逆，合并所有导出的 xls 文件，得到去重的 `.lang.csv`。
 
