@@ -82,3 +82,38 @@ file_id_of_array = {
     'quest-obj': ('7949764', '234743124', '144228340'),     # 目标，交任务的对话动作，交任务的动作
     'quest-talk-short': ('52420949', '66848564', '20958740', '205344756'),   # 任务名，NPC开场白，玩家回答，提示。任务名不译
 }
+
+# category 对应的中文名
+category_names = {
+    "achievement": "成就",
+    "book": "书信汉化",
+    "chat": "聊天",
+    "color": "颜色",
+    "country-or-region": "国家地区",
+    "crown": "皇冠商店",
+    "greeting": "NPC打招呼",
+    "interact-action": "交互动作",
+    "interact-win": "按E的非任务对话",
+    "item": "物品",
+    "item-type": "物品修饰",
+    "journey": "任务日志",
+    "loadscreen": "载入画面",
+    "location-and-object": "可交互物和地名",
+    "location-object": "地点及目标",
+    "merchant-talk": "商人等对话",
+    "more-desc": "其他描述",
+    "more-ui": "其他界面相关",
+    "mount": "坐骑宠物服装等",
+    "npc-name": "人名怪名",
+    "quest-end": "任务结束",
+    "questitem": "任务物品",
+    "quest-obj": "任务目标",
+    "quest-talk-long": "任务长对话",
+    "quest-talk-short": "任务短对话",
+    "set": "套装名",
+    "skill": "技能",
+    "three-alliance": "三阵营描述",
+    "tip": "提示帮助",
+    "title": "人物称谓",
+    "trap": "陷阱",
+}

@@ -7,6 +7,9 @@
 # 
 
 
+import os
+
+
 def load_lang_csv(file_path, skip_header=True):
     """读取 lang.csv 文件
 
@@ -125,6 +128,24 @@ def filter_string(src, charset):
     if src is None:
         return src
     return ''.join((ch for ch in src if ch in charset))
+
+
+def walk_xlsx_files(dir):
+    """遍历目录下的所有 xlsx 文件，返回其绝对路径
+
+    Args:
+        dir (str): 要遍历的路径
+
+    Returns:
+        files (list[str]): 所有 xlsx 文件的绝对路径
+    """
+    files = []
+    for dir_path, dir_names, file_names in os.walk(dir):
+        for file_name in file_names:
+            if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
+                file_abs_path = os.path.join(dir_path, file_name)
+                files.append(file_abs_path)
+    return files
 
 
 def merge_dict(dict1, dict2):

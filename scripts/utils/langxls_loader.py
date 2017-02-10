@@ -7,6 +7,7 @@
 # 
 
 
+import os
 from utils.xlsutils import load_xls, load_xls_cell
 from utils.check_xls import check_string_with_origin
 from utils.lang_def import *
@@ -112,8 +113,12 @@ def load_from_langxls(file_path):
 def get_category(file_path):
     """判断 xlsx 文件是哪种"""
     first_id = load_xls_cell(file_path, 1, 1)
-    id_split = first_id.split('-')
+    return get_category_of_id(first_id)
 
+
+def get_category_of_id(_id):
+    """返回 id 中的 category 部分"""
+    id_split = _id.split('-')
     if len(id_split) > 3 and id_split[-1].isdigit() and id_split[-2].isdigit() and id_split[-3].isdigit():
         # list of text
         return '-'.join(id_split[:-3])
@@ -121,3 +126,27 @@ def get_category(file_path):
         # name_desc
         return '-'.join(id_split[:-1])
     return None
+
+
+def get_filename_and_category(target_path):
+    """获取目录中每个文件名及其对应的种类
+
+    Args:
+        target_path (str): 要遍历的路径
+
+    Returns:
+        filename_to_category (dict[str: str]): 文件名: category
+    """
+    filename_to_category = {}
+    for dir_path, dir_names, file_names in os.walk(target_path):
+        for file_name in file_names:
+            if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
+                file_abs_path = os.path.join(dir_path, file_name)
+                # check category
+                category = get_category(file_abs_path)
+                if category is not None:
+                    filename_to_category[file_abs_path] = category
+                    print('%s: %s' % (file_name, category))
+                else:
+                    print('failed to get category of %s' % file_abs_path)
+    return filename_to_category
