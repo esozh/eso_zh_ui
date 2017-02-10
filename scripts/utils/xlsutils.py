@@ -34,6 +34,17 @@ def load_xls(file_path):
     return data
 
 
+def load_xls_cell(file_path, row_id, col_id):
+    """读取 Excel 文件某行某列的单元格的值"""
+    with xlrd.open_workbook(file_path) as workbook:
+        sheet = workbook.sheet_by_index(0)
+        nrows = sheet.nrows
+        ncols = sheet.ncols
+        if 0 <= row_id < nrows and 0 <= col_id < ncols:
+            return str(sheet.cell(row_id, col_id).value)
+    return None
+
+
 def save_xlsx_template(file_path, data, header=None, col_id=None):
     """将输入保存到 Excel 文件中。使用文件模板
 

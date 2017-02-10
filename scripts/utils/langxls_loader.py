@@ -7,7 +7,7 @@
 # 
 
 
-from utils.xlsutils import load_xls
+from utils.xlsutils import load_xls, load_xls_cell
 from utils.check_xls import check_string_with_origin
 from utils.lang_def import *
 
@@ -107,3 +107,17 @@ def load_from_langxls(file_path):
     else:
         print('load %s failed.' % file_path)
         return '', []
+
+
+def get_category(file_path):
+    """判断 xlsx 文件是哪种"""
+    first_id = load_xls_cell(file_path, 1, 1)
+    id_split = first_id.split('-')
+
+    if len(id_split) > 3 and id_split[-1].isdigit() and id_split[-2].isdigit() and id_split[-3].isdigit():
+        # list of text
+        return '-'.join(id_split[:-3])
+    elif len(id_split) > 1 and id_split[-1].isdigit():
+        # name_desc
+        return id_split[0]
+    return None
