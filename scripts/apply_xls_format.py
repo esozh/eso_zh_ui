@@ -27,11 +27,26 @@ def apply_format(file_path):
     print('save %s' % file_path)
 
 
-def format_file_path(filename, default_path):
-    """如果只有名字，就到 default_path 找 filename"""
-    if '\\' not in filename and '/' not in filename:
-        filename = os.path.join(default_path, filename)
-    return filename
+def format_file_path(filename_or_path, default_path):
+    """如果只有名字，就到 default_path 找 filename
+    如果是路径，就遍历，
+    返回文件名 list
+    """
+    if '\\' not in filename_or_path and '/' not in filename_or_path:
+        filename_or_path = os.path.join(default_path, filename_or_path)
+
+    if os.path.isdir(filename_or_path):
+        # 遍历路径中的 xlsx 文件
+        formatted_filename = []
+        for dir_path, dir_names, file_names in os.walk(filename_or_path):
+            for file_name in file_names:
+                if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
+                    file_abs_path = os.path.join(dir_path, file_name)
+                    formatted_filename.append(file_abs_path)
+        return formatted_filename
+    else:
+        # 是文件，则直接返回
+        return [filename_or_path, ]
 
 
 def main():
@@ -42,7 +57,9 @@ def main():
     cd = os.path.dirname(os.path.abspath(__file__))
     translation_path = os.path.join(cd, '../translation/lang')
 
-    file_paths = [format_file_path(filename, translation_path) for filename in sys.argv[1:]]
+    file_paths = []
+    for filename in sys.argv[1:]:
+        file_paths.extend(format_file_path(filename, translation_path))
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         pool.map(apply_format, file_paths)
 
