@@ -10,10 +10,7 @@
 import os
 import sys
 
-from utils import lang_def
 from utils.langxls_loader import get_category
-from utils.xlsutils import load_xls, save_xlsx
-from utils.utils import almost_equals
 from merge_langxls import merge_translation_file
 
 

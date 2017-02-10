@@ -12,9 +12,10 @@
 
 import os
 import sys
+import io
 
 from utils import lang_def
-from utils.langxls_loader import load_from_langxls
+from utils.langxls_loader import get_category
 from utils.xlsutils import load_xls, save_xlsx
 from utils.utils import almost_equals
 
@@ -35,8 +36,8 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
     """
 
     # check category
-    category, _ = load_from_langxls(dest_xls_path)
-    category_src, _ = load_from_langxls(src_xls_path)
+    category = get_category(dest_xls_path)
+    category_src = get_category(src_xls_path)
     if category != category_src:
         raise RuntimeError('category not equal.')
 
@@ -51,8 +52,8 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
     merged_data, conflict_data = merge_translation_data(category, dest_data, src_data)
 
     # sort
-    merged_data = sorted(merged_data, key=lambda row: '%06d' % int(row[0]))
-    conflict_data = sorted(conflict_data, key=lambda row: '%06d' % int(row[0]))
+    merged_data = sorted(merged_data, key=lambda row: '%06d' % int(float(row[0])))
+    conflict_data = sorted(conflict_data, key=lambda row: '%06d' % int(float(row[0])))
 
     # save
     print('%d conflicts.' % len(conflict_data))
@@ -217,4 +218,5 @@ def main():
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
     main()

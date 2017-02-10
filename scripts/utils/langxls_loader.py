@@ -119,5 +119,5 @@ def get_category(file_path):
         return '-'.join(id_split[:-3])
     elif len(id_split) > 1 and id_split[-1].isdigit():
         # name_desc
-        return id_split[0]
+        return '-'.join(id_split[:-1])
     return None
