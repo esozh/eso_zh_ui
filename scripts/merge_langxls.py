@@ -91,6 +91,7 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
     """合并数据
 
     合并时，以 dest 文件为准，根据 id，逐行从 src 文件加载译文。
+    修改的是 dest 文件，src 文件不变。
     1. 如果 dest 没有译文，并且 dest 和 src 的原文一致，就把 src 的译文写入 dest；
     2. 否则，dest 的这一行保持不变。
 
@@ -144,14 +145,14 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
 
             # 检查原文是否相等
             if not text_tuple_equals(dest_row_origin, src_row_origin):
-                conflict_data.append(dest_row)
+                conflict_data.append(src_row)
             # 如果原文相等，并且 src 的译文非空
             elif src_row_translation != empty_row_translation:
                 # 检查 dest 的译文是否为空
                 if dest_row_translation != empty_row_translation:
                     # 译文都非空且不等，判定为冲突
                     if dest_row_translation != src_row_translation:
-                        conflict_data.append(dest_row)
+                        conflict_data.append(src_row)
                 else:
                     # 空，则拷贝译文
                     merged_count += 1
@@ -159,7 +160,7 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
                         dest_row[i] = src_row[i]
         else:
             # src 没有此 id，判为冲突（新增）
-            conflict_data.append(dest_row)
+            conflict_data.append(src_row)
             new_count += 1
         merged_data.append(dest_row)
 
