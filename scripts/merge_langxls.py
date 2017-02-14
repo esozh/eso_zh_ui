@@ -52,8 +52,8 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
     merged_data, conflict_data = merge_translation_data(category, dest_data, src_data)
 
     # sort
-    merged_data = sorted(merged_data, key=lambda row: '%06d' % int(float(row[0])))
-    conflict_data = sorted(conflict_data, key=lambda row: '%06d' % int(float(row[0])))
+    merged_data = sorted(merged_data, key=lambda row: row[1])
+    conflict_data = sorted(conflict_data, key=lambda row: row[1])
 
     # save
     print('%d conflicts.' % len(conflict_data))
@@ -104,6 +104,9 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
     对于在 dest 中有，但在 src 中没有此 id 的行（新增），
     1. 如果在 src 中有与之原文相同的行，就把这行当作 src 中 id 相同的行，然后按前面的方式处理
     2. 否则，认为冲突（新增）
+
+    冲突文件包括：
+    1. dest 与 src 不一致时，src 中的这一行
 
     Args:
         dest_data (list[list[str]]): 目标文件中的数据
@@ -160,7 +163,7 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
                         dest_row[i] = src_row[i]
         else:
             # src 没有此 id，判为冲突（新增）
-            conflict_data.append(src_row)
+            conflict_data.append(dest_row)
             new_count += 1
         merged_data.append(dest_row)
 
