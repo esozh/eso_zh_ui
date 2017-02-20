@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : rename_lang_files.py
+# File          : rename_lang_xls.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : 根据 lang_def 的定义重命名文件

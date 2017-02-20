@@ -97,6 +97,7 @@ category_names = {
     "item": "物品",
     "item-type": "物品修饰",
     "journey": "任务日志",
+    "letter": "信件",
     "loadscreen": "载入画面",
     "location-and-object": "可交互物和地名",
     "location-object": "地点及目标",
@@ -116,4 +117,5 @@ category_names = {
     "tip": "提示帮助",
     "title": "人物称谓",
     "trap": "陷阱",
+    "treasure-map": "藏宝图",
 }

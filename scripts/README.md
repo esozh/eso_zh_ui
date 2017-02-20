@@ -112,6 +112,9 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 python check_xls.py ui.xlsx 3
 ```
 
+#### rename_lang_xls.py
+把 xlsx 文件命名为中文。
+
 #### apply_xls_format.py
 给指定的 xls 文件套用模板中的格式。
 
