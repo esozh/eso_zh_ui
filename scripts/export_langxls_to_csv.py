@@ -88,7 +88,8 @@ def get_en_line_to_zh_line(lines, translated_data):
         if key in en_key_to_line:
             en_line = en_key_to_line[key]
             file_id, unknown, index, offset, en_text = en_line.split(',', 4)
-            zh_line = '%s,%s,"%s"\n' % (key, offset, zh_text)
+            zh_text = zh_text.replace('"', '""').replace('""""', '""').replace('\n', r'\n')
+            zh_line = '%s,%s,"%s"\n' % (key, offset, zh_text.replace('"', '""').replace('""""', '""'))
             en_line_to_zh_line[en_line] = zh_line
 
     return en_line_to_zh_line
