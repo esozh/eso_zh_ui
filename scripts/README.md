@@ -118,6 +118,9 @@ python check_xls.py ui.xlsx 3
 #### apply_xls_format.py
 给指定的 xls 文件套用模板中的格式。
 
+#### join_langxls.py
+直接合并多个 xls 文件，pair 和 list 分别合并。
+
 #### utils.py
 
 #### xlsutils.py
