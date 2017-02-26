@@ -11,6 +11,8 @@ import getopt
 import os
 import sys
 
+from utils.lang_def import file_id_of_pair, file_id_of_list, file_id_of_array
+
 
 def main():
     lang = 'en'
@@ -50,12 +52,21 @@ def main():
         with open(target_file, 'wt', encoding='utf-8') as fp:
             fp.writelines(lines_with_same_id)
 
+    # known id
+    known_id = set()
+    for values in (file_id_of_pair.values(), file_id_of_list.values(), file_id_of_array.values()):
+        for id_tuple in values:
+            for _id in id_tuple:
+                known_id.add(_id)
+
     # file list
     target_file = os.path.join(dest_path, '%s.lang.split.txt' % lang)
     with open(target_file, 'wt', encoding='utf-8') as fp:
         id_list = sorted([int(_id) for _id in lines_grouped_by_id.keys()])
         for _id in id_list:
             fp.write('%d\n' % _id)
+            if str(_id) not in known_id:
+                print('warning: unknown id %d.' % _id)
 
 
 if __name__ == '__main__':
