@@ -26,20 +26,22 @@ def usage():
     print('by default keep dest if conflict')
 
 
-def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
+def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file, check_category=True):
     """合并两个文件中的数据，写回 dest 文件
 
     Args:
         dest_xls_path (str): 合并目标文件路径，当发生冲突时以此文件为准
         src_xls_path (str): 合并源文件路径
         conflict_xls_file (str | None): 冲突数据存放文件
+        check_category (bool): 检查类型是否相等
     """
 
     # check category
-    category = get_category(dest_xls_path)
-    category_src = get_category(src_xls_path)
-    if category != category_src:
-        raise RuntimeError('category not equal.')
+    if check_category:
+        category = get_category(dest_xls_path)
+        category_src = get_category(src_xls_path)
+        if category != category_src:
+            raise RuntimeError('category not equal.')
 
     # load
     print('load %s' % dest_xls_path)

@@ -48,7 +48,7 @@ def main():
                                                         os.path.splitext(os.path.basename(src_filename))[0])
                     conflict_filename = os.path.join(conflict_xls_path, conflict_filename)
                 print('%s X %s' % (dest_filename, src_filename))
-                merge_translation_file(dest_filename, src_filename, conflict_filename)
+                merge_translation_file(dest_filename, src_filename, conflict_filename, check_category=False)
 
 
 if __name__ == '__main__':
