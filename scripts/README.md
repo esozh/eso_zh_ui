@@ -121,6 +121,9 @@ python check_xls.py ui.xlsx 3
 #### join_langxls.py
 直接合并多个 xls 文件，pair 和 list 分别合并。
 
+#### show_lang_tag.py
+查询 en.lang.csv 中有多少种 `<< >>`
+
 #### utils.py
 
 #### xlsutils.py
