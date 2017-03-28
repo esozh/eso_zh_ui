@@ -9,6 +9,7 @@
 
 from objs.ui_line import UiLine
 from objs.ui_row import UiRow
+from utils.text_replacer import TextReplacer
 
 
 class UiMgr:
@@ -112,17 +113,22 @@ class UiMgr:
             rows[name] = row
         return rows
 
-    def get_txt_lines(self):
+    def get_txt_lines(self, replace=False):
         """转换成写入 .txt 的行
 
+        Args:
+            replace (bool): 把特殊标记按汉语习惯进行替换
         Returns:
             return (list[str]): 要写入的行的列表
         """
+        replacer = TextReplacer()
+
         lines = []
         for name, ui_line in sorted(self.ui_lines.items()):
             lines.append(ui_line.to_lua_line() + '\n')
             if ui_line.translation != '':
-                lines.append(ui_line.translation + '\n')
+                translation = replacer.replace(ui_line.translation) if replace else ui_line.translation
+                lines.append(translation + '\n')
         return lines
 
     def get_str_lines(self, mode='both'):

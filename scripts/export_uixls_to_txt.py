@@ -47,7 +47,7 @@ def main():
     ui_mgr.apply_translate_from_xls(data_from_xls)
 
     # save result
-    txt_lines = ui_mgr.get_txt_lines()
+    txt_lines = ui_mgr.get_txt_lines(replace=True)
     with open(translate_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(txt_lines)
         print('save translate file succeed.')

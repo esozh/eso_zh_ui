@@ -13,6 +13,7 @@ import sys
 from utils.lang_def import *
 from utils.utils import merge_dict
 from utils.langxls_loader import load_from_langxls
+from utils.text_replacer import TextReplacer
 
 
 def load_translation(translation_path):
@@ -81,6 +82,9 @@ def get_en_line_to_zh_line(lines, translated_data):
         key = ','.join((file_id, unknown, index))   # 格式为 "file_id","unknown","index"
         en_key_to_line[key] = line
 
+    # 批量替换文本
+    replacer = TextReplacer()
+
     # {"en_line": "zh_line"}
     en_line_to_zh_line = {}
     for file_id, unknown, index, zh_text in translated_data:
@@ -88,7 +92,8 @@ def get_en_line_to_zh_line(lines, translated_data):
         if key in en_key_to_line:
             en_line = en_key_to_line[key]
             file_id, unknown, index, offset, en_text = en_line.split(',', 4)
-            zh_text = zh_text.replace('"', '""').replace('""""', '""').replace('\n', r'\n')
+            # 处理汉化过的文本里的特殊标记
+            zh_text = replacer.replace(zh_text)
             zh_line = '%s,%s,"%s"\n' % (key, offset, zh_text.replace('"', '""').replace('""""', '""'))
             en_line_to_zh_line[en_line] = zh_line
 

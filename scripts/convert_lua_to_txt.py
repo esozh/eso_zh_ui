@@ -43,7 +43,7 @@ def main():
             return
 
     with open(translate_file, 'wt', encoding='utf-8') as fp:
-        fp.writelines(ui_mgr.get_txt_lines())
+        fp.writelines(ui_mgr.get_txt_lines(replace=True))
         print('save translate file succeed.')
 
 
