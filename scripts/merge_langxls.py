@@ -15,7 +15,7 @@ import sys
 import io
 
 from utils import lang_def
-from utils.langxls_loader import get_category
+from utils.langxls_loader import get_category, get_category_of_id
 from utils.xlsutils import load_xls, save_xlsx
 from utils.utils import almost_equals
 
@@ -49,6 +49,8 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file, check
     header, dest_data = dest_data[0], dest_data[1:]
     print('load %s' % src_xls_path)
     src_data = load_xls(src_xls_path)[1:]
+
+    category = get_category_of_id(dest_data[0][1])
 
     # merge
     merged_data, conflict_data = merge_translation_data(category, dest_data, src_data)
