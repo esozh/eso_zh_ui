@@ -1,14 +1,18 @@
 ﻿local EsoZH = {}
 EsoZH.name = "EsoZH"
 EsoZH.Flags = { "en", "zh" }
+EsoZH.firstInit = true
 
+-- 改变游戏语言
 function EsoZH_Change(lang)
     zo_callLater(function()
         SetCVar("language.2", lang)
+        EsoZH.savedVars.lang = lang
         ReloadUI()
     end, 500)
 end
 
+-- 重新加载 UI
 function EsoZH:RefreshUI()
     local flagControl
     local count = 0
@@ -21,7 +25,9 @@ function EsoZH:RefreshUI()
             GetControl("EsoZH_FlagControl_"..flagCode.."Texture"):SetTexture(flagTexture)
             if EsoZH:GetLanguage() ~= flagCode then
                 flagControl:SetAlpha(0.3)
-                if flagControl:GetHandler("OnMouseDown") == nil then flagControl:SetHandler("OnMouseDown", function() EsoZH_Change(flagCode) end) end
+                if flagControl:GetHandler("OnMouseDown") == nil then
+                    flagControl:SetHandler("OnMouseDown", function() EsoZH_Change(flagCode) end)
+                end
             end
         end
         flagControl:ClearAnchors()
@@ -32,15 +38,20 @@ function EsoZH:RefreshUI()
     EsoZHUI:SetMouseEnabled(true)
 end
 
+-- 返回当前游戏语言
 function EsoZH:GetLanguage()
     local lang = GetCVar("language.2")
     
-    if(lang == "zh") then return lang end
+    if (lang == "zh") then return lang end
     return "en"
 end
 
+-- 插件初始化时调用
 function EsoZH:OnInit(eventCode, addOnName)
     if (addOnName):find("^ZO_") then return end
+
+    local defaultVars = { lang = "zh" }
+    EsoZH.savedVars = ZO_SavedVars:NewAccountWide("EsoZH_Variables", 1, nil, defaultVars)
 
     for _, flagCode in pairs(EsoZH.Flags) do
         ZO_CreateStringId("SI_BINDING_NAME_"..string.upper(flagCode), string.upper(flagCode))
@@ -88,9 +99,18 @@ function EsoZH:OnInit(eventCode, addOnName)
     end
 end
 
+-- 玩家激活时调用
 function EsoZH.LoadScreen(event)
     SetNameplateKeyboardFont("EsoZH/fonts/univers67.otf", 4)
     SetNameplateGamepadFont("EsoZH/fonts/ftn87.otf", 4)
+    
+    -- 检查当前语言、上次设置的语言是否是中文，如有必要就修改语言设置
+    if EsoZH.firstInit then
+        EsoZH.firstInit = false
+        if EsoZH:GetLanguage() ~= "zh" and EsoZH.savedVars.lang == "zh" then
+            EsoZH_Change("zh")
+        end
+    end
 end
 
 EVENT_MANAGER:RegisterForEvent("EsoZH_OnAddOnLoaded", EVENT_ADD_ON_LOADED, function(_event, _name) EsoZH:OnInit(_event, _name) end)
