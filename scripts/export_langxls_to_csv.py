@@ -166,13 +166,14 @@ def expand_translated_lines_converter(en_line_to_zh_line, en_lines, jp_lines):
     other_translated_count = 0
 
     en_line_to_jp_text = get_en_line_to_jp_text(en_lines, jp_lines)
-    enjp_text_to_zh_text = {}
+    enjp_text_to_zh_text = {}   # 这里不考虑大小写
     for en_line, zh_line in sorted(en_line_to_zh_line.items()):
         _, _, _, _, en_text = en_line.strip().split(',', 4)
         _, _, _, _, zh_text = zh_line.strip().split(',', 4)
         if en_line in en_line_to_jp_text:
             jp_text = en_line_to_jp_text[en_line]
-            enjp_text_to_zh_text[en_text + ',' + jp_text] = zh_text
+            # 处理其他行时不考虑大小写
+            enjp_text_to_zh_text[en_text.lower() + ',' + jp_text.lower()] = zh_text
 
     # 排除英文原文中已经翻译过的
     en_lines = [line for line in en_lines if line not in en_line_to_zh_line.keys()]
@@ -184,7 +185,7 @@ def expand_translated_lines_converter(en_line_to_zh_line, en_lines, jp_lines):
         key = ','.join((file_id, unknown, index))
         # 在日文原文里要存在
         if key in fileid_unknown_index_to_jp_text:
-            enjp_text = en_text + ',' + fileid_unknown_index_to_jp_text[key]
+            enjp_text = en_text.lower() + ',' + fileid_unknown_index_to_jp_text[key].lower()
             # 并且这一行英文、日文原文都与已翻译的某一行的原文相等
             if enjp_text in enjp_text_to_zh_text:
                 # 那么，直接使用翻译
