@@ -22,8 +22,10 @@ def apply_format(file_path):
         return
     header = data[0]
     data = data[1:]
-    if len(header) in (9, 12):
+    if len(header) in (8, 9, 12):
         save_xlsx_template(file_path, data, header=header)
+    else:
+        print('unknown xls %s.' % file_path)
     print('save %s' % file_path)
 
 

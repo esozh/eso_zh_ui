@@ -65,6 +65,8 @@ def save_xlsx_template(file_path, data, header=None, col_id=None):
         shutil.copy(os.path.join(cd, 'data/prototype_list.xlsx'), file_path)
     elif num_col == 12:
         shutil.copy(os.path.join(cd, 'data/prototype_pair.xlsx'), file_path)
+    elif num_col == 8:
+        shutil.copy(os.path.join(cd, 'data/prototype_ui.xlsx'), file_path)
     else:
         return save_xlsx(file_path, data, header, col_id)
 
