@@ -129,6 +129,23 @@ def load_from_rawxls(file_path):
         return '', []
 
 
+def get_dict_from_csv(csv):
+    """从 csv 的行转换到 "fileid","unknown","index" 为 key, "offset","text" 为 value 的 dict
+
+    Args:
+        csv (list[str]): 从 csv 中读到的行
+
+    Returns:
+        csv_dict (dict[str:str]):
+    """
+    csv_dict = {}
+    for line in csv:
+        if line.strip() != '':
+            file_id, unknown, index, offset_text = line.split(',', 3)
+            csv_dict[','.join((file_id, unknown, index))] = offset_text
+    return csv_dict
+
+
 def main():
     cd = sys.path[0]
     src_path = os.path.join(cd, '../translation/lang')
@@ -138,10 +155,32 @@ def main():
     csv_list = get_csv_from_xls(src_path)
 
     # save result
-    dest_lang_file = os.path.join(translation_path, 'en.lang.reduce.csv')
-    with open(dest_lang_file, 'wt', encoding='utf-8') as fp:
+    dest_csv_file = os.path.join(translation_path, 'en.lang.reduce.csv')
+    with open(dest_csv_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(csv_list)
     print('write to en.lang.reduce.csv')
+
+    # load zh
+    zh_src_path = os.path.join(cd, '../translation/lang/translated/zh.lang.csv')
+    if not os.path.isfile(zh_src_path):
+        return
+    with open(zh_src_path, 'rt', encoding='utf-8') as fp:
+        zh_csv_list = fp.readlines()
+
+    # convert
+    csv_dict = get_dict_from_csv(csv_list)
+    zh_csv_dict = get_dict_from_csv(zh_csv_list)
+
+    zh_csv_list_reduced = []
+    for k in sorted(csv_dict):
+        if k in zh_csv_dict:
+            zh_csv_list_reduced.append('%s,%s' % (k, zh_csv_dict[k]))
+
+    # save zh
+    zh_dest_csv_file = os.path.join(translation_path, 'zh.lang.reduce.csv')
+    with open(zh_dest_csv_file, 'wt', encoding='utf-8') as fp:
+        fp.writelines(zh_csv_list_reduced)
+    print('write to zh.lang.reduce.csv')
 
 
 if __name__ == '__main__':
