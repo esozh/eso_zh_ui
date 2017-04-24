@@ -154,10 +154,16 @@ def main():
     # load from xlsx
     csv_list = get_csv_from_xls(src_path)
 
+    # convert
+    csv_dict = get_dict_from_csv(csv_list)
+    csv_list_reduced = []
+    for k, v in sorted(csv_dict.items()):
+        csv_list_reduced.append('%s,%s' % (k, v))
+
     # save result
     dest_csv_file = os.path.join(translation_path, 'en.lang.reduce.csv')
     with open(dest_csv_file, 'wt', encoding='utf-8') as fp:
-        fp.writelines(csv_list)
+        fp.writelines(csv_list_reduced)
     print('write to en.lang.reduce.csv')
 
     # load zh
@@ -168,7 +174,6 @@ def main():
         zh_csv_list = fp.readlines()
 
     # convert
-    csv_dict = get_dict_from_csv(csv_list)
     zh_csv_dict = get_dict_from_csv(zh_csv_list)
 
     zh_csv_list_reduced = []
