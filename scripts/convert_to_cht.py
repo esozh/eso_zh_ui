@@ -30,20 +30,31 @@ def prepare_cht_converter():
     cd = os.path.dirname(os.path.abspath(__file__))
     phrases_dict_path = os.path.join(cd, 'utils/data/STPhrases.txt')
     chars_dict_path = os.path.join(cd, 'utils/data/STCharacters.txt')
+    other_dict_path = os.path.join(cd, '../translation/STOthers.txt')   # 人工整理的
 
     lines = []
+
+    if os.path.isfile(other_dict_path):
+        with open(other_dict_path, 'rt', encoding='utf-8') as fp:
+            lines.extend(fp.readlines())
+
     with open(phrases_dict_path, 'rt', encoding='utf-8') as fp:
         lines.extend(fp.readlines())
     with open(chars_dict_path, 'rt', encoding='utf-8') as fp:
         lines.extend(fp.readlines())
+
+    if os.path.isfile(other_dict_path):
+        with open(other_dict_path, 'rt', encoding='utf-8') as fp:
+            lines.extend(fp.readlines())
 
     # 对应表
     replacement = []
     for line in lines:
         line = line.strip()
         if line != '':
-            chs, cht = line.split('\t')
+            chs, cht = line.split('\t', 1)
             cht = cht.split(' ')[0]     # 如果有多种可能，随便取一个
+            cht = cht.split('\t')[0]
             replacement.append((chs, cht))
 
     text_replacer = TextReplacer(replacement)
