@@ -10,6 +10,9 @@
 
 import os
 import sys
+import math
+import multiprocessing
+from multiprocessing import Pool
 
 from utils.text_replacer import TextReplacer
 
@@ -61,6 +64,16 @@ def prepare_cht_converter():
     return text_replacer
 
 
+def convert(input_text, text_replacer):
+    """从字典构造简繁替换类
+
+    Args:
+        input_text (str): 待替换文本
+        text_replacer (TextReplacer): 替换工具
+    """
+    return text_replacer.replace(input_text)
+
+
 def main():
     if len(sys.argv) != 3:
         usage()
@@ -75,11 +88,26 @@ def main():
     text_replacer = prepare_cht_converter()
 
     with open(input_file_path, 'rt', encoding='utf-8') as fp:
+        lines = fp.readlines()
         input_text = ''.join(fp.readlines())
+
+    # 文本预处理
+    # 按行数平分文本
+    input_text = []
+    num_per_part = 1000     # 每份的行数
+    part_num = int(math.ceil(len(lines) / num_per_part))    # 分成多少份
+    for i in range(0, part_num):
+        input_text.append(lines[num_per_part * i:num_per_part * (i + 1)])
+    input_text.append(lines[num_per_part * (part_num - 1):])
+
+    convert_args = [(''.join(partial_text), text_replacer) for partial_text in input_text]
 
     # 转换
     print('convert...')
-    output_text = text_replacer.replace(input_text)
+    with Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = pool.starmap(convert, convert_args)
+    output_text = ''.join(results)
+    #output_text = text_replacer.replace(input_text)
 
     # 保存
     with open(output_file_path, 'wt', encoding='utf-8') as fp:
