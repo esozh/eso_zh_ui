@@ -98,7 +98,8 @@ def main():
     part_num = int(math.ceil(len(lines) / num_per_part))    # 分成多少份
     for i in range(0, part_num):
         input_text.append(lines[num_per_part * i:num_per_part * (i + 1)])
-    input_text.append(lines[num_per_part * (part_num - 1):])
+    if part_num > 1:
+        input_text.append(lines[num_per_part * (part_num - 1):])
 
     convert_args = [(''.join(partial_text), text_replacer) for partial_text in input_text]
 
