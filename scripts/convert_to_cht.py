@@ -89,7 +89,6 @@ def main():
 
     with open(input_file_path, 'rt', encoding='utf-8') as fp:
         lines = fp.readlines()
-        input_text = ''.join(fp.readlines())
 
     # 文本预处理
     # 按行数平分文本
@@ -108,7 +107,6 @@ def main():
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(convert, convert_args)
     output_text = ''.join(results)
-    #output_text = text_replacer.replace(input_text)
 
     # 保存
     with open(output_file_path, 'wt', encoding='utf-8') as fp:
