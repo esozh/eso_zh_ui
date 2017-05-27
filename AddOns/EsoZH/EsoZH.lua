@@ -64,6 +64,7 @@ function EsoZH:OnInit(eventCode, addOnName)
         if LMP then
             LMP.MediaTable.font["Univers 67"] = nil
             LMP.MediaTable.font["Univers 57"] = nil
+            LMP.MediaTable.font["Univers 55"] = nil
             LMP.MediaTable.font["Skyrim Handwritten"] = nil
             LMP.MediaTable.font["ProseAntique"] = nil
             LMP.MediaTable.font["Trajan Pro"] = nil
@@ -72,6 +73,7 @@ function EsoZH:OnInit(eventCode, addOnName)
             LMP.MediaTable.font["Futura Condensed Light"] = nil
             LMP:Register("font", "Univers 67", "EsoZH/fonts/univers67.otf")
             LMP:Register("font", "Univers 57", "EsoZH/fonts/univers57.otf")
+            LMP:Register("font", "Univers 55", "EsoZH/fonts/univers55.otf")
             LMP:Register("font", "Skyrim Handwritten", "EsoZH/fonts/handwritten_bold.otf")
             LMP:Register("font", "ProseAntique", "EsoZH/fonts/proseantiquepsmt.otf")
             LMP:Register("font", "Trajan Pro", "EsoZH/fonts/trajanpro-regular.otf")
