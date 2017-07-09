@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : merge_langxls_dir.py
+# File          : merge_xls_dir.py
 # Author        : bssthu
 # Project       : eso_zh_ui
 # Description   : 以目录1为基准，把目录2的文件导入目录1里
@@ -11,12 +11,13 @@ import os
 import sys
 
 from utils.langxls_loader import get_filename_and_category
-from merge_langxls import merge_translation_file
+from merge_langxls import merge_translation_file as merge_lang_xls_file
+from merge_uixls import merge_translation_file as merge_ui_xls_file
 
 
 def usage():
     print('usage:')
-    print('python merge_langxls_dir.py dest_dir src_dir diff_dir')
+    print('python merge_xls_dir.py dest_dir src_dir diff_dir')
     print('by default keep dest if conflict')
 
 
@@ -48,7 +49,10 @@ def main():
                                                         os.path.splitext(os.path.basename(src_filename))[0])
                     conflict_filename = os.path.join(conflict_xls_path, conflict_filename)
                 print('%s X %s' % (dest_filename, src_filename))
-                merge_translation_file(dest_filename, src_filename, conflict_filename, check_category=False)
+                if src_category == 'UI':
+                    merge_ui_xls_file(dest_filename, src_filename, conflict_filename)
+                else:
+                    merge_lang_xls_file(dest_filename, src_filename, conflict_filename, check_category=False)
 
 
 if __name__ == '__main__':

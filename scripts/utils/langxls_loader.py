@@ -118,6 +118,10 @@ def get_category(file_path):
 
 def get_category_of_id(_id):
     """返回 id 中的 category 部分"""
+    if _id.startswith('SI_'):
+        # UI 汉化文件
+        return 'UI'
+    # 否则就是 item-111 或者 tip-1111-1-11 的格式
     id_split = _id.split('-')
     if len(id_split) > 3 and id_split[-1].isdigit() and id_split[-2].isdigit() and id_split[-3].isdigit():
         # list of text

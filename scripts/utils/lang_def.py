@@ -86,6 +86,7 @@ file_id_of_array = {
 
 # category 对应的中文名
 category_names = {
+    "UI": "UI汉化",
     "achievement": "成就",
     "book": "书信汉化",
     "chat": "聊天",

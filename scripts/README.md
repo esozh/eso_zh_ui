@@ -90,7 +90,7 @@ SafeAddString(SI_GAME_MENU_SETTINGS, "Settings", 0)
 #### merge_langxls.py
 按要求合并两个 xls 文件。
 
-#### merge_langxls_dir.py
+#### merge_xls_dir.py
 按要求合并两个目录中的 xls 文件。
 对目录1中的每个文件，都去目录2里找它的同类文件，向目录1中的文件导数据。
 
