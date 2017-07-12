@@ -106,6 +106,13 @@ def main():
     print('convert...')
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(convert, convert_args)
+
+    # 再转一次    ，以免“简体”列填的内容是繁体，导致没有转换到
+    convert_args = [(result, text_replacer) for result in results]
+    with Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = pool.starmap(convert, convert_args)
+
+    # 结果
     output_text = ''.join(results)
 
     # 保存
