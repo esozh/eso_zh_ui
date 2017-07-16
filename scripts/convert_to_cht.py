@@ -22,34 +22,15 @@ def usage():
     print('python convert_to_cht.py input_file output_file')
 
 
-def prepare_cht_converter():
-    """从字典构造简繁替换类
+def get_text_replacer(lines):
+    """从一个字典文件构造简繁替换类
+
+    Args:
+        lines (list[str]): 替换表中的行
 
     Returns:
         text_replacer (TextReplacer): 替换工具
     """
-
-    # 字典文件
-    cd = os.path.dirname(os.path.abspath(__file__))
-    phrases_dict_path = os.path.join(cd, 'utils/data/STPhrases.txt')
-    chars_dict_path = os.path.join(cd, 'utils/data/STCharacters.txt')
-    other_dict_path = os.path.join(cd, '../translation/STOthers.txt')   # 人工整理的
-
-    lines = []
-
-    if os.path.isfile(other_dict_path):
-        with open(other_dict_path, 'rt', encoding='utf-8') as fp:
-            lines.extend(fp.readlines())
-
-    with open(phrases_dict_path, 'rt', encoding='utf-8') as fp:
-        lines.extend(fp.readlines())
-    with open(chars_dict_path, 'rt', encoding='utf-8') as fp:
-        lines.extend(fp.readlines())
-
-    if os.path.isfile(other_dict_path):
-        with open(other_dict_path, 'rt', encoding='utf-8') as fp:
-            lines.extend(fp.readlines())
-
     # 对应表
     replacement = []
     for line in lines:
@@ -59,9 +40,71 @@ def prepare_cht_converter():
             cht = cht.split(' ')[0]     # 如果有多种可能，随便取一个
             cht = cht.split('\t')[0]
             replacement.append((chs, cht))
-
+    # 替换工具
     text_replacer = TextReplacer(replacement)
     return text_replacer
+
+
+def split_lines_by_first_word_len(lines):
+    """根据行中第一个词的长度来对行分组
+    本方法没有通用性
+    """
+    l1 = []
+    l2 = []
+    l3 = []
+    l4 = []
+    for line in lines:
+        key_len = len(line.strip().split('\t')[0])
+        if key_len <= 0:
+            continue
+        elif key_len <= 2:
+            l1.append(line)
+        elif key_len <= 3:
+            l2.append(line)
+        elif key_len <= 4:
+            l3.append(line)
+        else:
+            l4.append(line)
+
+    assert len(l1) != 0
+    assert len(l2) != 0
+    assert len(l3) != 0
+    assert len(l4) != 0
+    return [l4, l3, l2, l1]
+
+
+def prepare_cht_converter():
+    """获取所有需要的简繁替换类，使用时按顺序调用
+
+    Returns:
+        replacer_list (list[TextReplacer]): 替换工具
+    """
+
+    # 字典文件
+    cd = os.path.dirname(os.path.abspath(__file__))
+    phrases_dict_path = os.path.join(cd, 'utils/data/STPhrases.txt')
+    chars_dict_path = os.path.join(cd, 'utils/data/STCharacters.txt')
+    other_dict_path = os.path.join(cd, '../translation/STOthers.txt')   # 人工整理的
+
+    with open(phrases_dict_path, 'rt', encoding='utf-8') as fp:
+        phrases_dict_lines = fp.readlines()
+    with open(chars_dict_path, 'rt', encoding='utf-8') as fp:
+        chars_dict_lines = fp.readlines()
+    with open(other_dict_path, 'rt', encoding='utf-8') as fp:
+        other_dict_lines = fp.readlines()
+    phrases_dict_lines_group = split_lines_by_first_word_len(phrases_dict_lines)
+
+    replacer_list = [
+        get_text_replacer(other_dict_lines),
+        get_text_replacer(phrases_dict_lines_group[0]),
+        get_text_replacer(phrases_dict_lines_group[1]),
+        get_text_replacer(phrases_dict_lines_group[2]),
+        get_text_replacer(phrases_dict_lines_group[3]),
+        get_text_replacer(chars_dict_lines),
+        get_text_replacer(other_dict_lines)
+    ]
+
+    return replacer_list
 
 
 def convert(input_text, text_replacer):
@@ -85,7 +128,7 @@ def main():
     input_file_path, output_file_path = sys.argv[1], sys.argv[2]
 
     # 替换工具
-    text_replacer = prepare_cht_converter()
+    replacer_list = prepare_cht_converter()
 
     with open(input_file_path, 'rt', encoding='utf-8') as fp:
         lines = fp.readlines()
@@ -100,20 +143,17 @@ def main():
     if part_num > 1:
         input_text.append(lines[num_per_part * (part_num - 1):])
 
-    convert_args = [(''.join(partial_text), text_replacer) for partial_text in input_text]
-
     # 转换
     print('convert...')
-    with Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.starmap(convert, convert_args)
-
-    # 再转一次    ，以免“简体”列填的内容是繁体，导致没有转换到
-    convert_args = [(result, text_replacer) for result in results]
-    with Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.starmap(convert, convert_args)
+    text_list = [''.join(partial_text) for partial_text in input_text]
+    for text_replacer in replacer_list:
+        # 每个 replacer 转一遍
+        convert_args = [(partial_text, text_replacer) for partial_text in text_list]
+        with Pool(processes=multiprocessing.cpu_count()) as pool:
+            text_list = pool.starmap(convert, convert_args)
 
     # 结果
-    output_text = ''.join(results)
+    output_text = ''.join(text_list)
 
     # 保存
     with open(output_file_path, 'wt', encoding='utf-8') as fp:
