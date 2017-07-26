@@ -15,6 +15,12 @@ from multiprocessing import Pool
 from utils.xlsutils import load_xls, save_xlsx_template
 
 
+def apply_format_parallel(file_paths):
+    """并行套用格式"""
+    with Pool(processes=multiprocessing.cpu_count()) as pool:
+        pool.map(apply_format, file_paths)
+
+
 def apply_format(file_path):
     """xlsx 套用格式"""
     data = load_xls(file_path)
@@ -62,8 +68,8 @@ def main():
     file_paths = []
     for filename in sys.argv[1:]:
         file_paths.extend(format_file_path(filename, translation_path))
-    with Pool(processes=multiprocessing.cpu_count()) as pool:
-        pool.map(apply_format, file_paths)
+
+    apply_format_parallel(file_paths)
 
 
 if __name__ == '__main__':
