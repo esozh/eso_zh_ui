@@ -31,10 +31,7 @@ def main():
     conflict_xls_path = None
     if len(sys.argv) == 4:
         conflict_xls_path = sys.argv[3]
-    merge(dest_xls_path, src_xls_path, conflict_xls_path)
 
-
-def merge(dest_xls_path, src_xls_path, conflict_xls_path):
     # check category
     print('-- dest dir')
     dest_filename_to_category = get_filename_and_category(dest_xls_path)
