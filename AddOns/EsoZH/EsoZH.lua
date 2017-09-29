@@ -84,6 +84,15 @@ function EsoZH:OnInit(eventCode, addOnName)
         end
     end
 
+    -- chinese gamepad hack
+    for k, v in pairs( ZO_TOOLTIP_STYLES ) do
+        v.fontFace = "EsoZH/fonts/ftn47.otf"
+    end
+
+    for k, v in pairs( ZO_CRAFTING_TOOLTIP_STYLES ) do
+        v.fontFace = "EsoZH/fonts/ftn47.otf"
+    end
+
     EsoZH:RefreshUI()
 
     function ZO_GameMenu_OnShow(control)
