@@ -269,11 +269,8 @@ def main():
         if en_line in en_line_to_zh_line.keys():
             translated_lines.append(en_line_to_zh_line[en_line])
         else:
-            # 如果未翻译，检查在日文文本里是否有这行。检查 file_id,unknown,index
-            file_id, unknown, index = en_line.split(',', 4)[:3]
-            full_id = ','.join((file_id, unknown, index))
-            if (full_id in full_ids_jp) or (file_id in file_id_of_pair['crown']):   # 皇冠商店不同区域可能不一样
-                translated_lines.append(en_line)
+            # 不再检查在日文文本里是否有
+            translated_lines.append(en_line)
 
     # save result
     dest_lang_file = os.path.join(translation_path, 'zh.lang.csv')
