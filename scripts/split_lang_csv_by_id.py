@@ -11,7 +11,7 @@ import getopt
 import os
 import sys
 
-from utils.lang_def import file_id_of_pair, file_id_of_list, file_id_of_array
+from utils.lang_def import file_id_of_pair, file_id_of_list, file_id_of_array, ignored_file_id
 
 
 def main():
@@ -58,6 +58,7 @@ def main():
         for id_tuple in values:
             for _id in id_tuple:
                 known_id.add(_id)
+    known_id = known_id | ignored_file_id
 
     # file list
     target_file = os.path.join(dest_path, '%s.lang.split.txt' % lang)
