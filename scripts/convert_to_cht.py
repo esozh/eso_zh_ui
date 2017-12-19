@@ -85,26 +85,32 @@ def prepare_cht_converter():
     # 字典文件
     cd = os.path.dirname(os.path.abspath(__file__))
     phrases_dict_path = os.path.join(cd, 'utils/data/STPhrases.txt')
-    chars_dict_path = os.path.join(cd, 'utils/data/STCharacters.txt')
+    general_dict_names = ("STCharacters", "TWVariants", "TWPhrasesName",
+                  "TWPhrasesOther", "TWPhrasesIT")
     other_dict_path = os.path.join(cd, '../translation/STOthers.txt')   # 人工整理的
 
     with open(phrases_dict_path, 'rt', encoding='utf-8') as fp:
         phrases_dict_lines = fp.readlines()
-    with open(chars_dict_path, 'rt', encoding='utf-8') as fp:
-        chars_dict_lines = fp.readlines()
+    dict_lines_list = []
+    for name in general_dict_names:
+        dict_path = os.path.join(cd, 'utils/data/%s.txt' % name)
+        with open(dict_path, 'rt', encoding='utf-8') as fp:
+            dict_lines_list.append(fp.readlines())
     with open(other_dict_path, 'rt', encoding='utf-8') as fp:
         other_dict_lines = fp.readlines()
     phrases_dict_lines_group = split_lines_by_first_word_len(phrases_dict_lines)
 
+    # 替换顺序
     replacer_list = [
         get_text_replacer(other_dict_lines),
         get_text_replacer(phrases_dict_lines_group[0]),
         get_text_replacer(phrases_dict_lines_group[1]),
         get_text_replacer(phrases_dict_lines_group[2]),
         get_text_replacer(phrases_dict_lines_group[3]),
-        get_text_replacer(chars_dict_lines),
-        get_text_replacer(other_dict_lines)
     ]
+    for dict_lines in dict_lines_list:
+        replacer_list.append(get_text_replacer(dict_lines))
+    replacer_list.append(get_text_replacer(other_dict_lines))
 
     return replacer_list
 
