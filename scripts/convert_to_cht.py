@@ -36,10 +36,12 @@ def get_text_replacer(lines):
     for line in lines:
         line = line.strip()
         if line != '':
-            chs, cht = line.split('\t', 1)
-            cht = cht.split(' ')[0]     # 如果有多种可能，随便取一个
-            cht = cht.split('\t')[0]
-            replacement.append((chs, cht))
+            parts = line.split('\t')
+            if len(parts) >= 2:
+                chs, cht = parts[0], parts[1]
+                cht = cht.split(' ')[0]     # 如果有多种可能，随便取一个
+                cht = cht.split('\t')[0]
+                replacement.append((chs, cht))
     # 替换工具
     text_replacer = TextReplacer(replacement)
     return text_replacer
