@@ -234,6 +234,14 @@ def get_en_line_to_jp_text(en_lines, jp_lines):
     return en_line_to_jp_text
 
 
+def get_checked_line(line):
+    """屏蔽 EsoExtractData 不支持的格式"""
+    if line.endswith(r'\\"' + '\n'):
+        return line[:-3] + r'\\ "' + '\n'
+    else:
+        return line
+
+
 def main():
     cd = sys.path[0]
     src_path = os.path.join(cd, '../translation/lang')
@@ -267,10 +275,10 @@ def main():
     for en_line in lines:
         # 先检查是否已翻译
         if en_line in en_line_to_zh_line.keys():
-            translated_lines.append(en_line_to_zh_line[en_line])
+            translated_lines.append(get_checked_line(en_line_to_zh_line[en_line]))
         else:
             # 不再检查在日文文本里是否有
-            translated_lines.append(en_line)
+            translated_lines.append(get_checked_line(en_line))
 
     # save result
     dest_lang_file = os.path.join(translation_path, 'zh.lang.csv')
