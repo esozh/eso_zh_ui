@@ -55,4 +55,5 @@ def main():
 
 
 if __name__ == '__main__':
+    log.debug('main() with args: %s' % str(sys.argv))
     main()

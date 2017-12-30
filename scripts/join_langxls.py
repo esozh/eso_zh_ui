@@ -15,6 +15,7 @@ from utils import lang_def
 from utils.langxls_loader import get_category_of_id
 from utils.xlsutils import load_xls, save_xlsx
 from utils.utils import walk_xlsx_files
+from utils import log
 
 
 def usage():
@@ -64,5 +65,6 @@ def main():
 
 
 if __name__ == '__main__':
+    log.debug('main() with args: %s' % str(sys.argv))
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
     main()

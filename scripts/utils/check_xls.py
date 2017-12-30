@@ -176,6 +176,7 @@ def count_string_attr(text_to_check):
 
 
 if __name__ == '__main__':
+    log.debug('main() with args: %s' % str(sys.argv))
     if os.name == 'nt':
         sys.stdout = open(1, 'w', encoding='utf-8', closefd=False)  # windows
     main()

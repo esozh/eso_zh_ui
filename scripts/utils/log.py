@@ -99,6 +99,6 @@ def log(lvl, msg, *args, **kwargs):
     global G_LOG
     if G_LOG is None:
         init_log()
-        G_LOG.log(logging.DEBUG, "init log")
+        G_LOG.log(logging.DEBUG, 'init log, %s', str(sys.argv))
 
     G_LOG.log(lvl, msg, *args, **kwargs)
