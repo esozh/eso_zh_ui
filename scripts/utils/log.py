@@ -9,6 +9,7 @@
 
 import ctypes
 import os
+import sys
 import logging
 from logging import handlers, LogRecord, getLevelName
 
@@ -49,13 +50,13 @@ def init_log():
         return
 
     logging.setLogRecordFactory(ColoredLogRecord)
-    logger = logging.getLogger("eso_zh_ui")
+    logger = logging.getLogger(sys.argv[0])
     logger.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     if hasattr(ctypes, 'windll') and hasattr(ctypes.windll, 'kernel32'):
         ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
-    color_formatter = logging.Formatter('%(asctime)s - - %(colorlevelname)s - %(message)s')
+    color_formatter = logging.Formatter('%(asctime)s - %(name)s - %(colorlevelname)s - %(message)s')
 
     # to file
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../logs')

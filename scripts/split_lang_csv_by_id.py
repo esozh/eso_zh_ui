@@ -50,6 +50,7 @@ def main():
 
     for _id, lines_with_same_id in sorted(lines_grouped_by_id.items()):
         target_file = os.path.join(dest_path, '%s.%s.lang.csv' % (lang, _id))
+        log.debug('split to file %s' % target_file)
         with open(target_file, 'wt', encoding='utf-8') as fp:
             fp.writelines(lines_with_same_id)
 
