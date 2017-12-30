@@ -7,11 +7,39 @@
 # 
 
 
+import ctypes
 import os
 import logging
 from logging import handlers, LogRecord, getLevelName
 
+# logging 对象
 G_LOG = None
+
+BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
+COLORS = {
+    'DEBUG': GREEN,
+    'INFO': GREEN,
+    'WARNING': YELLOW,
+    'ERROR': RED,
+    'CRITICAL': RED
+}
+
+
+class ColoredLogRecord(LogRecord):
+    """增加 colorlevelname 一项"""
+    def __init__(self, name, level, pathname, lineno,
+                 msg, args, exc_info, func=None, sinfo=None, **kwargs):
+        super().__init__(name, level, pathname, lineno,
+                         msg, args, exc_info, func, sinfo, **kwargs)
+        self.colorlevelname = get_color_level_name(level)
+
+
+def get_color_level_name(level):
+    level_name = getLevelName(level)
+    if level_name in COLORS:
+        return '\033[1;%dm%s\033[0m' % (30 + COLORS[level_name], level_name)
+    else:
+        return level_name
 
 
 def init_log():
@@ -20,10 +48,14 @@ def init_log():
     if G_LOG is not None:
         return
 
+    logging.setLogRecordFactory(ColoredLogRecord)
     logger = logging.getLogger("eso_zh_ui")
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    if hasattr(ctypes, 'windll') and hasattr(ctypes.windll, 'kernel32'):
+        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+    color_formatter = logging.Formatter('%(asctime)s - - %(colorlevelname)s - %(message)s')
 
     # to file
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../logs')
@@ -36,7 +68,7 @@ def init_log():
     # to screen
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
+    ch.setFormatter(color_formatter)
     logger.addHandler(ch)
 
     G_LOG = logger
