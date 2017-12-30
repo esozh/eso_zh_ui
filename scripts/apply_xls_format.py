@@ -13,6 +13,7 @@ import multiprocessing
 from multiprocessing import Pool
 
 from utils.xlsutils import load_xls, save_xlsx_template
+from utils import log
 
 
 def apply_format(file_path):
@@ -24,9 +25,9 @@ def apply_format(file_path):
     data = data[1:]
     if len(header) in (8, 9, 12):
         save_xlsx_template(file_path, data, header=header)
+        log.info('save %s' % file_path)
     else:
-        print('unknown xls %s.' % file_path)
-    print('save %s' % file_path)
+        log.error('unknown xls %s.' % file_path)
 
 
 def format_file_path(filename_or_path, default_path):

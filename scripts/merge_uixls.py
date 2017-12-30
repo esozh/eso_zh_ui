@@ -15,6 +15,7 @@ import sys
 
 from merge_langxls import format_file_path, merge_translation_by_col
 from utils.xlsutils import load_xls, save_xlsx
+from utils import log
 
 
 def usage():
@@ -33,14 +34,15 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
     """
 
     # load
-    print('load %s' % dest_xls_path)
+    log.info('load %s' % dest_xls_path)
     dest_data = load_xls(dest_xls_path)
     header, dest_data = dest_data[0], dest_data[1:]
-    print('load %s' % src_xls_path)
+    log.info('load %s' % src_xls_path)
     src_data = load_xls(src_xls_path)[1:]
 
     # check
     if not (dest_data[0][1].startswith('SI_') and src_data[0][1].startswith('SI_')):
+        log.error('invalid ui xls file')
         raise RuntimeError('invalid ui xls file')
 
     # merge
@@ -48,11 +50,11 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file):
                                                           origin_col_ids=[2, ], translation_col_ids=[3, 4, 5, 6, 7])
 
     # save
-    print('%d conflicts.' % len(conflict_data))
-    print('save %s' % dest_xls_path)
+    log.info('%d conflicts.' % len(conflict_data))
+    log.info('save %s' % dest_xls_path)
     save_xlsx(dest_xls_path, merged_data, header=header)
     if conflict_xls_file is not None and len(conflict_data) > 0:
-        print('save %s' % conflict_xls_file)
+        log.info('save %s' % conflict_xls_file)
         save_xlsx(conflict_xls_file, conflict_data, header=header)
 
 

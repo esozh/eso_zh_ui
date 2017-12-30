@@ -11,6 +11,7 @@ import sys
 
 
 from utils.xlsutils import load_xls
+from utils import log
 
 
 def usage():
@@ -34,7 +35,8 @@ def main():
             output_path = input_path + '.csv'
 
     # convert
-    print(input_path, output_path)
+    log.info('input path: %s' % input_path)
+    log.info('out path: %s' % output_path)
     csv_data = load_xls(input_path)
     lines = []
     for row in csv_data:

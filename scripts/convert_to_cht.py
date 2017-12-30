@@ -15,6 +15,7 @@ import multiprocessing
 from multiprocessing import Pool
 
 from utils.text_replacer import TextReplacer
+from utils import log
 
 
 def usage():
@@ -131,7 +132,7 @@ def main():
         sys.exit(2)
 
     # init file path
-    print('init...')
+    log.info('initializing cht converter')
     # 输入输出文本文件
     input_file_path, output_file_path = sys.argv[1], sys.argv[2]
 
@@ -152,10 +153,11 @@ def main():
         input_text.append(lines[num_per_part * (part_num - 1):])
 
     # 转换
-    print('convert...')
+    log.info('converting to cht')
     text_list = [''.join(partial_text) for partial_text in input_text]
     for text_replacer in replacer_list:
         # 每个 replacer 转一遍
+        log.debug('convert with one converter')
         convert_args = [(partial_text, text_replacer) for partial_text in text_list]
         with Pool(processes=multiprocessing.cpu_count()) as pool:
             text_list = pool.starmap(convert, convert_args)
@@ -164,6 +166,7 @@ def main():
     output_text = ''.join(text_list)
 
     # 保存
+    log.debug('writing convert result')
     with open(output_file_path, 'wt', encoding='utf-8') as fp:
         fp.write(output_text)
 

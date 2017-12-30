@@ -16,6 +16,7 @@ from objs.lang_mgr_array import LangMgrArray
 from objs.lang_mgr_pair import LangMgrPair
 from utils.lang_def import *
 from utils.xlsutils import save_xlsx
+from utils import log
 
 
 def usage():
@@ -114,6 +115,7 @@ def prepare_pair_lang(category, pair_file_id, translation_path):
         rows (list[list[str]]): 准备写入 .xls 的列表
     """
     if len(pair_file_id) != 2:
+        log.error('len(pair_file_id) in prepare_pair_lang must equals 2.')
         raise RuntimeError('len(pair_file_id) in prepare_pair_lang must equals 2.')
     name_file_id = pair_file_id[0]
     desc_file_id = pair_file_id[1]
@@ -144,7 +146,7 @@ def load_category(translation_path, category):
     # save
     dest_filename = 'en.%ss.lang.xlsx' % category
     save_xlsx(os.path.join(translation_path, dest_filename), rows[1:], header=rows[0])
-    print('save to %s' % dest_filename)
+    log.info('save to %s' % dest_filename)
 
 
 def main():

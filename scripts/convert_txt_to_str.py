@@ -12,6 +12,7 @@ import os
 import sys
 
 from objs.ui_mgr import UiMgr
+from utils import log
 
 
 def usage():
@@ -27,7 +28,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'l:m:h')
     except getopt.GetoptError as e:
-        print(e)
+        log.error(e)
         usage()
         sys.exit(2)
     for o, a in opts:
@@ -68,19 +69,19 @@ def main():
         ui_mgr_pregame.apply_translate_from_txt_lines(lines)
         ui_mgr_client.apply_translate_from_txt_lines(lines)
 
-    print('mode: %s' % mode)
+    log.info('mode: %s' % mode)
 
     # save str
     pregame_dest = os.path.join(dest_path, '%s_pregame.str' % lang)
     pregame_lines = ui_mgr_pregame.get_str_lines(mode)
-    print('save to %s.' % pregame_dest)
+    log.info('save to %s.' % pregame_dest)
     with open(pregame_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
         fp.writelines(pregame_lines)
 
     client_dest = os.path.join(dest_path, '%s_client.str' % lang)
     client_lines = ui_mgr_client.get_str_lines(mode)
-    print('save to %s.' % client_dest)
+    log.info('save to %s.' % client_dest)
     with open(client_dest, 'wt', encoding='utf-8') as fp:
         fp.writelines(header)
         fp.writelines(client_lines)
@@ -89,7 +90,7 @@ def main():
     if lang != 'en':
         pregame_dest = os.path.join(dest_path, 'en_pregame.str')
         pregame_lines = ui_mgr_pregame.get_str_lines(mode)
-        print('save to %s.' % pregame_dest)
+        log.info('save to %s.' % pregame_dest)
         with open(pregame_dest, 'wt', encoding='utf-8') as fp:
             fp.writelines(header)
             # keep version info
@@ -99,7 +100,7 @@ def main():
 
         client_dest = os.path.join(dest_path, 'en_client.str')
         client_lines = ui_mgr_client.get_str_lines(mode)
-        print('save to %s.' % client_dest)
+        log.info('save to %s.' % client_dest)
         with open(client_dest, 'wt', encoding='utf-8') as fp:
             fp.writelines(header)
             # keep version info

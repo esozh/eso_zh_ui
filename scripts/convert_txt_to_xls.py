@@ -14,6 +14,7 @@ import sys
 from objs.ui_row import UiRow
 from objs.ui_mgr import UiMgr
 from utils.xlsutils import save_xlsx
+from utils import log
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'l:')
     except getopt.GetoptError as e:
-        print(e)
+        log.error(e)
         sys.exit(2)
     for o, a in opts:
         if o == '-l':

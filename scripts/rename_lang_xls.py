@@ -13,6 +13,7 @@ import sys
 
 from utils.lang_def import category_names
 from utils.langxls_loader import get_category
+from utils import log
 
 
 def usage():
@@ -25,7 +26,7 @@ def rename_file(filename, suffix):
     category = get_category(filename)
     path_name = os.path.dirname(filename)
     new_name = os.path.join(path_name, 'ESO_%s_%s.xlsx' % (category_names[category], suffix))
-    print('%s -> %s' % (filename, new_name))
+    log.info('%s -> %s' % (filename, new_name))
     os.system('mv %s %s' % (filename, new_name))
 
 

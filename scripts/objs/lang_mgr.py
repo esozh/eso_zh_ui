@@ -10,6 +10,7 @@
 import os
 from objs.lang_group import LangGroup
 from utils.utils import load_lang_csv
+from utils import log
 
 
 class LangMgr:
@@ -52,7 +53,7 @@ class LangMgr:
                 origin_jp = line[4]
                 if index not in lang_groups.keys():
                     # 如果是新出现的 index，则舍弃
-                    print('> new index from jp: %s' % line)
+                    log.debug('new index from jp: %s' % line)
                     continue
                 lang_groups[index].add_jp(file_id, unknown, index, offset, origin_jp)
         # 添加

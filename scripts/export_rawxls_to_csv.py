@@ -12,6 +12,7 @@ import sys
 
 from utils.xlsutils import load_xls
 from utils.lang_def import *
+from utils import log
 
 
 def get_csv_from_xls(translation_path):
@@ -30,11 +31,11 @@ def get_csv_from_xls(translation_path):
                     and not file_name.startswith('~'):
                 file_abs_path = os.path.join(dir_path, file_name)
                 # load from one file
-                print('load from %s' % file_name)
+                log.info('load from %s' % file_name)
                 category, translated_data = load_from_rawxls(file_abs_path)
-                print('load %d %ss' % (len(translated_data), category))
+                log.info('load %d %ss' % (len(translated_data), category))
                 if category in category_to_translated:
-                    print('> warning: override category %s' % category)
+                    log.warning('warning: override category %s' % category)
                 category_to_translated[category] = translated_data
     list_list = [line for _, translated_data in sorted(category_to_translated.items())
                  for line in translated_data]
@@ -125,7 +126,7 @@ def load_from_rawxls(file_path):
         # name_desc
         return load_from_pair_category(data)
     else:
-        print('load %s failed.' % file_path)
+        log.error('load %s failed.' % file_path)
         return '', []
 
 
@@ -164,7 +165,7 @@ def main():
     dest_csv_file = os.path.join(translation_path, 'en.lang.reduce.csv')
     with open(dest_csv_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(csv_list_reduced)
-    print('write to en.lang.reduce.csv')
+    log.info('write to en.lang.reduce.csv')
 
     # load zh
     zh_src_path = os.path.join(cd, '../translation/lang/translated/zh.lang.csv')
@@ -185,7 +186,7 @@ def main():
     zh_dest_csv_file = os.path.join(translation_path, 'zh.lang.reduce.csv')
     with open(zh_dest_csv_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(zh_csv_list_reduced)
-    print('write to zh.lang.reduce.csv')
+    log.info('write to zh.lang.reduce.csv')
 
 
 if __name__ == '__main__':

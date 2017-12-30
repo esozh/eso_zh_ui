@@ -18,6 +18,7 @@ from utils import lang_def
 from utils.langxls_loader import get_category, get_category_of_id
 from utils.xlsutils import load_xls, save_xlsx
 from utils.utils import almost_equals
+from utils import log
 
 
 def usage():
@@ -41,13 +42,14 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file, check
         category = get_category(dest_xls_path)
         category_src = get_category(src_xls_path)
         if category != category_src:
+            log.error('category not equal.')
             raise RuntimeError('category not equal.')
 
     # load
-    print('load %s' % dest_xls_path)
+    log.info('load %s' % dest_xls_path)
     dest_data = load_xls(dest_xls_path)
     header, dest_data = dest_data[0], dest_data[1:]
-    print('load %s' % src_xls_path)
+    log.info('load %s' % src_xls_path)
     src_data = load_xls(src_xls_path)[1:]
 
     category = get_category_of_id(dest_data[0][1])
@@ -60,11 +62,11 @@ def merge_translation_file(dest_xls_path, src_xls_path, conflict_xls_file, check
     conflict_data = sorted(conflict_data, key=lambda row: row[1])
 
     # save
-    print('%d conflicts.' % len(conflict_data))
-    print('save %s' % dest_xls_path)
+    log.info('%d conflicts.' % len(conflict_data))
+    log.info('save %s' % dest_xls_path)
     save_xlsx(dest_xls_path, merged_data, header=header)
     if conflict_xls_file is not None and len(conflict_data) > 0:
-        print('save %s' % conflict_xls_file)
+        log.info('save %s' % conflict_xls_file)
         save_xlsx(conflict_xls_file, conflict_data, header=header)
 
 
@@ -88,6 +90,7 @@ def merge_translation_data(category, dest_data, src_data):
         return merge_translation_by_col(dest_data, src_data, id_col=1,
                                         origin_col_ids=[3, 6], translation_col_ids=[4, 7, 8, 9, 10, 11])
     else:
+        log.error('unknown category.')
         raise RuntimeError('unknown category.')
 
 
@@ -171,8 +174,8 @@ def merge_translation_by_col(dest_data, src_data, id_col, origin_col_ids, transl
             new_count += 1
         merged_data.append(dest_row)
 
-    print('copy %d rows to dest' % merged_count)
-    print('%d unique rows in dest' % new_count)
+    log.info('copy %d rows to dest' % merged_count)
+    log.info('%d unique rows in dest' % new_count)
     return merged_data, conflict_data
 
 

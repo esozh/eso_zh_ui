@@ -11,6 +11,7 @@ import os
 import sys
 
 from objs.ui_mgr import UiMgr
+from utils import log
 
 
 def main():
@@ -26,9 +27,11 @@ def main():
     client_file = os.path.join(translation_path, 'en_client.lua')
 
     ui_mgr = UiMgr()
+    log.debug('loading lua file %s' % pregame_file)
     ui_mgr.load_lua_file(pregame_file)
+    log.debug('loading lua file %s' % client_file)
     ui_mgr.load_lua_file(client_file)
-    print('read %d lines.' % len(ui_mgr.ui_lines))
+    log.info('read %d lines.' % len(ui_mgr.ui_lines))
 
     # save merged lines
     translate_file = os.path.join(translation_path, '%s_translate.txt' % lang)
@@ -36,15 +39,15 @@ def main():
         choose = input('%s_translate.txt file exists, merge? [y/N]' % lang)
         choose = choose.lower().strip()
         if choose != '' and choose[0] == 'y':
-            print('merging to translate file.')
+            log.info('merging to translate file.')
             ui_mgr.apply_translate_from_txt_file(translate_file)
         else:
-            print('skipped.')
+            log.info('skipped.')
             return
 
     with open(translate_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(ui_mgr.get_txt_lines(replace=True))
-        print('save translate file succeed.')
+        log.info('save translate file succeed.')
 
 
 if __name__ == '__main__':

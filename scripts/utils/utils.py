@@ -8,6 +8,7 @@
 
 
 import os
+from utils import log
 
 
 def load_lang_csv(file_path, skip_header=True):
@@ -59,7 +60,7 @@ def load_index_and_text_from_csv(file_path):
     for _id, unknown, index, offset, text in data:
         index = int(index)
         if index in data_dict_by_index:     # 如果 index 没有重复，将来就可以只用 index 来反查
-            print(_id, unknown, index, offset, text)
+            log.error('duplicate index: %s' % (str((_id, unknown, index, offset, text))))
             raise RuntimeError('duplicate index')
         data_dict_by_index[index] = text
     return data_dict_by_index
@@ -81,6 +82,7 @@ def load_unknown_index_text_from_csv(file_path):
         index = int(index)
         joined_index = '%02d-%05d' % (unknown, index)
         if joined_index in data_dict_by_index:     # 如果 unknown-index 没有重复，将来就可以只用 unknown-index 来反查
+            log.error('duplicate index: %s' % (str((unknown, index))))
             raise RuntimeError('duplicate index')
         data_dict_by_index[joined_index] = text
     return data_dict_by_index

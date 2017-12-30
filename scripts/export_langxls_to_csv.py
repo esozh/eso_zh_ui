@@ -14,6 +14,7 @@ from utils.lang_def import *
 from utils.utils import merge_dict
 from utils.langxls_loader import load_from_langxls
 from utils.text_replacer import TextReplacer
+from utils import log
 
 
 def load_translation(translation_path):
@@ -31,11 +32,11 @@ def load_translation(translation_path):
             if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
                 file_abs_path = os.path.join(dir_path, file_name)
                 # load from one file
-                print('load from %s' % file_name)
+                log.info('load from %s' % file_name)
                 category, translated_data = load_from_langxls(file_abs_path)
-                print('load %d %ss' % (len(translated_data), category))
+                log.info('load %d %ss' % (len(translated_data), category))
                 if category in category_to_translated:
-                    print('> warning: override category %s' % category)
+                    log.warning('warning: override category %s' % category)
                 category_to_translated[category] = translated_data
     return category_to_translated
 
@@ -145,7 +146,7 @@ def get_translated_lines_converter(file_id_to_lines, category_to_translated):
         # merge translation
         en_line_to_zh_line = merge_dict(en_line_to_zh_line, en_line_to_zh_line_of_category)
 
-    print('%d(%d) lines translated' % (translated_count_dry, len(en_line_to_zh_line)))
+    log.info('%d(%d) lines translated' % (translated_count_dry, len(en_line_to_zh_line)))
     return en_line_to_zh_line
 
 
@@ -193,8 +194,8 @@ def expand_translated_lines_converter(en_line_to_zh_line, en_lines, jp_lines):
                 en_line_to_zh_line[line] = zh_line
                 other_translated_count += 1
 
-    print('%d more lines translated' % other_translated_count)
-    print('%d lines left' % (len(en_lines) - other_translated_count))
+    log.info('%d more lines translated' % other_translated_count)
+    log.info('%d lines left' % (len(en_lines) - other_translated_count))
 
     return en_line_to_zh_line
 
@@ -253,7 +254,7 @@ def main():
         header = fp.readline()
         # lines: 英文原文件中的行, 每行的格式为 "ID","Unknown","Index","Offset","Text"
         lines = fp.readlines()
-    print('read %d lines from en.lang.csv.' % len(lines))
+    log.info('read %d lines from en.lang.csv.' % len(lines))
 
     src_jp_lang_file = os.path.join(src_path, 'jp.lang.csv')
     with open(src_jp_lang_file, 'rt', encoding='utf-8') as fp:
@@ -261,7 +262,7 @@ def main():
         # lines_jp: 日文原文件中的行
         lines_jp = fp.readlines()
         full_ids_jp = {','.join(line.split(',', 4)[:3]) for line in lines_jp}
-    print('read %d lines from jp.lang.csv.' % len(lines_jp))
+    log.info('read %d lines from jp.lang.csv.' % len(lines_jp))
 
     file_id_to_lines = get_file_id_to_lines(lines)
 
@@ -285,7 +286,7 @@ def main():
     with open(dest_lang_file, 'wt', encoding='utf-8') as fp:
         fp.write(header)
         fp.writelines(translated_lines)
-    print('write to zh.lang.csv')
+    log.info('write to zh.lang.csv')
 
 
 if __name__ == '__main__':

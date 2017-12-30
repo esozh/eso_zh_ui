@@ -11,6 +11,7 @@ import os
 from utils.xlsutils import load_xls, load_xls_cell
 from utils.check_xls import check_string_with_origin
 from utils.lang_def import *
+from utils import log
 
 
 def load_from_list_category(data):
@@ -27,7 +28,7 @@ def load_from_list_category(data):
     # check
     for row in data:
         if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            print('> check string failed:', row[1])
+            log.warning('check string failed:', row[1])
 
     # 删除多余数据，只保留 内部编号, 中文
     data = [(row[1], row[4]) for row in data]
@@ -58,7 +59,7 @@ def load_from_pair_category(data):
     for row in data:
         if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
                 or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
-            print('> check string failed:', row[1])
+            log.warning('check string failed:', row[1])
 
     # 删除多余数据，只保留 内部编号, 中文名称, 中文描述
     data = [(row[1], row[4], row[7]) for row in data]
@@ -106,7 +107,7 @@ def load_from_langxls(file_path):
         # name_desc
         return load_from_pair_category(data)
     else:
-        print('load %s failed.' % file_path)
+        log.error('load %s failed.' % file_path)
         return '', []
 
 
@@ -150,7 +151,7 @@ def get_filename_and_category(target_path):
                 category = get_category(file_abs_path)
                 if category is not None:
                     filename_to_category[file_abs_path] = category
-                    print('%s: %s' % (file_name, category))
+                    log.info('%s: %s' % (file_name, category))
                 else:
-                    print('failed to get category of %s' % file_abs_path)
+                    log.error('failed to get category of %s' % file_abs_path)
     return filename_to_category

@@ -12,6 +12,7 @@ import os
 import sys
 
 from utils.lang_def import file_id_of_pair, file_id_of_list, file_id_of_array, ignored_file_id
+from utils import log
 
 
 def main():
@@ -21,7 +22,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'l:')
     except getopt.GetoptError as e:
-        print(e)
+        log.error(e)
         sys.exit(2)
     for o, a in opts:
         if o == '-l':
@@ -67,7 +68,7 @@ def main():
         for _id in id_list:
             fp.write('%d\n' % _id)
             if str(_id) not in known_id:
-                print('warning: unknown id %d.' % _id)
+                log.warning('warning: unknown id %d.' % _id)
 
 
 if __name__ == '__main__':

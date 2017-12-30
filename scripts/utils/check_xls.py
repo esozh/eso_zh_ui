@@ -12,6 +12,7 @@ import re
 import sys
 
 from utils.xlsutils import load_xls
+from utils import log
 
 
 def usage():
@@ -30,7 +31,7 @@ def main():
 
     # check translation
     check_xls(src_path, column_id, origin_column_id)
-    print('checked.')
+    log.info('checked.')
 
 
 def check_xls(src_path, column_id, origin_column_id):
@@ -53,10 +54,10 @@ def check_xls(src_path, column_id, origin_column_id):
             if origin_column_id is not None:
                 text_is_ok &= check_string_with_origin(line[column_id], line[origin_column_id])
         except Exception as e:
-            print(line)
-            print(e)
+            log.warning(line)
+            log.warning(e)
         if not text_is_ok:
-            print('> failed when checking:\n%s\n' % ', '.join(line))
+            log.warning('Failed when checking:\n%s\n' % ', '.join(line))
 
 
 def check_string(text_to_check):
@@ -92,6 +93,7 @@ def check_string(text_to_check):
             if text_to_check[i+1] == 'c':
                 search_not_match = re.compile(r'[^0-9a-fA-F]').search
                 if search_not_match(text_to_check[i+2:i+2+6]):    # 含有颜色以外的字符
+                    log.debug('find error: color |c')
                     return False
                 stack['c'] += 1
                 i += 7
@@ -109,18 +111,21 @@ def check_string(text_to_check):
                     i += 1
         elif curr_char == '\\':
             if text_to_check[i+1] not in r'\n"':
+                log.debug(r'find error: usage of \: is it \\ or \n?')
                 return False
             i += 1
         # <<>> 之间内容检查，暂无
         # 数量检查
         # |c |r 的情况似乎比较灵活
         if stack['<>'] < 0 or stack['<>'] > 1 or stack['c'] < -1 or stack['c'] > 1 or stack['t'] > 1:
+            log.debug('find error: <<>>, |c|r not match')
             return False
         # iter
         i += 1
 
     # 最终的匹配检查
     if stack['<>'] != 0 or stack['c'] < -1 or stack['c'] > 1 or stack['t'] != 0:
+        log.debug('find error: <<>>, |c|r not match')
         return False
     return True
 
@@ -138,6 +143,7 @@ def check_string_with_origin(text_to_check, origin_text):
     attr_origin = count_string_attr(origin_text)
     for key in attr_check.keys():
         if key not in attr_origin or attr_check[key] != attr_origin[key]:
+            log.debug('find error: number of special chars not equal')
             return False
     return True
 

@@ -12,6 +12,7 @@ import sys
 
 from objs.ui_mgr import UiMgr
 from utils.xlsutils import load_xls
+from utils import log
 
 
 def usage():
@@ -50,7 +51,7 @@ def main():
     txt_lines = ui_mgr.get_txt_lines(replace=True)
     with open(translate_file, 'wt', encoding='utf-8') as fp:
         fp.writelines(txt_lines)
-        print('save translate file succeed.')
+        log.info('save translate file succeed.')
 
 
 if __name__ == '__main__':

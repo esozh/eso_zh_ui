@@ -8,6 +8,7 @@
 
 
 from objs.lang_line import LangLine
+from utils import log
 
 
 class LangGroup:
@@ -33,6 +34,7 @@ class LangGroup:
             origin (str): 原文
         """
         if index != self.index:
+            log.error('index does not match: %d, %d' % (index, self.index))
             raise RuntimeError('index does not match')
 
         lang_line = LangLine(file_id, unknown, index, offset, origin)
@@ -51,6 +53,7 @@ class LangGroup:
             origin_jp (str): 日文原文
         """
         if index != self.index:
+            log.error('index does not match: %d, %d' % (index, self.index))
             raise RuntimeError('index does not match')
 
         key = LangLine(file_id, unknown, index, offset, origin_jp).get_key()

@@ -15,6 +15,7 @@ from utils import lang_def
 from utils.lang_def import category_names
 from utils.langxls_loader import get_filename_and_category, get_category_of_id
 from utils.xlsutils import load_xls, save_xlsx
+from utils import log
 
 
 def usage():
@@ -30,7 +31,7 @@ def merge_diff_files(files, output_path):
     header = None
     all_diff_data = []
     for filename in files:
-        print('loading %s...' % os.path.basename(filename))
+        log.info('loading %s...' % os.path.basename(filename))
         diff_data = load_xls(filename)
         header, diff_data = diff_data[0], diff_data[1:]
         all_diff_data.extend(diff_data)
@@ -42,7 +43,8 @@ def merge_diff_files(files, output_path):
     elif category in lang_def.file_id_of_pair:
         all_diff_data = [row for row in all_diff_data if row[4] + row[7] != '']
     else:
-        raise RuntimeError('unknown category %s.' % category)
+        log.error('unknown category %s.' % category)
+        raise RuntimeError('unknown category')
 
     # 去重
     all_diff_data_by_id = {}
@@ -62,10 +64,10 @@ def merge_diff_files(files, output_path):
 
     output_name = os.path.basename(output_path)
     if len(all_diff_data) > 0:
-        print('saving %s...' % output_name)
+        log.info('saving %s...' % output_name)
         save_xlsx(output_path, all_diff_data, header=header)
     else:
-        print('skip %s' % output_name)
+        log.info('skip %s' % output_name)
 
 
 def main():
@@ -77,11 +79,11 @@ def main():
     suffix, output_path, diff_path = sys.argv[1], sys.argv[2], sys.argv[3]
 
     # check category
-    print('-- diff dir')
+    log.info('merge: diff dir')
     diff_filename_to_category = get_filename_and_category(diff_path)
 
     # merge
-    print('-- merge')
+    log.info('merge: merge')
     for category, category_name in sorted(category_names.items()):
         diff_files = []
         # 检查是否有此 category
