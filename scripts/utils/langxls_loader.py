@@ -28,7 +28,7 @@ def load_from_list_category(data):
     # check
     for row in data:
         if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            log.warning('check string failed:', row[1])
+            log.warning('check string failed: %s', str(row[1]))
 
     # 删除多余数据，只保留 内部编号, 中文
     data = [(row[1], row[4]) for row in data]
@@ -59,7 +59,7 @@ def load_from_pair_category(data):
     for row in data:
         if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
                 or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
-            log.warning('check string failed:', row[1])
+            log.warning('check string failed: %s', str(row[1]))
 
     # 删除多余数据，只保留 内部编号, 中文名称, 中文描述
     data = [(row[1], row[4], row[7]) for row in data]

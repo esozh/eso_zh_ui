@@ -147,10 +147,9 @@ def main():
     input_text = []
     num_per_part = 1000     # 每份的行数
     part_num = int(math.ceil(len(lines) / num_per_part))    # 分成多少份
-    for i in range(0, part_num):
+    for i in range(0, part_num - 1):
         input_text.append(lines[num_per_part * i:num_per_part * (i + 1)])
-    if part_num > 1:
-        input_text.append(lines[num_per_part * (part_num - 1):])
+    input_text.append(lines[num_per_part * (part_num - 1):])
 
     # 转换
     log.info('converting to cht')

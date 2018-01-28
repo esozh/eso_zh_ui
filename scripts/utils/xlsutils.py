@@ -12,7 +12,7 @@ import shutil
 import xlrd
 import xlsxwriter
 import openpyxl
-from openpyxl.writer.write_only import WriteOnlyCell
+from openpyxl.worksheet.write_only import WriteOnlyCell
 
 
 def load_xls(file_path):
