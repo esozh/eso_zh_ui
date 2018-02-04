@@ -9,7 +9,7 @@
 
 import os
 import sys
-
+import shutil
 
 from utils.lang_def import category_names
 from utils.langxls_loader import get_category
@@ -27,7 +27,7 @@ def rename_file(filename, suffix):
     path_name = os.path.dirname(filename)
     new_name = os.path.join(path_name, 'ESO_%s_%s.xlsx' % (category_names[category], suffix))
     log.info('%s -> %s' % (filename, new_name))
-    os.system('mv %s %s' % (filename, new_name))
+    shutil.move(filename, new_name)
 
 
 def format_file_path(filename_or_path):
