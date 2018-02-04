@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# File          : convert_lua_to_txt.py
+# File          : main.py
 # Author        : bssthu
 # Project       : eso_zh_ui
-# Description   : 将从 mnf 中解出的， EsoUI 文件夹下的 en_client.lua 等转换为 .txt 文件
+# Description   : 
 # 
 
 
@@ -21,6 +21,7 @@ def execute(cmd):
     ret = os.system(cmd)
     if ret != 0:
         sys.exit(-1)
+
 
 def update_translation():
     """1. 更新翻译"""
@@ -51,7 +52,7 @@ def update_translation():
         # 清理 mnf 提取目录
         if os.path.exists(extract_path):
             log.info('clear %s' % extract_path)
-            #shutil.rmtree(extract_path)
+            shutil.rmtree(extract_path)
         # 清理翻译中间目录
         log.info('clear csv and xlsx')
         for root, dirs, files in os.walk('../../translation/lang'):
@@ -85,8 +86,8 @@ def update_translation():
             log.info('create %s' % dir)
             os.makedirs(dir)
 
-    print('### 正在提取...')
-    log.debug('正在提取...')
+    print('### 正在解码...')
+    log.debug('正在解码...')
     log.debug('extract eso.mnf -a 0')
     execute('EsoExtractData.exe "%s" -a 0 ../../temp/extract' % mnf_path)
     log.debug('extract eso.mnf -a 2')
