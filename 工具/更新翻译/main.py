@@ -136,6 +136,10 @@ def update_translation():
     filename = '../translation/zh_translate.xlsx'
     log.info('copy %s to %s' % (filename, dst))
     shutil.copy(filename, dst)
+    
+    print('### 正在重命名...')
+    log.debug('正在重命名...')
+    execute('python rename_lang_xls.py %s %s' % (datestr, dst))
 
 
 def merge_translation():
