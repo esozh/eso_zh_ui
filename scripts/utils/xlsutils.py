@@ -7,6 +7,7 @@
 # 
 
 
+import copy
 import os
 import shutil
 import xlrd
@@ -75,12 +76,12 @@ def save_xlsx_template(file_path, data, header=None, col_id=None):
     max_col_id = max(col_id)
 
     workbook = openpyxl.load_workbook(file_path)
-    sheet = workbook.get_sheet_by_name('sheet 1')
+    sheet = workbook['sheet 1']
 
     # 格式
-    fonts = [sheet.cell(row=1, column=i + 1).font.copy() for i in col_id]
-    fills = [sheet.cell(row=1, column=i + 1).fill.copy() for i in col_id]
-    alignments = [sheet.cell(row=1, column=i + 1).alignment.copy() for i in col_id]
+    fonts = [copy.copy(sheet.cell(row=1, column=i + 1).font) for i in col_id]
+    fills = [copy.copy(sheet.cell(row=1, column=i + 1).fill) for i in col_id]
+    alignments = [copy.copy(sheet.cell(row=1, column=i + 1).alignment) for i in col_id]
     number_formats = [sheet.cell(row=1, column=i + 1).number_format for i in col_id]
 
     # 写入内容
