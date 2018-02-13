@@ -18,7 +18,7 @@ from utils import log
 
 
 def main():
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在清理...')
     log.debug('正在清理...')
     # 清理输出目录
@@ -30,7 +30,7 @@ def main():
     os.makedirs(dir)
 
     os.chdir('../../')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在复制...')
     log.debug('正在复制...')
     dst = '输出/搜索工具/'
@@ -44,7 +44,7 @@ def main():
         shutil.copy(f, dst)
 
     os.chdir('输出/搜索工具/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在打包...')
     log.debug('正在打包...')
     datestr = time.strftime('%Y%m%d')

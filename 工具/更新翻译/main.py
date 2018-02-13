@@ -26,7 +26,7 @@ def execute(cmd):
 def update_translation():
     """1. 更新翻译"""
     NEED_CLEAR = True
-    os.system('pwd')
+    log.info(os.getcwd())
     eso_path = ' '.join(sys.argv[2:])
     log.info('ESO PATH: %s' % eso_path)
     mnf_path = os.path.join(eso_path, 'depot/eso.mnf')
@@ -97,7 +97,7 @@ def update_translation():
         sys.exit(-1)
 
     os.chdir('../../')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在复制...')
     log.debug('正在复制...')
     src_dst = (
@@ -111,7 +111,7 @@ def update_translation():
         shutil.copy(src, dst)
 
     os.chdir('scripts/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在分析...')
     log.debug('正在分析...')
     execute('python split_lang_csv_by_id.py')

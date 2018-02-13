@@ -33,7 +33,7 @@ def get_linenum(filename):
 def gen_chs():
     """1. 简体"""
     NEED_CLEAR = True
-    os.system('pwd')
+    log.info(os.getcwd())
 
     ver = 'v0.6.1'
     print('请输入版本号并按下回车: (例如 %s)' % ver)
@@ -101,7 +101,7 @@ def gen_chs():
                 shutil.copy(filename, dst)
 
     os.chdir('../../scripts/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 转换UI文本...')
     log.debug('转换UI文本...')
     execute('python export_uixls_to_txt.py ../translation/%s' % ui_xls_file)
@@ -121,7 +121,7 @@ def gen_chs():
     execute('python export_langxls_to_csv.py')
 
     os.chdir('../translation/lang/translated/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在编码...')
     log.debug('正在编码...')
     execute('EsoExtractData.exe -x zh.lang.csv')
@@ -139,7 +139,7 @@ def gen_chs():
         sys.exit(-1)
 
     os.chdir('../../../')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在打包...')
     log.debug('正在打包...')
     log.info('copy AddOns')
@@ -154,7 +154,7 @@ def gen_chs():
     os.remove('输出/生成简体插件/AddOns/gamedata/lang/.gitignore')
 
     os.chdir('输出/生成简体插件/')
-    os.system('pwd')
+    log.info(os.getcwd())
     with open('README.txt', 'rt', encoding='utf-8') as fp:
         desc = fp.read()
     zip_name = 'ESO汉化插件_%s.zip' % ver
@@ -170,7 +170,7 @@ def gen_chs():
 def gen_cht():
     """2. 繁体"""
     NEED_CLEAR = True
-    os.system('pwd')
+    log.info(os.getcwd())
 
     ver = 'v0.6.1'
     print('请输入版本号并按下回车: (例如 %s)' % ver)
@@ -232,7 +232,7 @@ def gen_cht():
                 break
 
     os.chdir('../../translation/')
-    os.system('pwd')
+    log.info(os.getcwd())
     execute('python ../scripts/xls2csv.py "%s" STOthers.txt' % chs_to_cht_file)
     with open('STOthers.txt', 'rt', encoding='utf-8') as fp:
         lines = fp.readlines()
@@ -240,7 +240,7 @@ def gen_cht():
         fp.write(''.join(lines[2:]))
 
     os.chdir('../scripts/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 简繁转换...')
     log.debug('简繁转换...')
     src_dst = (
@@ -252,7 +252,7 @@ def gen_cht():
         execute('python convert_to_cht.py %s %s' % (src, dst))
 
     os.chdir('../translation/lang/translated/')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在编码...')
     log.debug('正在编码...')
     execute('EsoExtractData.exe -x cht/zh.lang.csv')
@@ -270,7 +270,7 @@ def gen_cht():
         sys.exit(-1)
 
     os.chdir('../../../')
-    os.system('pwd')
+    log.info(os.getcwd())
     print('### 正在打包...')
     log.debug('正在打包...')
     log.info('copy AddOns')
@@ -289,7 +289,7 @@ def gen_cht():
     os.remove('输出/生成繁体插件/AddOns/gamedata/lang/.gitignore')
 
     os.chdir('输出/生成繁体插件/')
-    os.system('pwd')
+    log.info(os.getcwd())
     with open('README.txt', 'rt', encoding='utf-8') as fp:
         desc = fp.read()
     zip_name = 'ESO汉化插件_%s.zip' % ver
