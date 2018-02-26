@@ -105,15 +105,6 @@ def gen_chs():
     print('### 转换UI文本...')
     log.debug('转换UI文本...')
     execute('python export_uixls_to_txt.py ../translation/%s' % ui_xls_file)
-    with open('../translation/zh_translate.txt', 'rt', encoding='utf-8') as fp:
-        lines = fp.readlines()
-    for i in range(len(lines)):
-        if 'SI_VERSION' in lines[i]:
-            txt = r'微攻略汉化组 |ceeeeeehttp://vstab.com/local/|r\n汉化版本: ' \
-                + ver + r'\n版本: <<X:1>>' + '\n'
-            lines[i + 1] = txt
-    with open('../translation/zh_translate.txt', 'wt', encoding='utf-8') as fp:
-        fp.write(''.join(lines))
     execute('python convert_txt_to_str.py -m translation')
 
     print('### 转换其他文本...')

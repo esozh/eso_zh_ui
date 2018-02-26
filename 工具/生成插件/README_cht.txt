@@ -57,6 +57,7 @@ https://account.elderscrollsonline.com/add-on-terms
 
 ## 致謝/Credit
 - 微攻略漢化組
+- 祈源遊戲本地化
 - Esoita, http://www.esoui.com/downloads/info1067-ESOItalianTranslationWIP.html
 - Cervanteso, http://www.cervanteso.org.es/
 - RuEso, http://online.elderscrolls.net/RuESO
