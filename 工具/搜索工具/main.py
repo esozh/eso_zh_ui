@@ -17,6 +17,13 @@ sys.path.insert(0, '../../scripts/')
 from utils import log
 
 
+def execute(cmd):
+    print('> %s' % cmd)
+    ret = os.system(cmd)
+    if ret != 0:
+        sys.exit(-1)
+
+
 def main():
     log.info(os.getcwd())
     print('### 正在清理...')
@@ -29,19 +36,26 @@ def main():
     log.info('create %s' % dir)
     os.makedirs(dir)
 
-    os.chdir('../../')
+    os.chdir('../../scripts/')
+    log.info(os.getcwd())
+    print('### 正在去重...')
+    log.debug('正在去重...')
+    execute('python export_rawxls_to_csv.py')
+
+    os.chdir('../')
     log.info(os.getcwd())
     print('### 正在复制...')
     log.debug('正在复制...')
     dst = '输出/搜索工具/'
     files = (
-        '工具/搜索工具/lang_finder.exe',
-        'translation/lang/en.lang.csv',
-        'translation/lang/translated/zh.lang.csv',
+        ('工具/搜索工具/lang_finder.exe', 'lang_finder.exe'),
+        ('translation/lang/translated/en.lang.reduce.csv', 'en.lang.csv'),
+        ('translation/lang/translated/zh.lang.reduce.csv', 'zh.lang.csv'),
     )
-    for f in files:
-        log.info('copy %s to %s' % (f, dst))
-        shutil.copy(f, dst)
+    for f, dst_name in files:
+        dst_path = os.path.join(dst + dst_name)
+        log.info('copy %s to %s' % (f, dst_path))
+        shutil.copy(f, dst_path)
 
     os.chdir('输出/搜索工具/')
     log.info(os.getcwd())
