@@ -1,7 +1,7 @@
 ## Title: EsoZH
 ## Description: Chinese translation
-## Version: 0.6.2
-## APIVersion: 100022
+## Version: 0.6.6
+## APIVersion: 100023
 ## SavedVariables: EsoZH_Variables
 
 
