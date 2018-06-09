@@ -44,8 +44,7 @@ def main():
 
     # load translation
     data_from_xls = load_xls(xls_path)
-    ui_mgr.apply_translate_from_xls(data_from_xls)
-    ui_mgr.apply_translate_from_xls(data_from_xls)
+    ui_mgr.apply_translate_from_xls(data_from_xls, need_check=False)
 
     # save result
     txt_lines = ui_mgr.get_txt_lines(replace=True)

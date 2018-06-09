@@ -154,7 +154,7 @@ def count_string_attr(text_to_check):
     Args:
         text_to_check (str): 一个待检查的字符串
     """
-    count = {'<>': 0, 'c': 0, 't': 0, 'bs': 0, 'n': 0, 'q': 0}
+    count = {'<>': 0, 'c': 0, 't': 0, 'bs': 0, 'n': 0, 'q': 0, '$d': 0}
     len_text = len(text_to_check)
 
     for i in range(0, len_text - 1):
@@ -172,6 +172,8 @@ def count_string_attr(text_to_check):
             count['n'] += 1
         elif text_to_check[i] == '\\' and text_to_check[i+1] == '"':
             count['q'] += 1
+        elif text_to_check[i] == '$' and text_to_check[i+1] == 'd':
+            count['$d'] += 1
     return count
 
 

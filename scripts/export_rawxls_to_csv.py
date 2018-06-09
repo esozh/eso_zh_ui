@@ -11,36 +11,51 @@ import os
 import sys
 
 from utils.xlsutils import load_xls
+from utils.langxls_loader import load_from_langxls
 from utils.lang_def import *
 from utils import log
 
 
-def get_csv_from_xls(translation_path):
+def get_csv_from_xls(translation_path, lang):
     """从文件夹中读取所有翻译文件
 
     Args:
-        translation_path (str): 存放翻译 xlsx 文件的路径
+        translation_path (str): 存放翻译 xlsx 文件的路径或文件
+        lang (str): "zh"/"en", 读中文还是英文
 
     Returns:
         csv_list (dict[str: list]): dict<str, list>, 根据 category 归类的翻译
+        ui_xls_file: UI翻译文件，如果找到了
     """
+    file_list = []
+    if os.path.isfile(translation_path):
+        file_list.append((translation_path, translation_path))
+    else:
+        for dir_path, dir_names, file_names in os.walk(translation_path):
+            for file_name in file_names:
+                if file_name.lower().endswith('.xlsx') and not file_name.startswith('~') \
+                        and (file_name.startswith('en.') or lang == 'zh'):
+                    file_path = os.path.join(dir_path, file_name)
+                    file_list.append((file_name, file_path))
+
     category_to_translated = {}
-    for dir_path, dir_names, file_names in os.walk(translation_path):
-        for file_name in file_names:
-            if file_name.lower().endswith('.xlsx') and file_name.startswith('en.') \
-                    and not file_name.startswith('~'):
-                file_abs_path = os.path.join(dir_path, file_name)
-                # load from one file
-                log.info('load from %s' % file_name)
-                category, translated_data = load_from_rawxls(file_abs_path)
-                log.info('load %d %ss' % (len(translated_data), category))
-                if category in category_to_translated:
-                    log.warning('warning: override category %s' % category)
-                category_to_translated[category] = translated_data
+    ui_xls_file = None
+    for file_name, file_path in file_list:
+        # load from one file
+        log.info('load from %s' % file_name)
+        category, translated_data = load_from_langxls(file_path, lang, need_check=False, load_ui=True)
+        log.info('load %d %ss' % (len(translated_data), category))
+        if category in category_to_translated:
+            log.warning('warning: override category %s' % category)
+        category_to_translated[category] = translated_data
+        if category == 'UI':
+            ui_xls_file = file_path
+
     list_list = [line for _, translated_data in sorted(category_to_translated.items())
                  for line in translated_data]
-    return ['"%s","%s","%s","0","%s"\n' % (line[0], line[1], line[2], line[3])
+    csv_list = ['"%s","%s","%s","0","%s"\n' % (line[0], line[1], line[2], line[3])
             for line in list_list]
+    return csv_list, ui_xls_file
 
 
 def load_from_list_category(data):
@@ -152,10 +167,18 @@ def main():
     src_path = os.path.join(cd, '../translation/lang')
     translation_path = os.path.join(cd, '../translation/lang/translated')
 
-    # load from xlsx
-    csv_list = get_csv_from_xls(src_path)
+    # load en from xlsx
+    csv_list, _ = get_csv_from_xls(src_path, 'en')
 
-    # convert
+    # load zh from xlsx
+    zh_csv_list, ui_xls_file = get_csv_from_xls(translation_path, 'zh')
+
+    # load en ui from translated xlsx
+    if ui_xls_file is not None:
+        csv_list_ui, _ = get_csv_from_xls(ui_xls_file, 'en')
+        csv_list.extend(csv_list_ui)
+
+    # convert en
     csv_dict = get_dict_from_csv(csv_list)
     csv_list_reduced = []
     for k, v in sorted(csv_dict.items()):
@@ -167,14 +190,7 @@ def main():
         fp.writelines(csv_list_reduced)
     log.info('write to en.lang.reduce.csv')
 
-    # load zh
-    zh_src_path = os.path.join(cd, '../translation/lang/translated/zh.lang.csv')
-    if not os.path.isfile(zh_src_path):
-        return
-    with open(zh_src_path, 'rt', encoding='utf-8') as fp:
-        zh_csv_list = fp.readlines()
-
-    # convert
+    # convert zh
     zh_csv_dict = get_dict_from_csv(zh_csv_list)
 
     zh_csv_list_reduced = []

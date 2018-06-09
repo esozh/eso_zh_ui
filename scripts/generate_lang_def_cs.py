@@ -32,6 +32,7 @@ def main():
     print('        {')
     print('            fileidToCategory = new Dictionary<string, string>();')
     print('')
+    print('            fileidToCategory.Add("UI", "UI");')
     for k, v in sorted(list(file_id_of_list.items()) + list(file_id_of_array.items()) + list(file_id_of_pair.items())):
         for _id in v:
             print('            fileidToCategory.Add("%s", "%s");' % (_id, k))

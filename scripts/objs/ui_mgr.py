@@ -10,6 +10,8 @@
 from objs.ui_line import UiLine
 from objs.ui_row import UiRow
 from utils.text_replacer import TextReplacer
+from utils.check_xls import check_string_with_origin
+from utils import log
 
 
 class UiMgr:
@@ -49,13 +51,14 @@ class UiMgr:
             if ui_line is not None:
                 self.ui_lines[ui_line.name] = ui_line
 
-    def apply_translate_from_txt_lines(self, lines_from_txt):
+    def apply_translate_from_txt_lines(self, lines_from_txt, need_check=True):
         """从 _translate.txt 读到的行中加载的翻译
 
         只加载已有的 UiLine 的翻译，并且 txt 和 lua 中的原文要一致
 
         Args:
             lines_from_txt (list[str]): .txt 文件中的行
+            need_check (bool): 是否检查
         """
         # 每一行 SafeAddString 的下一行可能是翻译
         ui_line = None
@@ -66,24 +69,25 @@ class UiMgr:
                 ui_line = UiLine.from_lua_line(line)
             elif (ui_line is not None) and (line != ''):
                 # 译文行，检查并应用翻译
-                self.apply_one_translate(ui_line.name, ui_line.origin, line)
+                self.apply_one_translate(ui_line.name, ui_line.origin, line, need_check)
                 ui_line = None
 
-    def apply_translate_from_xls(self, data_from_xls):
+    def apply_translate_from_xls(self, data_from_xls, need_check=TrueInitCategoryToName):
         """应用从 xls 文件加载的翻译
 
         不检查更新
 
         Args:
             data_from_xls (list[list[str]]): xls 工作表中的数据
+            need_check (bool): 是否检查
         """
         name_column_id, origin_column_id, translation_column_id = 1, 2, 3
         for row_data in data_from_xls:
             name, origin, translation = \
                     row_data[name_column_id], row_data[origin_column_id], row_data[translation_column_id]
-            self.apply_one_translate(name, origin, translation)
+            self.apply_one_translate(name, origin, translation, need_check)
 
-    def apply_one_translate(self, name, origin, translation):
+    def apply_one_translate(self, name, origin, translation, need_check=True):
         """应用一条翻译
 
         先检查原文是否一致。不检查更新。
@@ -92,8 +96,11 @@ class UiMgr:
             name (str): 名字， SI_ 开头
             origin (str): 原文
             translation (str): 译文
+            need_check (bool): 是否检查
         """
         if name in self.ui_lines.keys() and origin == self.ui_lines[name].origin:
+            if need_check and not check_string_with_origin(translation, origin):
+                log.warning('check string failed: %s', name)
             self.ui_lines[name].set_translation(translation)
 
     def get_rows(self):

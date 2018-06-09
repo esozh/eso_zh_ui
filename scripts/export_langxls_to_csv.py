@@ -21,23 +21,30 @@ def load_translation(translation_path):
     """从文件夹中读取所有翻译文件
 
     Args:
-        translation_path (str): 存放翻译 xlsx 文件的路径
+        translation_path (str): 存放翻译 xlsx 文件的路径或文件
 
     Returns:
         category_to_translated (dict[str: list]): dict<str, list>, 根据 category 归类的翻译
     """
+    file_list = []
+    if os.path.isfile(translation_path):
+        file_list.append((translation_path, translation_path))
+    else:
+        for dir_path, dir_names, file_names in os.walk(translation_path):
+            for file_name in file_names:
+                if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
+                    file_path = os.path.join(dir_path, file_name)
+                    file_list.append((file_name, file_path))
+
     category_to_translated = {}
-    for dir_path, dir_names, file_names in os.walk(translation_path):
-        for file_name in file_names:
-            if file_name.lower().endswith('.xlsx') and not file_name.startswith('~'):
-                file_abs_path = os.path.join(dir_path, file_name)
-                # load from one file
-                log.info('load from %s' % file_name)
-                category, translated_data = load_from_langxls(file_abs_path)
-                log.info('load %d %ss' % (len(translated_data), category))
-                if category in category_to_translated:
-                    log.warning('warning: override category %s' % category)
-                category_to_translated[category] = translated_data
+    for file_name, file_path in file_list:
+        # load from one file
+        log.info('load from %s' % file_name)
+        category, translated_data = load_from_langxls(file_path, "zh", need_check=True)
+        log.info('load %d %ss' % (len(translated_data), category))
+        if category in category_to_translated:
+            log.warning('warning: override category %s' % category)
+        category_to_translated[category] = translated_data
     return category_to_translated
 
 

@@ -14,11 +14,13 @@ from utils.lang_def import *
 from utils import log
 
 
-def load_from_list_category(data):
+def load_from_list_category(data, lang, need_check=True):
     """解析从 list<text> 模式的 xlsx 中读取的翻译
 
     Args:
         data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
+        lang (str): "zh"/"en", 读中文还是英文
+        need_check (bool): 是否检查
 
     Returns:
         category (str): category from lang_def
@@ -26,12 +28,16 @@ def load_from_list_category(data):
     """
 
     # check
-    for row in data:
-        if row[4] != '' and not check_string_with_origin(row[3], row[4]):
-            log.warning('check string failed: %s', str(row[1]))
+    if need_check:
+        for row in data:
+            if row[4] != '' and not check_string_with_origin(row[3], row[4]):
+                log.warning('check string failed: %s', str(row[1]))
 
-    # 删除多余数据，只保留 内部编号, 中文
-    data = [(row[1], row[4]) for row in data]
+    # 删除多余数据，只保留 内部编号, 英文/中文
+    if lang == 'en':
+        data = [(row[1], row[3]) for row in data]
+    else:
+        data = [(row[1], row[4]) for row in data]
     category = data[0][0].rsplit('-', 3)[0]
 
     # 恢复编号
@@ -44,11 +50,13 @@ def load_from_list_category(data):
     return category, translated_data
 
 
-def load_from_pair_category(data):
+def load_from_pair_category(data, lang, need_check=True):
     """解析从 <name, desc> 模式的 xlsx 中读取的翻译
 
     Args:
         data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
+        lang (str): "zh"/"en", 读中文还是英文
+        need_check (bool): 是否检查
 
     Returns:
         category (str): category from lang_def
@@ -56,13 +64,17 @@ def load_from_pair_category(data):
     """
 
     # check
-    for row in data:
-        if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
-                or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
-            log.warning('check string failed: %s', str(row[1]))
+    if need_check:
+        for row in data:
+            if (row[4] != '' and not check_string_with_origin(row[3], row[4])) \
+                    or (row[7] != '' and not check_string_with_origin(row[6], row[7])):
+                log.warning('check string failed: %s', str(row[1]))
 
-    # 删除多余数据，只保留 内部编号, 中文名称, 中文描述
-    data = [(row[1], row[4], row[7]) for row in data]
+    # 删除多余数据，只保留 内部编号, 英文/中文名称, 英文/中文描述
+    if lang == 'en':
+        data = [(row[1], row[3], row[6]) for row in data]
+    else:
+        data = [(row[1], row[4], row[7]) for row in data]
 
     category = data[0][0].rsplit('-', 1)[0]
     name_file_id, desc_file_id = file_id_of_pair[category]
@@ -84,13 +96,57 @@ def load_from_pair_category(data):
     return category, translated_data
 
 
-def load_from_langxls(file_path):
+def load_from_ui_fake(data, lang, need_check=True):
+    """解析从UI模式的 xlsx 中读取的翻译
+
+    Args:
+        data: 从 xlsx 读出的数据，data[i][j] 表示第 i 行第 j 列的数据
+        lang (str): "zh"/"en", 读中文还是英文
+        need_check (bool): 是否检查
+
+    Returns:
+        category (str): "UI"
+        translated_data (list[str]): list of [file_id, unknown, index, text]
+    """
+
+    # check
+    if need_check:
+        for row in data:
+            if (row[2] != '' and not check_string_with_origin(row[3], row[4])) \
+                    or (row[3] != '' and not check_string_with_origin(row[6], row[7])):
+                log.warning('check string failed: %s', str(row[1]))
+
+    # 删除多余数据，只保留 名称, 原文/译文
+    if lang == 'en':
+        data = [(row[1], row[2]) for row in data]
+    else:
+        data = [(row[1], row[3]) for row in data]
+
+    category = 'UI'
+
+    # 恢复编号
+    translated_data = []
+    for intern_id, text in data:
+        if intern_id == '':
+            continue        # 空行
+        # file_id=='UI', unknown=='0', index==intern_id
+        index = intern_id
+        unknown = '0'
+        translated_data.append([category, unknown, index, text])
+
+    return category, translated_data
+
+
+def load_from_langxls(file_path, lang, need_check=False, load_ui=False):
     """从 xlsx 文件中读取 lang.csv 的翻译
 
     xlsx 文件可能是 <name, desc> 模式，也可能是 list<text> 模式。
 
     Args:
         file_path (str): xlsx 文件路径
+        lang (str): "zh"/"en", 读中文还是英文
+        need_check (bool): 是否检查
+        load_ui (bool): 是否读取ui汉化文件的内容
 
     Returns:
         category (str): category from lang_def
@@ -102,10 +158,17 @@ def load_from_langxls(file_path):
     id_split = data[0][1].split('-')
     if len(id_split) > 3 and id_split[-1].isdigit() and id_split[-2].isdigit() and id_split[-3].isdigit():
         # list of text
-        return load_from_list_category(data)
+        return load_from_list_category(data, lang, need_check)
     elif len(id_split) > 1 and id_split[-1].isdigit():
         # name_desc
-        return load_from_pair_category(data)
+        return load_from_pair_category(data, lang, need_check)
+    elif len(id_split) == 1 and '_' in id_split[0] \
+            and id_split[0][0].isalpha() and id_split[0][-1].isalpha():
+        if load_ui:
+            return load_from_ui_fake(data, lang, need_check)
+        else:
+            log.info('skip ui file %s.' % file_path)
+            return '', []
     else:
         log.error('load %s failed.' % file_path)
         return '', []

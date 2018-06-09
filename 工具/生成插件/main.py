@@ -95,8 +95,9 @@ def gen_chs():
                 if len(data[1]) == 8:  # ui 汉化文件
                     dst = '../../translation/'
                     ui_xls_file = f
-                else:
-                    dst = '../../translation/lang/translated/'
+                    log.info('copy %s to %s' % (filename, dst))
+                    shutil.copy(filename, dst)
+                dst = '../../translation/lang/translated/'
                 log.info('copy %s to %s' % (filename, dst))
                 shutil.copy(filename, dst)
 
