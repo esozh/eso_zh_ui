@@ -72,7 +72,7 @@ class UiMgr:
                 self.apply_one_translate(ui_line.name, ui_line.origin, line, need_check)
                 ui_line = None
 
-    def apply_translate_from_xls(self, data_from_xls, need_check=TrueInitCategoryToName):
+    def apply_translate_from_xls(self, data_from_xls, need_check=True):
         """应用从 xls 文件加载的翻译
 
         不检查更新
