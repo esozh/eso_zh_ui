@@ -53,7 +53,7 @@ class LangMgr:
                 origin_jp = line[4]
                 if index not in lang_groups.keys():
                     # 如果是新出现的 index，则舍弃
-                    log.debug('new index from jp: %s' % str(line))
+                    log.debug('new index from jp: %s' % str(line[0:4]))
                     continue
                 lang_groups[index].add_jp(file_id, unknown, index, offset, origin_jp)
         # 添加

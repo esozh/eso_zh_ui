@@ -101,4 +101,7 @@ def log(lvl, msg, *args, **kwargs):
         init_log()
         G_LOG.log(logging.DEBUG, 'init log, %s', str(sys.argv))
 
-    G_LOG.log(lvl, msg, *args, **kwargs)
+    try:
+        G_LOG.log(lvl, msg, *args, **kwargs)
+    except Exception as e:
+        G_LOG.log(logging.ERROR, "failed to write log:\n%s", repr(e))
