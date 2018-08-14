@@ -67,4 +67,5 @@ def main():
 if __name__ == '__main__':
     log.debug('main() with args: %s' % str(sys.argv))
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='gb18030')
     main()
