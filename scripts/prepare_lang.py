@@ -10,6 +10,8 @@
 import io
 import os
 import sys
+import multiprocessing
+from multiprocessing import Pool
 
 from objs.lang_mgr import LangMgr
 from objs.lang_mgr_array import LangMgrArray
@@ -159,12 +161,15 @@ def main():
     category = sys.argv[1]
 
     if category == '--all':
-        for each_category in file_id_of_pair:
-            load_category(translation_path, each_category)
+        category_args = []
         for each_category in file_id_of_list:
-            load_category(translation_path, each_category)
+            category_args.append([translation_path, each_category])
+        for each_category in file_id_of_pair:
+            category_args.append([translation_path, each_category])
         for each_category in file_id_of_array:
-            load_category(translation_path, each_category)
+            category_args.append([translation_path, each_category])
+        with Pool(processes=multiprocessing.cpu_count()) as pool:
+            pool.starmap(load_category, category_args)
     else:
         load_category(translation_path, category)
 
