@@ -18,6 +18,7 @@ from utils import log
 
 def apply_format(file_path):
     """xlsx 套用格式"""
+    log.debug('start %s' % file_path)
     data = load_xls(file_path)
     if len(data) < 2:
         return
@@ -63,8 +64,16 @@ def main():
     file_paths = []
     for filename in sys.argv[1:]:
         file_paths.extend(format_file_path(filename, translation_path))
+
+    # 按大小排序
+    file_path_and_size = []
+    for filename in file_paths:
+        file_path_and_size.append([filename, os.path.getsize(filename)])
+    file_path_and_size.sort(reverse=True, key=lambda x: x[1])
+    file_paths = [x[0] for x in file_path_and_size]
+
     with Pool(processes=multiprocessing.cpu_count()) as pool:
-        pool.map(apply_format, file_paths)
+        pool.map(apply_format, file_paths, chunksize=1)
 
 
 if __name__ == '__main__':
