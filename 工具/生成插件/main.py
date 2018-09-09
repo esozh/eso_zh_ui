@@ -35,10 +35,6 @@ def gen_chs():
     NEED_CLEAR = True
     log.info(os.getcwd())
 
-    ver = 'v0.6.1'
-    print('请输入版本号并按下回车: (例如 %s)' % ver)
-    ver = input().strip()
-
     if NEED_CLEAR:
         print('### 正在清理...')
         log.debug('正在清理...')
@@ -149,7 +145,7 @@ def gen_chs():
     log.info(os.getcwd())
     with open('README.txt', 'rt', encoding='utf-8') as fp:
         desc = fp.read()
-    zip_name = 'ESO汉化插件_%s.zip' % ver
+    zip_name = 'ESO汉化插件.zip'
     zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
     zipf.comment = bytes(desc, encoding='gbk')
     for root, dirs, files in os.walk('.'):
@@ -163,10 +159,6 @@ def gen_cht():
     """2. 繁体"""
     NEED_CLEAR = True
     log.info(os.getcwd())
-
-    ver = 'v0.6.1'
-    print('请输入版本号并按下回车: (例如 %s)' % ver)
-    ver = input().strip()
 
     if NEED_CLEAR:
         print('### 正在清理...')
@@ -284,7 +276,7 @@ def gen_cht():
     log.info(os.getcwd())
     with open('README.txt', 'rt', encoding='utf-8') as fp:
         desc = fp.read()
-    zip_name = 'ESO汉化插件_%s.zip' % ver
+    zip_name = 'ESO汉化插件_繁体.zip'
     zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
     zipf.comment = bytes(desc, encoding='gbk')
     for root, dirs, files in os.walk('.'):
