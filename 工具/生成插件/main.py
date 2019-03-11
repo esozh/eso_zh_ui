@@ -286,11 +286,120 @@ def gen_cht():
     zipf.close()
 
 
+def gen_chs_force():
+    """3. 强制简体，用原版做一次繁简转换"""
+    NEED_CLEAR = True
+    log.info(os.getcwd())
+
+    if NEED_CLEAR:
+        print('### 正在清理...')
+        log.debug('正在清理...')
+        # 清理输出目录
+        dirs = (
+            '../../输出/生成简体插件/',
+        )
+        for dir in dirs:
+            if os.path.exists(dir):
+                log.info('clear %s' % dir)
+                shutil.rmtree(dir)
+        # 清理翻译中间目录
+        files = (
+            '../../translation/STOthers.txt',
+            '../../translation/lang/translated/zh1.lang',
+            '../../translation/lang/translated/zh1.lang.csv',
+        )
+        for f in files:
+            if os.path.exists(f):
+                log.debug('remove %s' % f)
+                os.remove(f)
+        for root, dirs, files in os.walk('../../translation/'):
+            for f in files:
+                if f.endswith('.xlsx'):
+                    filename = os.path.join(root, f)
+                    log.debug('remove %s' % filename)
+                    os.remove(filename)
+            break
+
+    print('### 创建目录...')
+    log.debug('创建目录...')
+    dirs = (
+        '../../输出/生成简体插件/',
+    )
+    for dir in dirs:
+        if not os.path.isdir(dir):
+            log.info('create %s' % dir)
+            os.makedirs(dir)
+
+    print('### 分析对照表...')
+    log.debug('分析对照表...')
+
+    os.chdir('../../scripts/')
+    log.info(os.getcwd())
+    print('### 繁简转换...')
+    log.debug('繁简转换...')
+    # 直接覆盖吧
+    src_dst = (
+        ('../AddOns/EsoUI/lang/zh_pregame.str', '../AddOns/EsoUI/lang/zh_pregame.str',),
+        ('../AddOns/EsoUI/lang/zh_client.str', '../AddOns/EsoUI/lang/zh_client.str',),
+        ('../translation/lang/translated/zh.lang.csv', '../translation/lang/translated/zh.lang.csv',),
+    )
+    for src, dst in src_dst:
+        execute('python convert_to_chs.py %s %s' % (src, dst))
+
+    os.chdir('../translation/lang/translated/')
+    log.info(os.getcwd())
+    print('### 正在编码...')
+    log.debug('正在编码...')
+    execute('EsoExtractData.exe -x zh.lang.csv')
+
+    print('### 正在校验...')
+    log.debug('正在校验...')
+    shutil.copy('zh.lang', 'zh1.lang')
+    execute('EsoExtractData -l zh1.lang')
+    num1 = get_linenum('../en.lang.csv')
+    num2 = get_linenum('zh.lang.csv')
+    num3 = get_linenum('zh1.lang.csv')
+    log.info('validate line num: %d, %d, %d' % (num1, num2, num3))
+    if not num1 == num2 == num3:
+        log.error('校验失败')
+        sys.exit(-1)
+
+    os.chdir('../../../')
+    log.info(os.getcwd())
+    print('### 正在打包...')
+    log.debug('正在打包...')
+    log.info('copy AddOns')
+    shutil.copytree('AddOns/', '输出/生成简体插件/AddOns')
+    log.info('copy lang')
+    shutil.copy('translation/lang/translated/zh.lang', '输出/生成简体插件/AddOns/gamedata/lang/')
+    log.info('copy readme')
+    shutil.copy('工具/生成插件/README_chs.txt', '输出/生成简体插件/README.txt')
+    log.info('clear AddOns')
+    os.remove('输出/生成简体插件/AddOns/EsoUI/lang/.gitignore')
+    os.remove('输出/生成简体插件/AddOns/EsoZH/fonts/README.md')
+    os.remove('输出/生成简体插件/AddOns/gamedata/lang/.gitignore')
+
+    os.chdir('输出/生成简体插件/')
+    log.info(os.getcwd())
+    with open('README.txt', 'rt', encoding='utf-8') as fp:
+        desc = fp.read()
+    zip_name = 'ESO汉化插件.zip'
+    zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
+    zipf.comment = bytes(desc, encoding='gbk')
+    for root, dirs, files in os.walk('.'):
+        for f in files:
+            if f != zip_name:
+                zipf.write(os.path.join(root, f))
+    zipf.close()
+
+
 def main():
     if sys.argv[1] == '1':
         gen_chs()
     elif sys.argv[1] == '2':
         gen_cht()
+    elif sys.argv[1] == '3':
+        gen_chs_force()
     else:
         log.warning('unknown args')
         sys.exit(-2)
