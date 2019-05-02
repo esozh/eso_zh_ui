@@ -127,6 +127,9 @@ python check_xls.py ui.xlsx 3
 #### update_zh_csv.py
 用新的 en.lang.csv 重新生成一份 zh.lang.csv 文件。
 
+#### check_zh_font.py
+检查汉化文件中是否所有字都能用游戏字体正确显示。
+
 #### utils.py
 
 #### xlsutils.py
