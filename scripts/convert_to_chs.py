@@ -36,7 +36,8 @@ def prepare_chs_converter():
         'TSCharacters',
     )
     general_dict_paths = [os.path.join(cd,'utils/data', name + '.txt') for name in general_dict_names]
-    return convert_to_cht.prepare_converter(phrases_dict_path, general_dict_paths)
+    other_dict_path = os.path.join(cd, '../translation/STOthers_ts.txt')   # 人工整理的
+    return convert_to_cht.prepare_converter(phrases_dict_path, general_dict_paths, other_dict_path)
 
 
 def convert(input_text, text_replacer):

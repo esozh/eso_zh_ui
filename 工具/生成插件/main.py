@@ -221,7 +221,7 @@ def gen_cht():
     with open('STOthers.txt', 'rt', encoding='utf-8') as fp:
         lines = fp.readlines()
     with open('STOthers.txt', 'wt', encoding='utf-8') as fp:
-        fp.write(''.join(lines[2:]))
+        fp.write(''.join(lines[1:]))
 
     os.chdir('../scripts/')
     log.info(os.getcwd())
@@ -304,7 +304,7 @@ def gen_chs_force():
                 shutil.rmtree(dir)
         # 清理翻译中间目录
         files = (
-            '../../translation/STOthers.txt',
+            '../../translation/STOthers_ts.txt',
             '../../translation/lang/translated/zh1.lang',
             '../../translation/lang/translated/zh1.lang.csv',
         )
@@ -332,8 +332,25 @@ def gen_chs_force():
 
     print('### 分析对照表...')
     log.debug('分析对照表...')
+    for root, dirs, files in os.walk('繁简对照'):
+        for f in files:
+            if f.endswith('.xlsx') and not f.startswith('~'):
+                filename = os.path.join(root, f)
+                dst = '../../translation/'
+                log.info('copy %s to %s', filename, dst)
+                shutil.copy(filename, dst)
+                cht_to_chs_file = f
+                break
 
-    os.chdir('../../scripts/')
+    os.chdir('../../translation/')
+    log.info(os.getcwd())
+    execute('python ../scripts/xls2csv.py "%s" STOthers_ts.txt' % cht_to_chs_file)
+    with open('STOthers_ts.txt', 'rt', encoding='utf-8') as fp:
+        lines = fp.readlines()
+    with open('STOthers_ts.txt', 'wt', encoding='utf-8') as fp:
+        fp.write(''.join(lines[1:]))
+
+    os.chdir('../scripts/')
     log.info(os.getcwd())
     print('### 繁简转换...')
     log.debug('繁简转换...')
