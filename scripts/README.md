@@ -124,6 +124,9 @@ python check_xls.py ui.xlsx 3
 #### show_lang_tag.py
 查询 en.lang.csv 中有多少种 `<< >>`
 
+#### update_zh_csv.py
+用新的 en.lang.csv 重新生成一份 zh.lang.csv 文件。
+
 #### utils.py
 
 #### xlsutils.py

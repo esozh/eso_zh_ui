@@ -150,6 +150,10 @@ def walk_xlsx_files(dir):
     return files
 
 
+def is_ascii(s):
+    return all(ord(c) < 128 for c in s)
+
+
 def merge_dict(dict1, dict2):
     """合并两个 dict, 生成新 dict"""
     dictx = dict1.copy()
