@@ -37,6 +37,8 @@ def check_csv(csv_path, font_path, deduplicate=True):
             for k in cmap.cmap.keys():
                 valid_chars.add(k)
 
+    whitelist = {'\t'}
+
     # check
     invalid_chars = set()
     for line in lines:
@@ -45,11 +47,12 @@ def check_csv(csv_path, font_path, deduplicate=True):
             file_id, unknown, index, offset, text = line.split(',', 4)
             invalid = []
             for char in text:
-                if ord(char) not in valid_chars:
-                    if not deduplicate or char not in invalid_chars:
-                        invalid.append(char)
-                    invalid_chars.add(char)
-                    break
+                if char not in whitelist:
+                    if ord(char) not in valid_chars \
+                            or ord(char) > 0xffff:
+                        if not deduplicate or char not in invalid_chars:
+                            invalid.append(char + ' ' + '0x%x' % ord(char))
+                        invalid_chars.add(char)
             if invalid:
                 key = ','.join((file_id, unknown, index))
                 print('invalid char from %s: %s' % (key, ' '.join(invalid)))
