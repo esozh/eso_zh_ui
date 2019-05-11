@@ -3,8 +3,16 @@ EsoZH.name = "EsoZH"
 EsoZH.Flags = { "en", "zh" }
 EsoZH.firstInit = true
 
+-- 返回当前游戏语言，中文或英文
+function EsoZH.GetLanguage()
+    local lang = GetCVar("language.2")
+
+    if (lang == "zh") then return lang end
+    return "en"
+end
+
 -- 改变游戏语言
-function EsoZH_Change(lang)
+function EsoZH.ChangeLang(lang)
     zo_callLater(function()
         SetCVar("language.2", lang)
         EsoZH.savedVars.lang = lang
@@ -12,8 +20,18 @@ function EsoZH_Change(lang)
     end, 500)
 end
 
+-- 是否是全 ascii 字符串，用来判断是否汉化了
+function EsoZH.IsAscii(s)
+    for i = 1, #s do
+        if string.byte(string.sub(s, i, i)) >= 128 then
+            return true
+        end
+    end
+    return false
+end
+
 -- 重新加载 UI
-function EsoZH:RefreshUI()
+function EsoZH.RefreshUI()
     local flagControl
     local count = 0
     local flagTexture
@@ -23,10 +41,10 @@ function EsoZH:RefreshUI()
         if flagControl == nil then
             flagControl = CreateControlFromVirtual("EsoZH_FlagControl_", EsoZHUI, "EsoZH_FlagControl", tostring(flagCode))
             GetControl("EsoZH_FlagControl_"..flagCode.."Texture"):SetTexture(flagTexture)
-            if EsoZH:GetLanguage() ~= flagCode then
+            if EsoZH.GetLanguage() ~= flagCode then
                 flagControl:SetAlpha(0.3)
                 if flagControl:GetHandler("OnMouseDown") == nil then
-                    flagControl:SetHandler("OnMouseDown", function() EsoZH_Change(flagCode) end)
+                    flagControl:SetHandler("OnMouseDown", function() EsoZH.ChangeLang(flagCode) end)
                 end
             end
         end
@@ -38,16 +56,8 @@ function EsoZH:RefreshUI()
     EsoZHUI:SetMouseEnabled(true)
 end
 
--- 返回当前游戏语言
-function EsoZH:GetLanguage()
-    local lang = GetCVar("language.2")
-    
-    if (lang == "zh") then return lang end
-    return "en"
-end
-
 -- 插件初始化时调用
-function EsoZH:OnInit(eventCode, addOnName)
+function EsoZH.OnInit(eventCode, addOnName)
     if (addOnName):find("^ZO_") then return end
 
     local defaultVars = { lang = "zh" }
@@ -93,7 +103,7 @@ function EsoZH:OnInit(eventCode, addOnName)
         v.fontFace = "EsoZH/fonts/ftn47.otf"
     end
 
-    EsoZH:RefreshUI()
+    EsoZH.RefreshUI()
 
     function ZO_GameMenu_OnShow(control)
         if control.OnShow then
@@ -118,11 +128,29 @@ function EsoZH.LoadScreen(event)
     -- 检查当前语言、上次设置的语言是否是中文，如有必要就修改语言设置
     if EsoZH.firstInit then
         EsoZH.firstInit = false
-        if EsoZH:GetLanguage() ~= "zh" and EsoZH.savedVars.lang == "zh" then
-            EsoZH_Change("zh")
+        if EsoZH.GetLanguage() ~= "zh" and EsoZH.savedVars.lang == "zh" then
+            EsoZH.ChangeLang("zh")
         end
     end
 end
 
-EVENT_MANAGER:RegisterForEvent("EsoZH_OnAddOnLoaded", EVENT_ADD_ON_LOADED, function(_event, _name) EsoZH:OnInit(_event, _name) end)
+-- 修改字幕显示时间，因为中文文本一般会比英文短
+if not EsoZH.old_OnShowSubtitle then
+    EsoZH.old_OnShowSubtitle = ZO_SubtitleManager.OnShowSubtitle
+end
+ZO_SubtitleManager.OnShowSubtitle = function(self, ...)
+    EsoZH.old_OnShowSubtitle(self, ...)
+    local message = self.currentSubtitle and self.currentSubtitle.messageText
+    local lang = GetCVar("Language.2")
+    if lang == "zh" and message and EsoZH.IsAscii(message) then
+        local minLen = 3
+        local maxLen = 12
+        local messageLength = ZoUTF8StringLength(message)
+        local charactersPerSecond = 4  -- default is 10
+        self.currentSubtitle.displayLengthSeconds = zo_clamp(messageLength / charactersPerSecond, minLen, maxLen)
+    end
+end
+
+-- 注册初始化事件
+EVENT_MANAGER:RegisterForEvent("EsoZH_OnAddOnLoaded", EVENT_ADD_ON_LOADED, function(_event, _name) EsoZH.OnInit(_event, _name) end)
 EVENT_MANAGER:RegisterForEvent("EsoZH_LoadScreen", EVENT_PLAYER_ACTIVATED, EsoZH.LoadScreen)
